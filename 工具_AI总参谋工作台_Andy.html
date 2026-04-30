@@ -240,9 +240,21 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
         <div class="subt">企业经营分析 · 高管人才盘点 · 企业决策沙盘<br>高管面试题库 · 高管面试分析 · 高管试用辅佐<br><br>老板的随身参谋部，每一个关键决策都有AI辅助</div>
         <div class="ref-tag" id="refTag" style="display:none">👤 推荐人：<span id="refName"></span></div>
         <input type="text" id="activationInput" placeholder="请输入激活码" maxlength="200" autocomplete="off">
+        <div class="login-hint" id="loginHint" style="display:none;font-size:11px;color:rgba(212,175,55,.5);margin-bottom:6px;cursor:pointer" onclick="fillLastCode()" title="点击填入上次使用的激活码">💾 上次使用：<span id="lastCodeHint"></span></div>
         <div class="login-err" id="loginErr"></div>
         <button class="btn btn-activate" id="activateBtn" onclick="activate()">激活使用</button>
-        <div class="login-info">还没有激活码？<br>💬 加微信：miaoan1913 获取<br><br>💰 月卡 ¥999(30次) · 半年卡 ¥4999(200次) · 年卡 ¥9999(500次)<br><br><span id="syncStatusLogin" style="cursor:pointer;color:rgba(212,175,55,.6);font-size:11px;text-decoration:underline" onclick="showTokenSetup()">⚙️ 设置云端同步（跨设备共享次数）</span></div>
+        <div class="login-info">还没有激活码？<br>💬 加微信：miaoan1913 获取<br><br>💰 月卡 ¥999(30次) · 半年卡 ¥4999(200次) · 年卡 ¥9999(500次)<br><br><span id="syncStatusLogin" style="cursor:pointer;color:rgba(212,175,55,.6);font-size:11px;text-decoration:underline" onclick="showTokenSetup()">⚙️ 设置云端同步（跨设备共享次数）</span><br><br><span style="cursor:pointer;color:rgba(212,175,55,.5);font-size:10px;text-decoration:underline" onclick="document.getElementById('aiGuide').style.display=document.getElementById('aiGuide').style.display==='none'?'':'none'">💡 不知道怎么用AI工具？点击查看推荐</span></div>
+        <div id="aiGuide" style="display:none;text-align:left;font-size:10px;color:rgba(255,255,255,.45);margin-top:8px;line-height:2;padding:10px 14px;background:rgba(255,255,255,.02);border-radius:8px">
+            <strong style="color:rgba(212,175,55,.7)">推荐AI工具（均免费注册）：</strong><br>
+            🥇 <b>DeepSeek</b>（chat.deepseek.com）— 免费、中文强、逻辑好<br>
+            🥈 <b>Kimi</b>（kimi.moonshot.cn）— 免费、长文本、擅长分析<br>
+            🥉 <b>通义千问</b>（tongyi.aliyun.com）— 免费、阿里出品<br>
+            🌐 <b>ChatGPT</b>（chatgpt.com）— 综合最强，需科学上网<br><br>
+            <strong style="color:rgba(212,175,55,.7)">使用方法：</strong><br>
+            1. 工作台填数据 → 点"生成指令" → 点"复制指令"<br>
+            2. 打开上面任一AI工具 → 粘贴 → 发送<br>
+            3. AI会给出专业分析报告
+        </div>
     </div>
 </div>
 
@@ -293,7 +305,8 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
         <button class="close-btn" onclick="closeHistory()">✕</button>
         <h3>📜 历史记录</h3>
         <div class="modal-subt">每次生成的指令自动保存，点击可查看或复制。最多保留50条。</div>
-        <div style="margin-bottom:12px">
+        <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <input type="text" id="historySearch" placeholder="搜索历史记录..." oninput="renderHistoryList()" style="flex:1;min-width:120px;padding:6px 12px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:8px;background:rgba(0,0,0,.2);color:#d8d8d8">
             <button class="btn btn-outline" style="font-size:11px;padding:6px 14px" onclick="clearAllHistory()">🗑️ 清空全部</button>
         </div>
         <div id="historyList" style="max-height:50vh;overflow-y:auto">
@@ -351,7 +364,7 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
             <button class="icon-btn" onclick="openCandidateTracker()" title="人选追踪">👤<span class="badge" id="candidateBadge" style="display:none">0</span></button>
         </div>
         <div class="user-bar">
-            <div id="userName"></div>
+            <div><span id="userName"></span> <a href="javascript:logout()" style="color:rgba(255,255,255,.25);font-size:11px;text-decoration:none" title="退出登录">🚪</a></div>
             <div>剩余：<span class="remaining" id="remainingUses">-</span> 次 · 到期：<span id="expiryDate">-</span></div>
             <div id="wechatBound" style="display:none;margin-top:2px"><span style="color:#d4af37">💚</span> 已绑定：<span id="boundWechat"></span></div>
         </div>
@@ -362,12 +375,12 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
     </div>
 
     <div class="tabs">
-        <button class="tab active" data-emoji="📊" onclick="switchTab('biz')">企业经营分析</button>
-        <button class="tab" data-emoji="👥" onclick="switchTab('talent')">高管人才盘点</button>
-        <button class="tab" data-emoji="🎯" onclick="switchTab('decision')">企业决策沙盘</button>
-        <button class="tab" data-emoji="📋" onclick="switchTab('exambank')">高管面试题库</button>
-        <button class="tab" data-emoji="🔍" onclick="switchTab('examanalyze')">高管面试分析</button>
-        <button class="tab" data-emoji="🛡️" onclick="switchTab('onboard')">高管试用辅佐</button>
+        <button class="tab active" data-emoji="📊" data-tab="biz" onclick="switchTab('biz')">企业经营分析</button>
+        <button class="tab" data-emoji="👥" data-tab="talent" onclick="switchTab('talent')">高管人才盘点</button>
+        <button class="tab" data-emoji="🎯" data-tab="decision" onclick="switchTab('decision')">企业决策沙盘</button>
+        <button class="tab" data-emoji="📋" data-tab="exambank" onclick="switchTab('exambank')">高管面试题库</button>
+        <button class="tab" data-emoji="🔍" data-tab="examanalyze" onclick="switchTab('examanalyze')">高管面试分析</button>
+        <button class="tab" data-emoji="🛡️" data-tab="onboard" onclick="switchTab('onboard')">高管试用辅佐</button>
     </div>
 
     <div class="main">
@@ -550,6 +563,10 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
             <h3>📋 高管面试题库</h3>
             <div class="desc">面高管不是聊天。AI帮你设计结构化面试题——业绩验证、战略思维、领导力、文化匹配，每个维度精准出题。</div>
             <div class="profile-indicator off"><span class="pi-dot"></span>尚未设置公司档案 — <a href="javascript:openCompanyProfile()" style="color:#ff6b6b;text-decoration:underline">立即设置</a></div>
+            <label>从人选追踪中选择<span class="hint">自动填入岗位信息</span></label>
+            <select id="examBank-candidate" onchange="fillExamBankFromCandidate(this.value)" style="width:100%;padding:10px 14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;font-size:14px;background:rgba(0,0,0,.25);color:#d8d8d8;font-family:inherit;margin-bottom:8px">
+                <option value="">手动填写（不选择人选）</option>
+            </select>
             <label>岗位名称</label>
             <input type="text" id="exam-position" placeholder="如：运营VP / 销售总监 / CTO">
             <label>公司阶段与规模</label>
@@ -584,6 +601,10 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
             <h3>🔍 高管面试分析</h3>
             <div class="desc">面试完别靠"感觉"做判断。AI帮你把面试记录变成结构化评估，对抗光环效应和认知偏差。</div>
             <div class="profile-indicator off"><span class="pi-dot"></span>尚未设置公司档案 — <a href="javascript:openCompanyProfile()" style="color:#ff6b6b;text-decoration:underline">立即设置</a></div>
+            <label>从人选追踪中选择<span class="hint">自动填入岗位信息</span></label>
+            <select id="examAnalyze-candidate" onchange="fillExamAnalyzeFromCandidate(this.value)" style="width:100%;padding:10px 14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;font-size:14px;background:rgba(0,0,0,.25);color:#d8d8d8;font-family:inherit;margin-bottom:8px">
+                <option value="">手动填写（不选择人选）</option>
+            </select>
             <label>面试的岗位</label>
             <input type="text" id="analyze-position" placeholder="如：运营VP">
             <label>候选人背景简述</label>
@@ -811,6 +832,8 @@ function getOrCreateGist() {
     var _a;
 }
 
+var gistETag = null; // 乐观锁：存储最近一次读取的 ETag
+
 function readSharedState(gistId) {
     return ghApi('/gists/' + gistId).then(function(gist) {
         if (gist && gist.files && gist.files[GIST_FILENAME]) {
@@ -819,10 +842,29 @@ function readSharedState(gistId) {
         return { codes: {} };
     });
 }
+// 读取并记住 ETag（用于后续写入时做乐观锁）
+function readSharedStateWithETag(gistId) {
+    if (!GH_TOKEN) return Promise.resolve(null);
+    return fetch('https://api.github.com/gists/' + gistId, {
+        headers: { 'Authorization': 'Bearer ' + GH_TOKEN, 'Accept': 'application/vnd.github.v3+json' }
+    }).then(function(r) {
+        var etag = r.headers.get('ETag') || r.headers.get('etag') || '';
+        if (etag) gistETag = etag.replace(/^[WL]\/"?|"$/g, '');
+        return r.json();
+    }).then(function(gist) {
+        if (gist && gist.files && gist.files[GIST_FILENAME]) {
+            try { return JSON.parse(gist.files[GIST_FILENAME].content); } catch(e){}
+        }
+        return { codes: {} };
+    }).catch(function(){ return { codes: {} }; });
+}
 
 function writeSharedState(gistId, state) {
+    var headers = {};
+    if (gistETag) { headers['If-Match'] = gistETag; gistETag = null; }
     return ghApi('/gists/' + gistId, {
         method: 'PATCH',
+        headers: headers,
         body: { files: (_b={}, _b[GIST_FILENAME]={content:JSON.stringify(state)}, _b) }
     });
     var _b;
@@ -858,6 +900,37 @@ function incrementUsage(code) {
     return data;
 }
 
+// 统一扣减次数入口：生成指令时调用，本地+云端同步
+function useOneCredit(onSuccess, onFail) {
+    if (!currentSession) { if (onFail) onFail('会话已过期，请刷新页面重新激活'); return false; }
+    var usage = getUsage(currentSession.code);
+    if (currentSession.maxUses > 0 && usage.uses >= currentSession.maxUses) {
+        if (onFail) onFail('使用次数已用完，请联系续费');
+        return false;
+    }
+    incrementUsage(currentSession.code);
+    refreshUsageDisplay();
+    // 云端同步（后台静默，不阻塞）
+    if (GH_TOKEN) {
+        getOrCreateGist().then(function(gistId) {
+            if (!gistId) return;
+            return readSharedStateWithETag(gistId).then(function(state) {
+                var ch = currentSession.code.replace(/[-\s]/g, '').toUpperCase();
+                var hash = simpleHash(ch).toString(16);
+                var cs = state.codes[hash];
+                if (!cs) {
+                    cs = { wechatIds: [], uses: 0, maxUses: currentSession.maxUses, maxWechatUsers: currentSession.maxWechatUsers, expiry: currentSession.expiry, userName: currentSession.userName };
+                    state.codes[hash] = cs;
+                }
+                cs.uses = Math.max(cs.uses, getUsage(currentSession.code).uses);
+                return writeSharedState(gistId, state);
+            });
+        }).catch(function(){});
+    }
+    if (onSuccess) onSuccess();
+    return true;
+}
+
 var currentSession = null;
 var currentBizMode = 'monthly';
 var currentOnboardMode = 'plan';
@@ -873,6 +946,13 @@ function activate() {
     var validation;
     if (cached) {
         validation = JSON.parse(cached);
+        // 重新校验防止localStorage篡改
+        var fresh = validateCode(input);
+        if (fresh.valid) {
+            validation.maxUses = fresh.maxUses;
+            validation.expiry = fresh.expiry;
+            validation.maxWechatUsers = fresh.maxWechatUsers;
+        }
         if (new Date() > new Date(validation.expiry + 'T23:59:59')) {
             localStorage.removeItem(storageKey);
             errEl.textContent = '激活码已过期，请续费';
@@ -897,8 +977,8 @@ function activate() {
     btn.textContent = '✅ 验证通过';
 
     var boundWx = localStorage.getItem('bound_wechat');
-    if (validation.maxWechatUsers > 0) {
-        // 限制人数模式：必须绑定微信号
+    if (validation.maxWechatUsers > 0 && !boundWx) {
+        // 限制人数模式且未绑定：必须绑定微信号
         document.getElementById('wechatBindSubt').textContent = '该激活码限 ' + validation.maxWechatUsers + ' 人使用';
         document.getElementById('wechatBindBenefits').style.display = 'none';
         document.getElementById('wechatBindSkipBtn').style.display = 'none';
@@ -940,7 +1020,7 @@ function saveWechat() {
             btn.disabled = true;
             getOrCreateGist().then(function(gistId){
                 if (!gistId) { failFallback('网络异常，请稍后重试'); return; }
-                return readSharedState(gistId).then(function(state){
+                return readSharedStateWithETag(gistId).then(function(state){
                     var ch = currentSession.code.replace(/[-\s]/g, '').toUpperCase();
                     var hash = simpleHash(ch).toString(16);
                     var cs = state.codes[hash];
@@ -1011,6 +1091,7 @@ function saveWechatBindings(code, list) {
 }
 
 function enterApp() {
+    localStorage.setItem('last_activation_code', currentSession.code);
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('mainApp').classList.add('show');
     document.getElementById('userName').textContent = '👤 ' + currentSession.userName;
@@ -1019,10 +1100,12 @@ function enterApp() {
     var boundWx = localStorage.getItem('bound_wechat');
     if (boundWx) {
         document.getElementById('wechatBound').style.display = 'block';
-        var bindCount = currentSession.maxWechatUsers > 0 ? getWechatBindings(currentSession.code).length : 0;
+        var bindCount = getWechatBindings(currentSession.code).length;
         var bindInfo = '💚 微信号：' + boundWx;
         if (currentSession.maxWechatUsers > 0) {
             bindInfo += ' （第' + bindCount + '/' + currentSession.maxWechatUsers + '人）';
+        } else if (bindCount > 0) {
+            bindInfo += ' （' + bindCount + '人使用中）';
         }
         document.getElementById('boundWechat').textContent = bindInfo;
     }
@@ -1030,6 +1113,8 @@ function enterApp() {
     updateProfileIndicators();
     updateHistoryBadge();
     updateCandidateBadge();
+    restoreDrafts();
+    setInterval(saveDrafts, 15000); // 每15秒自动保存草稿
     // 从云端同步最新状态（GitHub Gist 或 Cloudflare Worker）
     if (GH_TOKEN) {
         getOrCreateGist().then(function(gistId){
@@ -1048,7 +1133,9 @@ function enterApp() {
                     if (cs.wechatIds.length > 0) {
                         document.getElementById('wechatBound').style.display = 'block';
                         var wx = localStorage.getItem('bound_wechat') || '';
-                        document.getElementById('boundWechat').textContent = '💚 云同步 · ' + cs.wechatIds.length + '/' + cs.maxWechatUsers + '人使用中';
+                        var cloudInfo = '💚 云同步 · ' + cs.wechatIds.length;
+                        cloudInfo += cs.maxWechatUsers > 0 ? '/' + cs.maxWechatUsers + '人使用中' : '人使用中';
+                        document.getElementById('boundWechat').textContent = cloudInfo;
                     }
                 }
             });
@@ -1071,17 +1158,20 @@ function updateContactBar() {
     var msg = document.getElementById('contactBarMsg');
     var expiry = new Date(currentSession.expiry + 'T23:59:59');
     var daysLeft = Math.ceil((expiry - new Date()) / (1000*60*60*24));
+    var messages = [];
     if (daysLeft <= 7) {
-        bar.classList.add('show');
-        msg.textContent = daysLeft <= 0 ? '会员已到期，请续费' : '剩余 ' + daysLeft + ' 天到期';
+        messages.push(daysLeft <= 0 ? '会员已到期，请续费' : '剩余 ' + daysLeft + ' 天到期');
     }
     if (currentSession.maxUses > 0) {
         var used = getUsage(currentSession.code).uses;
         var left = currentSession.maxUses - used;
         if (left <= 10 && left > 0) {
-            bar.classList.add('show');
-            msg.textContent = '剩余 ' + left + ' 次使用';
+            messages.push('剩余 ' + left + ' 次使用');
         }
+    }
+    if (messages.length > 0) {
+        bar.classList.add('show');
+        msg.textContent = messages.join('，');
     }
 }
 
@@ -1104,39 +1194,6 @@ function copyResult(boxId) {
     }).catch(function(){
         showToast('复制失败，请手动选择复制', true);
     });
-    // 优先走 GitHub Gist 共享计数
-    if (GH_TOKEN) {
-        getOrCreateGist().then(function(gistId){
-            if (!gistId) { localIncrement(); return; }
-            return readSharedState(gistId).then(function(state){
-                var ch = currentSession.code.replace(/[-\s]/g, '').toUpperCase();
-                var hash = simpleHash(ch).toString(16);
-                var cs = state.codes[hash];
-                if (!cs) {
-                    cs = { wechatIds:[], uses:0, maxUses:currentSession.maxUses, maxWechatUsers:currentSession.maxWechatUsers, expiry:currentSession.expiry, userName:currentSession.userName };
-                    state.codes[hash] = cs;
-                }
-                if (cs.maxUses > 0 && cs.uses >= cs.maxUses) {
-                    showToast('⚠️ 次数已用完，请联系续费', true);
-                    return;
-                }
-                cs.uses++;
-                return writeSharedState(gistId, state).then(function(){
-                    var key = getUsageKey(currentSession.code);
-                    var usage = getUsage(currentSession.code);
-                    usage.uses = cs.uses;
-                    localStorage.setItem(key, JSON.stringify(usage));
-                    refreshUsageDisplay();
-                });
-            });
-        }).catch(function(){ localIncrement(); });
-    } else {
-        localIncrement();
-    }
-    function localIncrement() {
-        incrementUsage(currentSession.code);
-        refreshUsageDisplay();
-    }
 }
 
 function refreshUsageDisplay() {
@@ -1151,11 +1208,30 @@ function showToast(msg, warn) {
     setTimeout(function(){ t.classList.remove('show'); }, 2500);
 }
 
+// ========== 表单草稿自动保存 ==========
+function saveDrafts() {
+    var drafts = {};
+    document.querySelectorAll('.panel input[type="text"], .panel input[type="number"], .panel textarea').forEach(function(el) {
+        if (el.id && el.value) drafts[el.id] = el.value;
+    });
+    localStorage.setItem('form_drafts', JSON.stringify(drafts));
+}
+function restoreDrafts() {
+    try {
+        var drafts = JSON.parse(localStorage.getItem('form_drafts') || '{}');
+        Object.keys(drafts).forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el && !el.value) el.value = drafts[id];
+        });
+    } catch(e) {}
+}
+function clearDrafts() {
+    localStorage.removeItem('form_drafts');
+}
+
 function switchTab(tab) {
-    document.querySelectorAll('.tab').forEach(function(el,i){
-        el.classList.toggle('active', el.textContent.includes(
-            tab==='biz'?'经营分析':tab==='talent'?'人才盘点':tab==='decision'?'决策沙盘':tab==='exambank'?'面试题库':tab==='examanalyze'?'面试分析':'试用辅佐'
-        ));
+    document.querySelectorAll('.tab').forEach(function(el){
+        el.classList.toggle('active', el.getAttribute('data-tab') === tab);
     });
     document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
     document.getElementById('panel-' + tab).classList.add('active');
@@ -1192,7 +1268,7 @@ function getCompanyProfileText() {
     return `## 公司档案（已加载，AI回答时请结合以下背景）
 - 公司名称：${cp.name || '未填'}
 - 所属行业：${cp.industry || '未填'}
-- 发展阶段：${cp.stage || '未填'}，员工${cp.size || '未填'}人，年营收约${cp.revenue || '未填'}万元
+- 发展阶段：${cp.stage || '未填'}，员工${cp.size || '未填'}人，年营收约${(cp.revenue || '未填').replace(/[万元亿]/g,'')}万元
 - 主营业务：${cp.business || '未填'}
 - 核心产品/服务：${cp.products || '未填'}
 - 核心竞争优势：${cp.advantage || '未填'}
@@ -1292,6 +1368,8 @@ function updateHistoryBadge() {
 
 function openHistory() {
     document.getElementById('historyModal').classList.add('show');
+    var searchEl = document.getElementById('historySearch');
+    if (searchEl) searchEl.value = '';
     renderHistoryList();
 }
 
@@ -1302,47 +1380,65 @@ function closeHistory() {
 function renderHistoryList() {
     var history = getHistory();
     var container = document.getElementById('historyList');
+    var searchEl = document.getElementById('historySearch');
+    var query = searchEl ? (searchEl.value || '').toLowerCase() : '';
+    if (query) {
+        history = history.filter(function(h) {
+            return (h.module||'').toLowerCase().indexOf(query) !== -1 ||
+                   (h.mode||'').toLowerCase().indexOf(query) !== -1 ||
+                   (h.preview||'').toLowerCase().indexOf(query) !== -1;
+        });
+    }
     if (history.length === 0) {
-        container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无记录</div>';
+        container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">' + (query ? '无匹配记录' : '暂无记录') + '</div>';
         return;
     }
     var html = '';
     history.forEach(function(h, i){
         var d = new Date(h.id);
         var dateStr = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-        html += '<div class="history-item" onclick="viewHistoryItem('+i+')">';
+        html += '<div class="history-item" onclick="viewHistoryItemById('+h.id+')">';
         html += '<div class="hi-date">'+dateStr+'</div>';
         html += '<div class="hi-module">'+h.module+(h.mode?' · '+h.mode:'')+'</div>';
         html += '<div class="hi-preview">'+h.preview+'...</div>';
         html += '<div class="hi-actions">';
-        html += '<button onclick="event.stopPropagation();copyHistoryItem('+i+')">📋 复制</button>';
-        html += '<button onclick="event.stopPropagation();deleteHistoryItem('+i+')">🗑️</button>';
+        html += '<button onclick="event.stopPropagation();copyHistoryItemById('+h.id+')">📋 复制</button>';
+        html += '<button onclick="event.stopPropagation();deleteHistoryItemById('+h.id+')">🗑️</button>';
         html += '</div></div>';
     });
     container.innerHTML = html;
 }
 
-function viewHistoryItem(i) {
+function findHistoryById(id) {
     var history = getHistory();
-    if (!history[i]) return;
-    var text = history[i].prompt;
-    navigator.clipboard.writeText(text).then(function(){
+    for (var i = 0; i < history.length; i++) {
+        if (history[i].id === id) return { item: history[i], index: i };
+    }
+    return null;
+}
+
+function viewHistoryItemById(id) {
+    var found = findHistoryById(id);
+    if (!found) return;
+    navigator.clipboard.writeText(found.item.prompt).then(function(){
         closeHistory();
         showToast('✅ 历史指令已复制到剪贴板');
     });
 }
 
-function copyHistoryItem(i) {
-    var history = getHistory();
-    if (!history[i]) return;
-    navigator.clipboard.writeText(history[i].prompt).then(function(){
+function copyHistoryItemById(id) {
+    var found = findHistoryById(id);
+    if (!found) return;
+    navigator.clipboard.writeText(found.item.prompt).then(function(){
         showToast('✅ 已复制');
     });
 }
 
-function deleteHistoryItem(i) {
+function deleteHistoryItemById(id) {
+    var found = findHistoryById(id);
+    if (!found) return;
     var history = getHistory();
-    history.splice(i, 1);
+    history.splice(found.index, 1);
     localStorage.setItem('analysis_history', JSON.stringify(history));
     renderHistoryList();
     updateHistoryBadge();
@@ -1480,6 +1576,58 @@ function renderCandidateList() {
     container.innerHTML = html;
 }
 
+// ========== 人选追踪 → 面试模块联动 ==========
+function refreshExamCandidateSelects() {
+    var candidates = getCandidates();
+    var active = candidates.filter(function(c) { return c.status !== '已放弃' && c.status !== '已转正'; });
+    var opts = '<option value="">手动填写（不选择人选）</option>';
+    active.forEach(function(c) {
+        opts += '<option value="' + c.id + '">' + c.name + ' — ' + c.position + '（' + c.status + '）</option>';
+    });
+    var sel1 = document.getElementById('examBank-candidate');
+    var sel2 = document.getElementById('examAnalyze-candidate');
+    if (sel1) sel1.innerHTML = opts;
+    if (sel2) sel2.innerHTML = opts;
+}
+
+function fillExamBankFromCandidate(id) {
+    if (!id) return;
+    var candidates = getCandidates();
+    var c = candidates.find(function(x) { return x.id === parseInt(id); });
+    if (!c) return;
+    document.getElementById('exam-position').value = (c.position && c.position !== '未填') ? c.position : '';
+    document.getElementById('exam-stage').value = (getCompanyProfile()||{}).stage || '【请根据实际填写】';
+    if (c.notes) {
+        document.getElementById('exam-worry').value = '备注：' + c.notes;
+    }
+}
+
+function fillExamAnalyzeFromCandidate(id) {
+    if (!id) return;
+    var candidates = getCandidates();
+    var c = candidates.find(function(x) { return x.id === parseInt(id); });
+    if (!c) return;
+    document.getElementById('analyze-position').value = (c.position && c.position !== '未填') ? c.position : '';
+    if (c.notes) {
+        document.getElementById('analyze-bg').value = '人选追踪备注：' + c.notes + '\n来源：' + (c.source || '未知');
+    }
+}
+
+// 切换tab时刷新候选下拉
+var origSwitchTab = switchTab;
+switchTab = function(tab) {
+    origSwitchTab(tab);
+    if (tab === 'exambank' || tab === 'examanalyze') {
+        refreshExamCandidateSelects();
+    }
+};
+// 新增/编辑人选后也刷新
+var origRenderCandidateList = renderCandidateList;
+renderCandidateList = function() {
+    origRenderCandidateList();
+    refreshExamCandidateSelects();
+};
+
 // ============================================================
 // 提示词组装辅助：自动加载公司档案 + 历史保存
 // ============================================================
@@ -1498,19 +1646,21 @@ function processBiz() {
     resultBox.innerHTML = '<div class="spinner"></div>正在生成四大板块经营分析指令...';
     document.getElementById('biz-copy-btn').style.display = 'none';
 
-    var raw;
-    if (currentBizMode === 'monthly') {
-        raw = buildMonthlyPrompt();
-    } else {
-        raw = buildQuarterlyPrompt();
-    }
-    var prompt = wrapPrompt(raw, '企业经营分析', currentBizMode==='monthly'?'月度快诊':'季度深盘');
-
-    setTimeout(function(){
+    useOneCredit(function() {
+        var raw;
+        if (currentBizMode === 'monthly') {
+            raw = buildMonthlyPrompt();
+        } else {
+            raw = buildQuarterlyPrompt();
+        }
+        var prompt = wrapPrompt(raw, '企业经营分析', currentBizMode==='monthly'?'月度快诊':'季度深盘');
         resultBox.classList.remove('loading');
         resultBox.textContent = prompt;
         document.getElementById('biz-copy-btn').style.display = 'inline-block';
-    }, 300);
+    }, function(err) {
+        resultBox.classList.remove('loading');
+        resultBox.innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:20px">' + err + '</div>';
+    });
 }
 
 function buildMonthlyPrompt() {
@@ -1749,6 +1899,7 @@ ${worry}
 }
 
 function clearBiz() {
+    if (!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。')) return; clearDrafts();
     document.querySelectorAll('#monthlyFields input, #monthlyFields textarea, #quarterlyFields input, #quarterlyFields textarea').forEach(function(el){ el.value = ''; });
     document.getElementById('biz-result').classList.remove('show');
     document.getElementById('biz-copy-btn').style.display = 'none';
@@ -1763,12 +1914,12 @@ function processTalent() {
     resultBox.innerHTML = '<div class="spinner"></div>正在生成人才盘点指令...';
     document.getElementById('talent-copy-btn').style.display = 'none';
 
-    var stage = document.getElementById('talent-stage').value || '【请填写】';
-    var goals = document.getElementById('talent-goals').value || '【请填写】';
-    var list = document.getElementById('talent-list').value || '【请填写高管信息】';
-    var worry = document.getElementById('talent-worry').value || '无';
-
-    var raw = `你是一位资深组织与人才顾问，拥有20年高管评估经验，服务过500+家企业的人才盘点项目。请帮我做一次核心团队的人才盘点。
+    useOneCredit(function() {
+        var stage = document.getElementById('talent-stage').value || '【请填写】';
+        var goals = document.getElementById('talent-goals').value || '【请填写】';
+        var list = document.getElementById('talent-list').value || '【请填写高管信息】';
+        var worry = document.getElementById('talent-worry').value || '无';
+        var raw = `你是一位资深组织与人才顾问，拥有20年高管评估经验，服务过500+家企业的人才盘点项目。请帮我做一次核心团队的人才盘点。
 
 ## 背景信息
 - 公司当前阶段：${stage}
@@ -1816,15 +1967,18 @@ ${list}
 - 既要诚实（该淘汰就淘汰），也要务实（有时候"能用"比"优秀"更现实）
 - 不要用HR术语堆砌，老板要的是判断不是论文
 - 如果老板提供的评分跟事实逻辑矛盾，指出来`;
-    var prompt = wrapPrompt(raw, '高管人才盘点', '');
-    setTimeout(function(){
+        var prompt = wrapPrompt(raw, '高管人才盘点', '');
         resultBox.classList.remove('loading');
         resultBox.textContent = prompt;
         document.getElementById('talent-copy-btn').style.display = 'inline-block';
-    }, 300);
+    }, function(err) {
+        resultBox.classList.remove('loading');
+        resultBox.innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:20px">' + err + '</div>';
+    });
 }
 
 function clearTalent() {
+    if (!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。')) return; clearDrafts();
     document.querySelectorAll('#panel-talent input, #panel-talent textarea').forEach(function(el){ el.value = ''; });
     document.getElementById('talent-result').classList.remove('show');
     document.getElementById('talent-copy-btn').style.display = 'none';
@@ -1839,13 +1993,13 @@ function processDecision() {
     resultBox.innerHTML = '<div class="spinner"></div>正在生成决策推演指令...';
     document.getElementById('decision-copy-btn').style.display = 'none';
 
-    var question = document.getElementById('dec-question').value || '【请填写】';
-    var context = document.getElementById('dec-context').value || '【请填写】';
-    var options = document.getElementById('dec-options').value || '【请填写至少2个方案】';
-    var risk = document.getElementById('dec-risk').value || '【请填写】';
-    var deadline = document.getElementById('dec-deadline').value || '无特定时间窗口';
-
-    var raw = `你是一位资深企业战略顾问，服务过300+家企业的重大决策咨询。现在有一位老板面临一个关键决策，请你帮他做一次系统的决策推演。你不替他做决定，但帮他把每个选项想清楚。
+    useOneCredit(function() {
+        var question = document.getElementById('dec-question').value || '【请填写】';
+        var context = document.getElementById('dec-context').value || '【请填写】';
+        var options = document.getElementById('dec-options').value || '【请填写至少2个方案】';
+        var risk = document.getElementById('dec-risk').value || '【请填写】';
+        var deadline = document.getElementById('dec-deadline').value || '无特定时间窗口';
+        var raw = `你是一位资深企业战略顾问，服务过300+家企业的重大决策咨询。现在有一位老板面临一个关键决策，请你帮他做一次系统的决策推演。你不替他做决定，但帮他把每个选项想清楚。
 
 ## 决策背景
 - 核心问题：${question}
@@ -1908,15 +2062,18 @@ ${options}
 - 如果老板的信息不够做判断，明确指出"还需要什么信息"
 - 老板最担心的风险如果确实重要，认真分析；如果不重要，告诉他为什么不用太担心
 - 禁止模棱两可的废话，每个判断都要有逻辑链条`;
-    var prompt = wrapPrompt(raw, '企业决策沙盘', '');
-    setTimeout(function(){
+        var prompt = wrapPrompt(raw, '企业决策沙盘', '');
         resultBox.classList.remove('loading');
         resultBox.textContent = prompt;
         document.getElementById('decision-copy-btn').style.display = 'inline-block';
-    }, 300);
+    }, function(err) {
+        resultBox.classList.remove('loading');
+        resultBox.innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:20px">' + err + '</div>';
+    });
 }
 
 function clearDecision() {
+    if (!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。')) return; clearDrafts();
     document.querySelectorAll('#panel-decision input, #panel-decision textarea').forEach(function(el){ el.value = ''; });
     document.getElementById('decision-result').classList.remove('show');
     document.getElementById('decision-copy-btn').style.display = 'none';
@@ -1931,13 +2088,13 @@ function processExamBank() {
     resultBox.innerHTML = '<div class="spinner"></div>正在生成面试题库指令...';
     document.getElementById('exambank-copy-btn').style.display = 'none';
 
-    var position = document.getElementById('exam-position').value || '【请填写】';
-    var stage = document.getElementById('exam-stage').value || '【请填写】';
-    var battles = document.getElementById('exam-battles').value || '【请填写】';
-    var musthave = document.getElementById('exam-musthave').value || '【请填写】';
-    var worry = document.getElementById('exam-worry').value || '无';
-
-    var raw = `你是一位资深高管猎头兼面试顾问，拥有20年高管招聘经验，面试过2000+位高管候选人。请帮我为以下岗位设计一套完整的高管面试题库。
+    useOneCredit(function() {
+        var position = document.getElementById('exam-position').value || '【请填写】';
+        var stage = document.getElementById('exam-stage').value || '【请填写】';
+        var battles = document.getElementById('exam-battles').value || '【请填写】';
+        var musthave = document.getElementById('exam-musthave').value || '【请填写】';
+        var worry = document.getElementById('exam-worry').value || '无';
+        var raw = `你是一位资深高管猎头兼面试顾问，拥有20年高管招聘经验，面试过2000+位高管候选人。请帮我为以下岗位设计一套完整的高管面试题库。
 
 ## 岗位信息
 - 岗位：${position}
@@ -1989,15 +2146,18 @@ function processExamBank() {
 - 禁止"你的优点是什么""你最大的缺点是什么"这类无效问题
 - 针对老板最担心的${worry}，重点设计2-3道验证题
 - 题目要适配中小企业的实际场景，不要大厂面试套路`;
-    var prompt = wrapPrompt(raw, '高管面试题库', '');
-    setTimeout(function(){
+        var prompt = wrapPrompt(raw, '高管面试题库', '');
         resultBox.classList.remove('loading');
         resultBox.textContent = prompt;
         document.getElementById('exambank-copy-btn').style.display = 'inline-block';
-    }, 300);
+    }, function(err) {
+        resultBox.classList.remove('loading');
+        resultBox.innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:20px">' + err + '</div>';
+    });
 }
 
 function clearExamBank() {
+    if (!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。')) return; clearDrafts();
     document.querySelectorAll('#panel-exambank input, #panel-exambank textarea').forEach(function(el){ el.value = ''; });
     document.getElementById('exambank-result').classList.remove('show');
     document.getElementById('exambank-copy-btn').style.display = 'none';
@@ -2012,12 +2172,12 @@ function processExamAnalyze() {
     resultBox.innerHTML = '<div class="spinner"></div>正在生成面试分析指令...';
     document.getElementById('examanalyze-copy-btn').style.display = 'none';
 
-    var position = document.getElementById('analyze-position').value || '【请填写】';
-    var bg = document.getElementById('analyze-bg').value || '【请填写】';
-    var transcript = document.getElementById('analyze-transcript').value || '【请粘贴面试录音转写文字】';
-    var gut = document.getElementById('analyze-gut').value || '无';
-
-    var raw = `你是一位资深高管面试评估专家，拥有20年面试评估经验，参与过1000+次高管面试评估。请帮我对以下面试记录做结构化分析。
+    useOneCredit(function() {
+        var position = document.getElementById('analyze-position').value || '【请填写】';
+        var bg = document.getElementById('analyze-bg').value || '【请填写】';
+        var transcript = document.getElementById('analyze-transcript').value || '【请粘贴面试录音转写文字】';
+        var gut = document.getElementById('analyze-gut').value || '无';
+        var raw = `你是一位资深高管面试评估专家，拥有20年面试评估经验，参与过1000+次高管面试评估。请帮我对以下面试记录做结构化分析。
 
 ## 面试信息
 - 应聘岗位：${position}
@@ -2097,15 +2257,18 @@ ${transcript}
 - 明确指出"有证据的判断"和"推测"的区别
 - 如果面试内容不足以做完整评估，明确说"信息不足，建议再问XX"
 - 对抗认知偏差，不要迎合老板的直觉感受`;
-    var prompt = wrapPrompt(raw, '高管面试分析', '');
-    setTimeout(function(){
+        var prompt = wrapPrompt(raw, '高管面试分析', '');
         resultBox.classList.remove('loading');
         resultBox.textContent = prompt;
         document.getElementById('examanalyze-copy-btn').style.display = 'inline-block';
-    }, 300);
+    }, function(err) {
+        resultBox.classList.remove('loading');
+        resultBox.innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:20px">' + err + '</div>';
+    });
 }
 
 function clearExamAnalyze() {
+    if (!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。')) return; clearDrafts();
     document.querySelectorAll('#panel-examanalyze input, #panel-examanalyze textarea').forEach(function(el){ el.value = ''; });
     document.getElementById('examanalyze-result').classList.remove('show');
     document.getElementById('examanalyze-copy-btn').style.display = 'none';
@@ -2120,19 +2283,21 @@ function processOnboard() {
     resultBox.innerHTML = '<div class="spinner"></div>正在生成辅佐指令...';
     document.getElementById('onboard-copy-btn').style.display = 'none';
 
-    var raw;
-    if (currentOnboardMode === 'plan') {
-        raw = buildOnboardPlanPrompt();
-    } else {
-        raw = buildOnboardRiskPrompt();
-    }
-    var prompt = wrapPrompt(raw, '高管试用辅佐', currentOnboardMode==='plan'?'90天融入计划':'风险诊断');
-
-    setTimeout(function(){
+    useOneCredit(function() {
+        var raw;
+        if (currentOnboardMode === 'plan') {
+            raw = buildOnboardPlanPrompt();
+        } else {
+            raw = buildOnboardRiskPrompt();
+        }
+        var prompt = wrapPrompt(raw, '高管试用辅佐', currentOnboardMode==='plan'?'90天融入计划':'风险诊断');
         resultBox.classList.remove('loading');
         resultBox.textContent = prompt;
         document.getElementById('onboard-copy-btn').style.display = 'inline-block';
-    }, 300);
+    }, function(err) {
+        resultBox.classList.remove('loading');
+        resultBox.innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:20px">' + err + '</div>';
+    });
 }
 
 function buildOnboardPlanPrompt() {
@@ -2246,10 +2411,51 @@ function buildOnboardRiskPrompt() {
 }
 
 function clearOnboard() {
+    if (!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。')) return; clearDrafts();
     document.querySelectorAll('#planFields input, #planFields textarea, #riskFields input, #riskFields textarea').forEach(function(el){ el.value = ''; });
     document.getElementById('onboard-result').classList.remove('show');
     document.getElementById('onboard-copy-btn').style.display = 'none';
 }
+// 退出登录
+function logout() {
+    if (!confirm('确定要退出吗？\n\n退出后重新进入需要输入激活码。')) return;
+    currentSession = null;
+    document.getElementById('mainApp').classList.remove('show');
+    document.getElementById('loginScreen').style.display = '';
+    document.getElementById('activateBtn').disabled = false;
+    document.getElementById('activateBtn').textContent = '激活使用';
+    var lastCode = localStorage.getItem('last_activation_code');
+    if (lastCode) {
+        document.getElementById('activationInput').value = lastCode;
+        document.getElementById('loginHint').style.display = '';
+        document.getElementById('lastCodeHint').textContent = maskCode(lastCode);
+    }
+    clearDrafts();
+}
+// 填入上次激活码
+function fillLastCode() {
+    var code = localStorage.getItem('last_activation_code');
+    if (code) {
+        document.getElementById('activationInput').value = code;
+        document.getElementById('loginHint').style.display = 'none';
+    }
+}
+function maskCode(code) {
+    if (code.length <= 8) return code.substring(0, 2) + '****' + code.substring(code.length - 2);
+    return code.substring(0, 4) + '****' + code.substring(code.length - 4);
+}
+// 登录页显示上次使用的激活码提示
+(function(){
+    var lastCode = localStorage.getItem('last_activation_code');
+    if (lastCode) {
+        var hint = document.getElementById('loginHint');
+        var span = document.getElementById('lastCodeHint');
+        if (hint && span) {
+            span.textContent = maskCode(lastCode);
+            hint.style.display = '';
+        }
+    }
+})();
 // 云端同步状态指示
 (function(){
     var el = document.getElementById('syncStatusLogin');
