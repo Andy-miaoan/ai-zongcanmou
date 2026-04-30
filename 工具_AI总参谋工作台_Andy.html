@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>AI总参谋 · 安迪 AI调度师</title>
+<link rel="icon" href="logo.png" type="image/png">
+<style>
+:root {
+  --bg-deep: #060e0a;
+  --bg-card: rgba(14, 24, 18, 0.85);
+  --bg-input: rgba(0, 0, 0, 0.3);
+  --gold: #d4af37;
+  --gold-light: #e8d5a3;
+  --gold-dark: #a68a2e;
+  --gold-glow: rgba(212, 175, 55, 0.12);
+  --text-primary: #e6e0d0;
+  --text-secondary: rgba(255, 255, 255, 0.5);
+  --text-muted: rgba(255, 255, 255, 0.3);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-gold: rgba(212, 175, 55, 0.18);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-card: 0 1px 2px rgba(0,0,0,.4), 0 8px 32px rgba(0,0,0,.5);
+  --shadow-lg: 0 4px 40px rgba(0,0,0,.65);
+  --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Noto Sans SC',sans-serif;background:var(--bg-deep);color:var(--text-primary);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;line-height:1.6}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(212,175,55,.025) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 100%,rgba(212,175,55,.015) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+.login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(212,175,55,.06) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 80%,rgba(212,175,55,.03) 0%,transparent 55%),linear-gradient(175deg,#040a06 0%,#08120c 40%,#0a1810 100%)}
+.login-overlay::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='rgba(212,175,55,.015)' stroke-width='.5'/%3E%3C/svg%3E") repeat;pointer-events:none;opacity:.5}
+.login-card{position:relative;z-index:1;background:rgba(12,20,15,.92);border:1px solid var(--border-gold);border-radius:var(--radius-lg);padding:48px 36px;max-width:440px;width:92%;text-align:center;box-shadow:var(--shadow-lg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.login-card .logo-img{width:64px;height:64px;border-radius:16px;margin-bottom:14px;object-fit:cover;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.login-card .brand{font-size:11px;color:rgba(212,175,55,.65);letter-spacing:3px;margin-bottom:8px;font-weight:600;text-transform:uppercase}
+.login-card h2{font-size:26px;margin-bottom:6px;color:var(--gold-light);font-weight:700;letter-spacing:1px}
+.login-card .subt{font-size:13px;color:var(--text-secondary);margin-bottom:28px;line-height:1.7}
+.login-card input{width:100%;padding:14px 18px;border:1.5px solid var(--border-gold);border-radius:var(--radius-md);font-size:15px;text-align:center;letter-spacing:2px;font-family:'SF Mono','Fira Code','Courier New',monospace;background:var(--bg-input);color:var(--gold-light);transition:var(--transition)}
+.login-card input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 6px rgba(212,175,55,.04),0 0 24px rgba(212,175,55,.06)}
+.login-card input::placeholder{color:rgba(255,255,255,.18);letter-spacing:1px;font-size:13px;font-family:inherit}
+.login-card .btn{width:100%;padding:14px;border:none;border-radius:var(--radius-md);font-size:16px;font-weight:600;cursor:pointer;margin-top:16px;transition:var(--transition);letter-spacing:.5px}
+.login-card .btn-activate{background:linear-gradient(135deg,#e0c04a,#c9a520,#b8950e);color:#0a0a0a;box-shadow:0 4px 24px rgba(212,175,55,.18);position:relative;overflow:hidden}
+.login-card .btn-activate::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);transition:var(--transition)}
+.login-card .btn-activate:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(212,175,55,.28)}
+.login-card .btn-activate:hover::after{left:100%}
+.login-card .btn-activate:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.login-err{color:#ff6b6b;font-size:12px;margin-top:10px;min-height:18px;font-weight:500}
+.login-info{font-size:11px;color:var(--text-muted);margin-top:20px;line-height:1.8}
+.ref-tag{display:inline-block;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.25);border-radius:20px;padding:6px 16px;font-size:12px;color:var(--gold);margin-bottom:16px;font-weight:500;backdrop-filter:blur(8px)}
+.ref-tag span{font-weight:700;color:var(--gold-light)}
+
+.wechat-bind-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.wechat-bind-overlay.show{display:flex}
+.wechat-bind-card{background:rgba(14,22,16,.98);border:1px solid var(--border-gold);border-radius:var(--radius-lg);padding:36px 28px;max-width:400px;width:92%;text-align:center;box-shadow:var(--shadow-lg);animation:slideUp .35s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.wechat-bind-card .icon{font-size:48px;margin-bottom:12px}
+.wechat-bind-card h3{font-size:19px;margin-bottom:6px;color:var(--gold-light)}
+.wechat-bind-card .subt{font-size:12px;color:var(--text-secondary);margin-bottom:18px;line-height:1.6}
+.wechat-bind-card .benefits{text-align:left;font-size:12px;color:rgba(255,255,255,.55);margin-bottom:16px;line-height:2;padding:12px 16px;background:rgba(255,255,255,.02);border-radius:10px}
+.wechat-bind-card .benefits span{color:var(--gold)}
+.wechat-bind-card input{width:100%;padding:12px 16px;border:1.5px solid var(--border-gold);border-radius:var(--radius-sm);font-size:15px;text-align:center;background:var(--bg-input);color:var(--gold-light);transition:var(--transition)}
+.wechat-bind-card input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(212,175,55,.05)}
+.wechat-bind-card .btn{width:100%;padding:13px;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;margin-top:12px;transition:var(--transition)}
+.wechat-bind-card .btn-save{background:linear-gradient(135deg,#d4af37,#b8960f);color:#0a0a0a;box-shadow:0 4px 16px rgba(212,175,55,.15)}
+.wechat-bind-card .btn-save:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(212,175,55,.25)}
+.wechat-bind-card .btn-skip{background:none;color:rgba(255,255,255,.3);font-size:13px;font-weight:400;margin-top:8px}
+
+.app{max-width:960px;margin:0 auto;min-height:100vh;display:none;position:relative;z-index:0}
+.app.show{display:block}
+
+.header{background:rgba(8,16,10,.95);color:var(--text-primary);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(212,175,55,.1);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);position:sticky;top:0;z-index:20}
+.header-left{display:flex;align-items:center;gap:12px}
+.header-logo{width:38px;height:38px;border-radius:10px;overflow:hidden;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.header-logo img{width:100%;height:100%;object-fit:cover}
+.header-brand{font-size:10px;color:rgba(212,175,55,.65);letter-spacing:2px;line-height:1.2;text-transform:uppercase;font-weight:600}
+.header h1{font-size:18px;font-weight:700;line-height:1.2;color:var(--gold-light)}
+.header .user-bar{font-size:11px;text-align:right;line-height:1.7}
+.user-bar .remaining{color:var(--gold);font-weight:700;font-size:14px}
+
+.contact-bar{background:rgba(212,175,55,.05);border-bottom:1px solid rgba(212,175,55,.12);padding:10px 16px;text-align:center;font-size:12px;color:var(--gold-light);display:none;backdrop-filter:blur(8px)}
+.contact-bar.show{display:block}
+.contact-bar .wx-btn{display:inline-block;background:var(--gold);color:#0a0a0a;padding:5px 16px;border-radius:14px;font-size:11px;margin-left:10px;cursor:pointer;font-weight:600;letter-spacing:.5px;transition:var(--transition)}
+.contact-bar .wx-btn:hover{background:#c4a030;transform:translateY(-1px)}
+
+.tabs{display:flex;background:rgba(6,14,10,.97);overflow-x:auto;position:sticky;top:0;z-index:10;border-bottom:1px solid var(--border-gold);-webkit-overflow-scrolling:touch;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:0 8px;gap:2px}
+.tab{flex:1 0 auto;min-width:96px;padding:15px 8px;text-align:center;font-size:11px;cursor:pointer;border:none;background:none;color:var(--text-secondary);border-bottom:2px solid transparent;transition:var(--transition);white-space:nowrap;line-height:1.3;font-weight:500;position:relative}
+.tab:hover{color:var(--gold-light);background:rgba(212,175,55,.03)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600;background:rgba(212,175,55,.04)}
+.tab::before{content:attr(data-emoji);display:block;font-size:18px;margin-bottom:3px}
+@media(min-width:600px){
+  .tab{font-size:13px;min-width:110px;padding:16px 10px}
+  .tab::before{font-size:20px}
+}
+
+.main{padding:24px}
+.panel{display:none;animation:fadeIn .3s ease}
+.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:26px;margin-bottom:20px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:var(--transition);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.card:hover{border-color:rgba(212,175,55,.1)}
+.card h3{font-size:17px;margin-bottom:6px;color:var(--gold-light);display:flex;align-items:center;gap:8px}
+.card .desc{font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.7}
+
+label{display:block;font-size:12px;font-weight:600;color:var(--text-secondary);margin:16px 0 6px;letter-spacing:.3px}
+label .hint{font-weight:400;color:var(--text-muted);font-size:11px;margin-left:4px}
+textarea,input[type="text"],input[type="number"]{width:100%;padding:12px 15px;border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-sm);font-size:14px;line-height:1.6;font-family:inherit;resize:vertical;background:var(--bg-input);color:var(--text-primary);transition:var(--transition)}
+textarea:hover,input:hover{border-color:rgba(255,255,255,.12)}
+textarea:focus,input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(212,175,55,.04)}
+textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
+
+.btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn{padding:12px 24px;border:none;border-radius:var(--radius-sm);font-size:14px;cursor:pointer;font-weight:600;transition:var(--transition);white-space:nowrap;letter-spacing:.3px;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:linear-gradient(135deg,#d4af37,#b8960f);color:#0a0a0a;box-shadow:0 3px 14px rgba(212,175,55,.14)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(212,175,55,.22)}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-secondary{background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.08)}
+.btn-secondary:hover{background:rgba(255,255,255,.08);color:var(--text-primary)}
+.btn-outline{background:transparent;color:var(--gold);border:1px solid rgba(212,175,55,.25)}
+.btn-outline:hover{background:rgba(212,175,55,.06);border-color:rgba(212,175,55,.4)}
+
+.result-box{display:none;margin-top:18px;padding:20px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.05);border-radius:var(--radius-md);font-size:13px;line-height:2;white-space:pre-wrap;max-height:520px;overflow-y:auto;color:rgba(255,255,255,.75);font-family:'SF Mono','Fira Code','Courier New',monospace}
+.result-box.show{display:block;animation:fadeIn .25s ease}
+.result-box.loading{color:var(--text-secondary);text-align:center;padding:48px}
+
+.spinner{display:inline-block;width:24px;height:24px;border:2px solid rgba(255,255,255,.08);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.toast{position:fixed;top:28px;left:50%;transform:translateX(-50%);background:rgba(30,28,18,.98);color:var(--gold-light);padding:12px 28px;border-radius:24px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 36px rgba(0,0,0,.6);border:1px solid rgba(212,175,55,.2);letter-spacing:.5px;font-weight:500;backdrop-filter:blur(12px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+.toast.warn{background:rgba(40,16,16,.98);border-color:rgba(255,107,107,.3);color:#ffa0a0;box-shadow:0 8px 32px rgba(255,107,107,.15)}
+
+.wechat-footer{background:rgba(6,12,8,.9);border-top:1px solid rgba(255,255,255,.04);padding:12px 16px;text-align:center;font-size:11px;color:var(--text-muted);backdrop-filter:blur(12px)}
+.wechat-footer .wx-badge{display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:#0a0a0a;padding:5px 14px;border-radius:14px;font-size:11px;font-weight:600;cursor:pointer;transition:var(--transition);margin-left:8px}
+.wechat-footer .wx-badge:hover{opacity:.85;transform:scale(1.03)}
+
+.instruction{background:rgba(212,175,55,.04);padding:13px 16px;border-radius:var(--radius-sm);font-size:12px;color:rgba(212,175,55,.55);margin-top:14px;line-height:1.9;border:1px solid rgba(212,175,55,.06)}
+.instruction strong{color:var(--gold)}
+
+.mode-switch{display:flex;gap:4px;background:rgba(255,255,255,.03);border-radius:8px;padding:3px;margin-bottom:18px}
+.mode-btn{flex:1;padding:9px 16px;border:none;border-radius:6px;font-size:13px;cursor:pointer;background:none;color:var(--text-secondary);transition:var(--transition);font-weight:500}
+.mode-btn.active{background:rgba(212,175,55,.1);color:var(--gold);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+
+.header-btns{display:flex;gap:8px;align-items:center}
+.icon-btn{width:36px;height:36px;border-radius:50%;border:1px solid rgba(212,175,55,.15);background:rgba(212,175,55,.05);color:var(--gold);font-size:16px;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;position:relative}
+.icon-btn:hover{background:rgba(212,175,55,.14);border-color:rgba(212,175,55,.35);transform:scale(1.05)}
+.icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ff6b6b;color:#fff;font-size:9px;min-width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;padding:0 4px}
+
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.72);z-index:1001;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.modal-overlay.show{display:flex}
+.modal-card{background:rgba(14,22,16,.98);border:1px solid var(--border-gold);border-radius:var(--radius-lg);padding:30px 26px;max-width:540px;width:94%;max-height:82vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .35s cubic-bezier(.4,0,.2,1);scrollbar-width:thin;scrollbar-color:rgba(212,175,55,.15) transparent}
+.modal-card::-webkit-scrollbar{width:5px}
+.modal-card::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15);border-radius:10px}
+.modal-card h3{font-size:18px;color:var(--gold-light);margin-bottom:6px}
+.modal-card .modal-subt{font-size:11px;color:var(--text-secondary);margin-bottom:18px}
+.modal-card .close-btn{float:right;background:none;border:none;color:rgba(255,255,255,.4);font-size:24px;cursor:pointer;padding:0;line-height:1;transition:var(--transition)}
+.modal-card .close-btn:hover{color:#ff6b6b;transform:rotate(90deg)}
+
+.history-item{background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:14px;margin-bottom:8px;cursor:pointer;transition:var(--transition)}
+.history-item:hover{background:rgba(212,175,55,.04);border-color:rgba(212,175,55,.12)}
+.history-item .hi-date{font-size:10px;color:var(--text-muted)}
+.history-item .hi-module{font-size:13px;color:var(--gold-light);font-weight:600}
+.history-item .hi-preview{font-size:11px;color:var(--text-secondary);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-item .hi-actions{text-align:right;margin-top:6px}
+.history-item .hi-actions button{font-size:10px;padding:4px 12px;margin-left:6px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:var(--text-secondary);cursor:pointer;transition:var(--transition)}
+.history-item .hi-actions button:hover{color:var(--gold);border-color:rgba(212,175,55,.25)}
+
+.candidate-card{background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:16px;margin-bottom:10px;transition:var(--transition)}
+.candidate-card:hover{border-color:rgba(255,255,255,.1)}
+.candidate-card .cand-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.candidate-card .cand-name{font-size:15px;color:var(--gold-light);font-weight:600}
+.candidate-card .cand-status{font-size:11px;padding:4px 12px;border-radius:12px;font-weight:600;letter-spacing:.3px}
+.candidate-card .cand-info{font-size:11px;color:var(--text-secondary);line-height:1.8}
+.status-筛选{background:rgba(100,149,237,.12);color:#8eb8ff}
+.status-面试中{background:rgba(255,193,7,.1);color:#ffd54f}
+.status-谈薪{background:rgba(212,175,55,.12);color:var(--gold)}
+.status-已录用{background:rgba(72,199,142,.1);color:#48c78e}
+.status-试用中{background:rgba(0,191,255,.1);color:#66d4ff}
+.status-已转正{background:rgba(72,199,142,.15);color:#5ee8a0}
+.status-已放弃{background:rgba(255,107,107,.1);color:#ff8a8a}
+
+.profile-indicator{background:rgba(212,175,55,.05);border:1px solid rgba(212,175,55,.1);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:rgba(212,175,55,.6);display:flex;align-items:center;gap:8px}
+.profile-indicator .pi-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;box-shadow:0 0 6px rgba(212,175,55,.3)}
+.profile-indicator.off{background:rgba(255,107,107,.04);border-color:rgba(255,107,107,.08);color:rgba(255,107,107,.45)}
+.profile-indicator.off .pi-dot{background:#ff6b6b;box-shadow:0 0 6px rgba(255,107,107,.2)}
+
+@media(max-width:768px){
+  .header{padding:12px 16px;gap:8px}
+  .header h1{font-size:15px}
+  .header-left{gap:8px}
+  .header-logo{width:30px;height:30px}
+  .header .user-bar{font-size:10px}
+  .tabs{padding:0 4px}
+  .tab{padding:12px 4px;font-size:10px;min-width:62px}
+  .tab::before{font-size:16px}
+  .card{padding:16px}
+  .card h3{font-size:15px}
+  .main{padding:14px}
+  label{font-size:11px}
+  textarea,input[type="text"],input[type="number"]{font-size:13px;padding:10px 13px}
+  .btn{padding:10px 18px;font-size:13px;width:100%}
+  .btn-row{gap:8px}
+  .btn-row .btn{flex:1}
+  .result-box{font-size:12px;padding:14px;max-height:380px}
+  .login-card{padding:36px 22px}
+  .header-btns{gap:6px}
+  .header-btns .icon-btn{width:32px;height:32px;font-size:14px}
+  .modal-card{width:96%;padding:22px 18px;max-height:85vh}
+  .mode-switch{gap:2px}
+  .mode-btn{padding:8px 12px;font-size:12px}
+}
+@media(max-width:480px){
+  .header{padding:10px 12px}
+  .header h1{font-size:13px}
+  .header-brand{font-size:9px}
+  .tabs{gap:0}
+  .tab{padding:10px 2px;font-size:9px;min-width:54px;letter-spacing:0}
+  .tab::before{font-size:15px;margin-bottom:1px}
+  .card{padding:14px}
+  .card h3{font-size:14px}
+  .main{padding:10px}
+  .btn{padding:11px 14px;font-size:12px}
+  .login-card{padding:30px 18px}
+  .login-card h2{font-size:22px}
+  .login-card .subt{font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ========== 登录页 ========== -->
+<div class="login-overlay" id="loginScreen">
+    <div class="login-card">
+        <img class="logo-img" src="logo.png" alt="安迪 AI调度师" onerror="this.style.display='none'">
+        <div class="brand">安迪 AI调度师</div>
+        <h2>AI总参谋</h2>
+        <div class="subt">企业经营分析 · 高管人才盘点 · 企业决策沙盘<br>高管面试题库 · 高管面试分析 · 高管试用辅佐<br><br>老板的随身参谋部，每一个关键决策都有AI辅助</div>
+        <div class="ref-tag" id="refTag" style="display:none">👤 推荐人：<span id="refName"></span></div>
+        <input type="text" id="activationInput" placeholder="请输入激活码" maxlength="200" autocomplete="off">
+        <div class="login-err" id="loginErr"></div>
+        <button class="btn btn-activate" id="activateBtn" onclick="activate()">激活使用</button>
+        <div class="login-info">还没有激活码？<br>💬 加微信：miaoan1913 获取<br><br>💰 月卡 ¥199(20次) · 季卡 ¥499(100次) · 年卡 ¥1199(500次)</div>
+    </div>
+</div>
+
+<!-- ========== 微信绑定弹窗 ========== -->
+<div class="wechat-bind-overlay" id="wechatBindOverlay">
+    <div class="wechat-bind-card">
+        <div class="icon">📱</div>
+        <h3>绑定微信，不怕到期</h3>
+        <div class="subt">到期前3天微信自动提醒续费<br>避免正在用突然中断</div>
+        <div class="benefits"><span>✅</span> 到期前3天微信提醒续费<br><span>✅</span> 换设备时一键恢复会员<br><span>✅</span> 新功能上线第一时间通知<br><span>🚫</span> 不打扰、不群发、不营销</div>
+        <input type="text" id="wechatInput" placeholder="输入微信号（选填）">
+        <button class="btn btn-save" onclick="saveWechat()">💚 绑定，开始使用</button>
+        <button class="btn btn-skip" onclick="skipWechat()">先跳过，直接使用</button>
+    </div>
+</div>
+
+<!-- ========== 公司档案弹窗 ========== -->
+<div class="modal-overlay" id="companyProfileModal">
+    <div class="modal-card">
+        <button class="close-btn" onclick="closeCompanyProfile()">✕</button>
+        <h3>🏢 公司档案</h3>
+        <div class="modal-subt">填写一次，所有模块自动加载——AI会基于你的公司情况给出更精准的分析</div>
+        <label>公司名称</label><input type="text" id="cp-name" placeholder="如：XX服饰有限公司">
+        <label>所属行业</label><input type="text" id="cp-industry" placeholder="如：服装电商 / 制造业 / 餐饮连锁">
+        <label>发展阶段</label><input type="text" id="cp-stage" placeholder="如：初创期 / 成长期 / 成熟期 / 转型期">
+        <label>员工人数</label><input type="text" id="cp-size" placeholder="如：50人">
+        <label>年营收规模（万元）</label><input type="text" id="cp-revenue" placeholder="如：3000">
+        <label>主营业务<span class="hint">一句话说清楚你们做什么</span></label>
+        <input type="text" id="cp-business" placeholder="如：中高端女装设计+电商零售，主做抖音直播+私域复购">
+        <label>核心产品/服务</label><textarea id="cp-products" rows="2" placeholder="如：1.设计师女装（客单价300-800元）2.高定系列（客单价2000+）3.配饰线..."></textarea>
+        <label>核心竞争优势<span class="hint">你跟同行比，强在哪？</span></label>
+        <input type="text" id="cp-advantage" placeholder="如：自有工厂/15年供应链/复购率40%/设计师是行业头部博主...">
+        <label>当前面临的主要挑战</label>
+        <textarea id="cp-challenges" rows="2" placeholder="如：1.抖音流量成本上升 2.核心设计师可能被挖 3.库存周转偏慢..."></textarea>
+        <label>目标客户画像</label>
+        <input type="text" id="cp-customers" placeholder="如：25-40岁一二线城市职场女性，注重设计感，客单价敏感度低">
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="saveCompanyProfile()">💾 保存档案</button>
+            <button class="btn btn-secondary" onclick="closeCompanyProfile()">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 历史记录弹窗 ========== -->
+<div class="modal-overlay" id="historyModal">
+    <div class="modal-card">
+        <button class="close-btn" onclick="closeHistory()">✕</button>
+        <h3>📜 历史记录</h3>
+        <div class="modal-subt">每次生成的指令自动保存，点击可查看或复制。最多保留50条。</div>
+        <div style="margin-bottom:12px">
+            <button class="btn btn-outline" style="font-size:11px;padding:6px 14px" onclick="clearAllHistory()">🗑️ 清空全部</button>
+        </div>
+        <div id="historyList" style="max-height:50vh;overflow-y:auto">
+            <div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无记录</div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 人选追踪弹窗 ========== -->
+<div class="modal-overlay" id="candidateTrackerModal">
+    <div class="modal-card">
+        <button class="close-btn" onclick="closeCandidateTracker()">✕</button>
+        <h3>👤 高管人选追踪</h3>
+        <div class="modal-subt">记录和追踪每一位高管候选人的进展，不再靠脑子记。</div>
+        <button class="btn btn-primary" style="width:100%;margin-bottom:14px;font-size:13px" onclick="showAddCandidateForm()">➕ 添加人选</button>
+        <div id="addCandidateForm" style="display:none;margin-bottom:14px;padding:14px;background:rgba(255,255,255,.02);border-radius:10px;border:1px solid rgba(212,175,55,.15)">
+            <label>人选姓名/代号</label><input type="text" id="cand-name" placeholder="如：张总">
+            <label>应聘岗位</label><input type="text" id="cand-position" placeholder="如：运营VP">
+            <label>当前状态</label>
+            <select id="cand-status" style="width:100%;padding:10px 12px;border:1px solid rgba(255,255,255,.08);border-radius:10px;font-size:14px;background:rgba(0,0,0,.25);color:#d8d8d8;font-family:inherit">
+                <option value="筛选">初筛中</option>
+                <option value="面试中">面试中</option>
+                <option value="谈薪">谈薪阶段</option>
+                <option value="已录用">已录用</option>
+                <option value="试用中">试用中</option>
+                <option value="已转正">已转正</option>
+                <option value="已放弃">已放弃</option>
+            </select>
+            <label>来源渠道</label><input type="text" id="cand-source" placeholder="如：猎头推荐/朋友介绍/招聘平台">
+            <label>备注</label><textarea id="cand-notes" rows="2" placeholder="如：之前在某公司做运营总监3年，操盘过双11..."></textarea>
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="addCandidate()">✅ 保存</button>
+                <button class="btn btn-secondary" onclick="hideAddCandidateForm()">取消</button>
+            </div>
+        </div>
+        <div id="candidateList" style="max-height:50vh;overflow-y:auto">
+            <div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无追踪人选</div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 主工作台 ========== -->
+<div class="app" id="mainApp">
+    <div class="header">
+        <div class="header-left">
+            <div class="header-logo"><img src="logo.png" alt="Logo" onerror="this.parentElement.style.display='none'"></div>
+            <div>
+                <div class="header-brand">安迪 AI调度师</div>
+                <h1>AI总参谋</h1>
+            </div>
+        </div>
+        <div class="header-btns">
+            <button class="icon-btn" onclick="openCompanyProfile()" title="公司档案">🏢</button>
+            <button class="icon-btn" onclick="openHistory()" title="历史记录">📜<span class="badge" id="historyBadge" style="display:none">0</span></button>
+            <button class="icon-btn" onclick="openCandidateTracker()" title="人选追踪">👤<span class="badge" id="candidateBadge" style="display:none">0</span></button>
+        </div>
+        <div class="user-bar">
+            <div id="userName"></div>
+            <div>剩余：<span class="remaining" id="remainingUses">-</span> 次 · 到期：<span id="expiryDate">-</span></div>
+            <div id="wechatBound" style="display:none;margin-top:2px"><span style="color:#d4af37">💚</span> 已绑定：<span id="boundWechat"></span></div>
+        </div>
+    </div>
+    <div class="contact-bar" id="contactBar">
+        ⚠️ <span id="contactBarMsg">即将到期</span>
+        <span class="wx-btn" onclick="copyWechat()">📋 一键复制客服微信</span>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" data-emoji="📊" onclick="switchTab('biz')">企业经营分析</button>
+        <button class="tab" data-emoji="👥" onclick="switchTab('talent')">高管人才盘点</button>
+        <button class="tab" data-emoji="🎯" onclick="switchTab('decision')">企业决策沙盘</button>
+        <button class="tab" data-emoji="📋" onclick="switchTab('exambank')">高管面试题库</button>
+        <button class="tab" data-emoji="🔍" onclick="switchTab('examanalyze')">高管面试分析</button>
+        <button class="tab" data-emoji="🛡️" onclick="switchTab('onboard')">高管试用辅佐</button>
+    </div>
+
+    <div class="main">
+
+    <!-- ================================================================ -->
+    <!-- 模块1：企业经营分析（四大板块：财务+业务+运营+人力） -->
+    <!-- ================================================================ -->
+    <div class="panel active" id="panel-biz">
+        <div class="card">
+            <h3>📊 企业经营分析</h3>
+            <div class="desc">四大板块全面诊断——财务健康、业务增长、运营效率、人力效能。不只是看数字，是找到数字背后的原因和行动方向。</div>
+            <div class="profile-indicator off"><span class="pi-dot"></span>尚未设置公司档案 — <a href="javascript:openCompanyProfile()" style="color:#ff6b6b;text-decoration:underline">立即设置</a></div>
+            <div class="mode-switch">
+                <button class="mode-btn active" id="mode-monthly" onclick="switchBizMode('monthly')">📅 月度快诊</button>
+                <button class="mode-btn" id="mode-quarterly" onclick="switchBizMode('quarterly')">📈 季度深盘</button>
+            </div>
+
+            <!-- 月度快诊字段 -->
+            <div id="monthlyFields">
+                <!-- 板块一：财务健康 -->
+                <h4 style="color:#d4af37;font-size:13px;margin:16px 0 8px;border-bottom:1px solid rgba(212,175,55,.15);padding-bottom:6px">💰 板块一：财务健康</h4>
+                <label>上月营收（万元）<span class="hint"> + 环比/同比变化</span></label><input type="text" id="biz-month-revenue" placeholder="如：180（环比-8%，同比+12%）">
+                <label>上月营业成本（万元）</label><input type="text" id="biz-month-cost" placeholder="如：95">
+                <label>上月费用合计（万元）<span class="hint">管理+销售+财务</span></label><input type="text" id="biz-month-expense" placeholder="如：45">
+                <label>上月净利润（万元）/ 净利率</label><input type="text" id="biz-month-profit" placeholder="如：40 / 22%">
+                <label>经营性现金流（万元）<span class="hint">正 or 负？</span></label><input type="text" id="biz-month-cashflow" placeholder="如：+25 或 -10">
+                <label>账上现金余额（万元）</label><input type="text" id="biz-month-cash" placeholder="如：120">
+                <label>应收账款（万元）<span class="hint">其中90天以上多少？</span></label><input type="text" id="biz-month-ar" placeholder="如：80（其中90天以上25）">
+                <label>应付账款（万元）</label><input type="text" id="biz-month-ap" placeholder="如：50">
+
+                <!-- 板块二：业务增长 -->
+                <h4 style="color:#d4af37;font-size:13px;margin:16px 0 8px;border-bottom:1px solid rgba(212,175,55,.15);padding-bottom:6px">📈 板块二：业务增长</h4>
+                <label>上月总订单量 / 客单价<span class="hint">环比变化？</span></label><input type="text" id="biz-month-orders" placeholder="如：2800单/642元（环比订单+5%，客单价-3%）">
+                <label>新客户数 / 老客户复购率</label><input type="text" id="biz-month-customers" placeholder="如：新客320个/复购率28%">
+                <label>TOP3渠道收入占比 & ROI<span class="hint">各渠道贡献了多少？投入产出比如何？</span></label>
+                <textarea id="biz-month-channels" rows="3" placeholder="如：抖音直播50%，ROI 1:3.2；天猫25%，ROI 1:2.1；私域15%，ROI 1:5.8；批发10%..."></textarea>
+                <label>TOP3产品线收入占比 & 毛利率<span class="hint">哪条线在赚钱？哪条在拖后腿？</span></label>
+                <textarea id="biz-month-products" rows="3" placeholder="如：女装上衣40%（毛利率55%）；连衣裙30%（毛利率60%）；配饰15%（毛利率70%）；清仓款15%（毛利率10%）..."></textarea>
+
+                <!-- 板块三：运营效率 -->
+                <h4 style="color:#d4af37;font-size:13px;margin:16px 0 8px;border-bottom:1px solid rgba(212,175,55,.15);padding-bottom:6px">⚙️ 板块三：运营效率</h4>
+                <label>发货及时率 / 退货率</label><input type="text" id="biz-month-delivery" placeholder="如：及时率94%/退货率22%">
+                <label>客户投诉量<span class="hint"> + 主要投诉类型</span></label><input type="text" id="biz-month-complaints" placeholder="如：18件（质量问题10件/物流延迟5件/其他3件）">
+                <label>库存周转天数 / 滞销库存占比</label><input type="text" id="biz-month-inventory" placeholder="如：周转65天/滞销占比18%（金额35万）">
+                <label>关键项目进度<span class="hint">选填，如有重要项目列出状态</span></label>
+                <input type="text" id="biz-month-projects" placeholder="如：新仓库搬迁中/进度60%/正常；小程序商城开发中/进度30%/延期2周">
+
+                <!-- 板块四：人力效能 -->
+                <h4 style="color:#d4af37;font-size:13px;margin:16px 0 8px;border-bottom:1px solid rgba(212,175,55,.15);padding-bottom:6px">👤 板块四：人力效能</h4>
+                <label>员工总数 / 人均营收（万元）</label><input type="text" id="biz-month-headcount" placeholder="如：48人/3.75万/人（上月3.9万/人）">
+                <label>人力成本占营收比</label><input type="text" id="biz-month-laborcost" placeholder="如：28%（上月26%）">
+                <label>本月入职人数 / 离职人数</label><input type="text" id="biz-month-turnover" placeholder="如：入职3人/离职2人（其中1人是核心岗位）">
+                <label>核心岗位变动 / 在招岗位</label><input type="text" id="biz-month-coreposts" placeholder="如：销售主管离职、在补；运营总监岗位招聘中（已招45天）">
+
+                <label>本月最让你睡不着的事<span class="hint">选填，AI会重点诊断</span></label>
+                <textarea id="biz-month-worry" rows="2" placeholder="如：这个月营收达标但利润跌了，钱不知道被哪个环节吃掉了..."></textarea>
+            </div>
+
+            <!-- 季度深盘字段 -->
+            <div id="quarterlyFields" style="display:none">
+                <!-- 板块一：财务健康 -->
+                <h4 style="color:#d4af37;font-size:13px;margin:16px 0 8px;border-bottom:1px solid rgba(212,175,55,.15);padding-bottom:6px">💰 板块一：财务健康（季度）</h4>
+                <label>本季度总营收（万元）<span class="hint"> + 同比/环比/预算达成率</span></label><input type="text" id="biz-q-revenue" placeholder="如：540（同比+15%/环比+8%/达成率92%）">
+                <label>本季度总成本+费用（万元）</label><input type="text" id="biz-q-totalcost" placeholder="如：410">
+                <label>本季度净利润（万元）/ 净利率趋势</label><input type="text" id="biz-q-profit" placeholder="如：130/24%（上季26%，去年同季22%）">
+                <label>季度经营性现金流 / 期末现金余额</label><input type="text" id="biz-q-cashflow" placeholder="如：+60/账上余额180万">
+                <label>应收账款 & 应付账款现状<span class="hint">跟年初比是变好还是变差？</span></label><input type="text" id="biz-q-arap" placeholder="如：应收90万（比年初+20%），应付55万（持平）">
+
+                <!-- 板块二：业务增长 -->
+                <h4 style="color:#d4af37;font-size:13px;margin:16px 0 8px;border-bottom:1px solid rgba(212,175,55,.15);padding-bottom:6px">📈 板块二：业务增长（季度）</h4>
+                <label>季度总订单量 / 平均客单价<span class="hint">趋势变化</span></label><input type="text" id="biz-q-orders" placeholder="如：8200单/658元（客单价连续2季下降）">
+                <label>新客数 / 老客复购率 / 获客成本</label><input type="text" id="biz-q-customers" placeholder="如：新客1100个/复购率26%/获客成本85元/人（上季72元/人）">
+                <label>各渠道收入占比 & ROI趋势<span class="hint">哪条渠道效率在升？哪条在降？</span></label>
+                <textarea id="biz-q-channels" rows="3" placeholder="如：抖音55%（ROI 1:3.0，上季1:3.5↓）；天猫20%（ROI 1:2.3，持平）；私域18%（ROI 1:6.2，上季1:5.0↑）；线下7%..."></textarea>
+                <label>各产品线收入占比 & 毛利率变化</label>
+                <textarea id="biz-q-products" rows="3" placeholder="如：女装上衣38%（毛利率53%，↓3%）；连衣裙32%（毛利率62%，持平）；配饰18%（毛利率68%，↑2%）；清仓12%（毛利率8%）..."></textarea>
+                <label>销售漏斗各环节转化率<span class="hint">选填，如有数据</span></label>
+                <input type="text" id="biz-q-funnel" placeholder="如：线索→有效线索35%→商机28%→成交18%，成交周期平均22天">
+
+                <!-- 板块三：运营效率 -->
+                <h4 style="color:#d4af37;font-size:13px;margin:16px 0 8px;border-bottom:1px solid rgba(212,175,55,.15);padding-bottom:6px">⚙️ 板块三：运营效率（季度）</h4>
+                <label>季度平均退货率 / 退货原因TOP3</label><input type="text" id="biz-q-returns" placeholder="如：退货率24%（原因：尺码不符35%/质量不满意30%/色差20%/其他15%）">
+                <label>客户满意度 / NPS（如有）/ 投诉趋势</label><input type="text" id="biz-q-satisfaction" placeholder="如：满意度4.2/5，投诉52件（环比+15%），主要投诉：发货慢/客服响应慢">
+                <label>库存周转天数 / 滞销库存金额</label><input type="text" id="biz-q-inventory" placeholder="如：周转72天（上季65天↑）/滞销库存48万（占比19%）">
+                <label>供应商交期达成率 / 缺货率</label><input type="text" id="biz-q-supply" placeholder="如：交期达成率85%/缺货率6%">
+                <label>本季度关键项目完成情况</label>
+                <textarea id="biz-q-projects" rows="2" placeholder="如：✅新仓库上线/延期1个月完成；⚠️小程序商城/进度70%/延期风险；✅抖音店播团队搭建完成/正常启动..."></textarea>
+
+                <!-- 板块四：人力效能 -->
+                <h4 style="color:#d4af37;font-size:13px;margin:16px 0 8px;border-bottom:1px solid rgba(212,175,55,.15);padding-bottom:6px">👤 板块四：人力效能（季度）</h4>
+                <label>季度末员工总数 / 季度人均营收</label><input type="text" id="biz-q-headcount" placeholder="如：50人/人均10.8万（上季人均11.5万↓）">
+                <label>人力成本占营收比 / 各部门编制满足率</label><input type="text" id="biz-q-laborcost" placeholder="如：人力占比27%/销售缺2人、运营满编、技术缺1人">
+                <label>季度离职率 / 核心人才变动</label><input type="text" id="biz-q-turnover" placeholder="如：季度离职率8%（3人），其中销售主管1人（影响：核心客户关系受损）">
+                <label>试用期通过率 / 在招岗位平均招聘周期</label><input type="text" id="biz-q-hiring" placeholder="如：试用期通过率75%/在招3个岗，平均招65天">
+                <label>组织氛围与团队状态<span class="hint">选填，定性描述</span></label>
+                <textarea id="biz-q-culture" rows="2" placeholder="如：整体稳定，但销售团队因主管离职士气偏低；运营团队加班偏多（日均10h）；新来的CTO跟老团队磨合中有摩擦..."></textarea>
+
+                <label>本季度最让你睡不着的事<span class="hint">选填</span></label>
+                <textarea id="biz-q-worry" rows="2" placeholder="如：营收在涨但利润在跌，人效连续两个季度下降，最大的客户可能要流失..."></textarea>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="processBiz()">🔍 生成经营分析指令</button>
+                <button class="btn btn-secondary" onclick="clearBiz()">清空</button>
+            </div>
+            <div class="result-box" id="biz-result"></div>
+            <button class="btn btn-outline" id="biz-copy-btn" style="display:none;margin-top:8px" onclick="copyResult('biz-result')">📋 复制指令</button>
+            <div class="instruction">💡 <strong>怎么用：</strong>尽可能多填数据（数据越完整分析越精准）→ 点「生成指令」→ 复制 → 粘贴到任何AI工具 → AI输出四大板块综合分析报告。如果某个板块数据不全，AI会标注"信息不足"而不是瞎猜。</div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- 模块2：高管人才盘点 -->
+    <!-- ================================================================ -->
+    <div class="panel" id="panel-talent">
+        <div class="card">
+            <h3>👥 高管人才盘点</h3>
+            <div class="desc">用九宫格模型系统评估核心团队。谁是你的超级明星？谁该果断优化？谁走了影响最大？</div>
+            <div class="profile-indicator off"><span class="pi-dot"></span>尚未设置公司档案 — <a href="javascript:openCompanyProfile()" style="color:#ff6b6b;text-decoration:underline">立即设置</a></div>
+            <label>公司当前阶段</label>
+            <input type="text" id="talent-stage" placeholder="如：成长期/成熟期/转型期/二次创业期">
+            <label>今年最重要的3个战略目标<span class="hint">人才盘点要对照战略来看</span></label>
+            <textarea id="talent-goals" rows="2" placeholder="如：1.直播业务翻倍 2.新开2个城市 3.搭建自有品牌供应链..."></textarea>
+            <label>核心高管信息<span class="hint">每人一行，格式：姓名/岗位/绩效1-5分/潜力1-5分/留任意愿1-5分/关键程度1-5分/你的评价一句话</span></label>
+            <textarea id="talent-list" rows="10" placeholder="示例：
+张总/销售总监/4/3/3/5/老黄牛，业绩稳但没冲劲了
+李总/运营VP/5/5/2/5/超级明星，但最近有猎头挖
+王总/财务总监/3/2/5/3/能力一般但忠诚，公司离不开
+赵总/技术CTO/4/5/3/5/技术强但管理弱，团队怨气大
+钱总/市场总监/2/3/4/4/来了半年没出活，再观察还是止损？
+..."></textarea>
+            <label>团队最大的隐忧<span class="hint">选填</span></label>
+            <textarea id="talent-worry" rows="2" placeholder="如：核心销售团队被竞争对手盯上了，不确定薪酬有没有竞争力..."></textarea>
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="processTalent()">👥 生成人才盘点指令</button>
+                <button class="btn btn-secondary" onclick="clearTalent()">清空</button>
+            </div>
+            <div class="result-box" id="talent-result"></div>
+            <button class="btn btn-outline" id="talent-copy-btn" style="display:none;margin-top:8px" onclick="copyResult('talent-result')">📋 复制指令</button>
+            <div class="instruction">💡 <strong>怎么用：</strong>先认真给每个人打分（诚实比精确更重要）→ 生成指令 → AI输出九宫格地图+离职风险TOP3+能力缺口+行动建议</div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- 模块3：企业决策沙盘 -->
+    <!-- ================================================================ -->
+    <div class="panel" id="panel-decision">
+        <div class="card">
+            <h3>🎯 企业决策沙盘</h3>
+            <div class="desc">重大决策前，AI帮你推演每个选项走下去会怎样。不替你做决定，但帮你想清楚再拍板。</div>
+            <div class="profile-indicator off"><span class="pi-dot"></span>尚未设置公司档案 — <a href="javascript:openCompanyProfile()" style="color:#ff6b6b;text-decoration:underline">立即设置</a></div>
+            <label>你要做的决策是什么<span class="hint">一句话说清楚</span></label>
+            <input type="text" id="dec-question" placeholder="如：要不要在广州开分公司？要不要把直播业务外包？要不要换掉销售VP？">
+            <label>当前情况<span class="hint">说清楚背景，AI才能准确推演</span></label>
+            <textarea id="dec-context" rows="4" placeholder="如：我们做服装电商，总部在杭州，目前60%订单来自珠三角客户。广州有产业带优势+物流成本低+人才多。但我是杭州人，对广州不熟，担心异地管理失控..."></textarea>
+            <label>可选方案（至少2个）<span class="hint">方案A、方案B...也可以有"不动"方案</span></label>
+            <textarea id="dec-options" rows="4" placeholder="方案A：在广州设分公司，派一个副总去管，投入200万
+方案B：跟广州当地团队合作，利润分成模式，投入50万
+方案C：暂时不动，先把杭州做透，明年再考虑
+方案D：只在广州设仓库，团队还是杭州管"></textarea>
+            <label>你最担心的风险</label>
+            <input type="text" id="dec-risk" placeholder="如：异地管理失控、派出去的人扛不住、钱投了回不来...">
+            <label>这个决策有没有时间窗口<span class="hint">选填</span></label>
+            <input type="text" id="dec-deadline" placeholder="如：最好在6月前决定，7月是旺季">
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="processDecision()">🎯 生成决策推演指令</button>
+                <button class="btn btn-secondary" onclick="clearDecision()">清空</button>
+            </div>
+            <div class="result-box" id="decision-result"></div>
+            <button class="btn btn-outline" id="decision-copy-btn" style="display:none;margin-top:8px" onclick="copyResult('decision-result')">📋 复制指令</button>
+            <div class="instruction">💡 <strong>怎么用：</strong>尽量诚实填（别美化自己的选项）→ 生成指令 → AI会对每个方案做情景推演+风险矩阵+前提条件检验+建议</div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- 模块4：高管面试题库 -->
+    <!-- ================================================================ -->
+    <div class="panel" id="panel-exambank">
+        <div class="card">
+            <h3>📋 高管面试题库</h3>
+            <div class="desc">面高管不是聊天。AI帮你设计结构化面试题——业绩验证、战略思维、领导力、文化匹配，每个维度精准出题。</div>
+            <div class="profile-indicator off"><span class="pi-dot"></span>尚未设置公司档案 — <a href="javascript:openCompanyProfile()" style="color:#ff6b6b;text-decoration:underline">立即设置</a></div>
+            <label>岗位名称</label>
+            <input type="text" id="exam-position" placeholder="如：运营VP / 销售总监 / CTO">
+            <label>公司阶段与规模</label>
+            <input type="text" id="exam-stage" placeholder="如：A轮创业公司50人 / 成熟期200人 / 传统企业转型">
+            <label>这个岗位要打赢的3场硬仗<span class="hint">他最核心的使命是什么</span></label>
+            <textarea id="exam-battles" rows="3" placeholder="如：1.6个月内搭建自有直播团队，把外包成本降50%
+2.一年内把抖音渠道GMV从500万做到2000万
+3.培养出至少2个能独立带团队的主播组长..."></textarea>
+            <label>硬性门槛（缺一不可）</label>
+            <textarea id="exam-musthave" rows="3" placeholder="如：1.操盘过年GMV3000万以上的直播团队
+2.在服装行业至少3年经验
+3.带过15人以上团队
+4.有从0到1搭建经验（非大厂螺丝钉）
+5.愿意base杭州..."></textarea>
+            <label>你最担心候选人哪方面不行<span class="hint">选填，AI会在这个维度多出几道验证题</span></label>
+            <input type="text" id="exam-worry" placeholder="如：履历水分大、只会管不会干、大厂出来的水土不服...">
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="processExamBank()">📋 生成面试题库指令</button>
+                <button class="btn btn-secondary" onclick="clearExamBank()">清空</button>
+            </div>
+            <div class="result-box" id="exambank-result"></div>
+            <button class="btn btn-outline" id="exambank-copy-btn" style="display:none;margin-top:8px" onclick="copyResult('exambank-result')">📋 复制指令</button>
+            <div class="instruction">💡 <strong>怎么用：</strong>先想清楚"这个岗位要打赢什么仗"（比JD重要10倍）→ 生成指令 → AI输出5大模块共24题，每题有考察点+好回答标准+递进追问</div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- 模块5：高管面试分析 -->
+    <!-- ================================================================ -->
+    <div class="panel" id="panel-examanalyze">
+        <div class="card">
+            <h3>🔍 高管面试分析</h3>
+            <div class="desc">面试完别靠"感觉"做判断。AI帮你把面试记录变成结构化评估，对抗光环效应和认知偏差。</div>
+            <div class="profile-indicator off"><span class="pi-dot"></span>尚未设置公司档案 — <a href="javascript:openCompanyProfile()" style="color:#ff6b6b;text-decoration:underline">立即设置</a></div>
+            <label>面试的岗位</label>
+            <input type="text" id="analyze-position" placeholder="如：运营VP">
+            <label>候选人背景简述</label>
+            <textarea id="analyze-bg" rows="2" placeholder="如：前阿里P8，带过30人运营团队，主要负责过双11项目，年薪要求150万..."></textarea>
+            <label>面试录音转写文字<span class="hint">用飞书妙记/通义听悟/讯飞听见转写后粘贴全文</span></label>
+            <textarea id="analyze-transcript" rows="12" placeholder="在此粘贴面试录音的转写全文..."></textarea>
+            <label>你面试完的直觉感受<span class="hint">选填，诚实写——AI会帮你检验直觉是否靠谱</span></label>
+            <input type="text" id="analyze-gut" placeholder="如：感觉人挺强的，聊得来，但总觉得哪里不太对...">
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="processExamAnalyze()">🔍 生成面试分析指令</button>
+                <button class="btn btn-secondary" onclick="clearExamAnalyze()">清空</button>
+            </div>
+            <div class="result-box" id="examanalyze-result"></div>
+            <button class="btn btn-outline" id="examanalyze-copy-btn" style="display:none;margin-top:8px" onclick="copyResult('examanalyze-result')">📋 复制指令</button>
+            <div class="instruction">💡 <strong>怎么用：</strong>面试录音转文字→粘贴→生成指令→AI输出四维打分(业绩/战略/领导力/文化)+证据链分析+红旗信号+背调方案+认知偏差提醒</div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- 模块6：高管试用辅佐 -->
+    <!-- ================================================================ -->
+    <div class="panel" id="panel-onboard">
+        <div class="card">
+            <h3>🛡️ 高管试用辅佐</h3>
+            <div class="desc">新高管入职是最危险的窗口期。AI帮你设计90天融入计划，或诊断"该给时间还是该止损"。</div>
+            <div class="profile-indicator off"><span class="pi-dot"></span>尚未设置公司档案 — <a href="javascript:openCompanyProfile()" style="color:#ff6b6b;text-decoration:underline">立即设置</a></div>
+            <div class="mode-switch">
+                <button class="mode-btn active" id="mode-plan" onclick="switchOnboardMode('plan')">📅 90天融入计划</button>
+                <button class="mode-btn" id="mode-risk" onclick="switchOnboardMode('risk')">⚠️ 风险诊断</button>
+            </div>
+
+            <!-- 90天融入计划字段 -->
+            <div id="planFields">
+                <label>岗位</label><input type="text" id="onboard-position" placeholder="如：运营VP">
+                <label>公司阶段</label><input type="text" id="onboard-stage" placeholder="如：成长期/转型期">
+                <label>团队规模与结构</label><input type="text" id="onboard-teamsize" placeholder="如：管15人，下设3个主管，其中2个是老人">
+                <label>他需要打赢的3场硬仗</label>
+                <textarea id="onboard-battles" rows="3" placeholder="如：1.前3个月搭建直播团队
+2.第4-6个月GMV翻倍
+3.培养出可接班的组长..."></textarea>
+                <label>公司文化的关键特征<span class="hint">选填，帮他快速融入</span></label>
+                <textarea id="onboard-culture" rows="2" placeholder="如：结果导向、扁平化管理、决策快、不鼓励加班文化..."></textarea>
+            </div>
+
+            <!-- 风险诊断字段 -->
+            <div id="riskFields" style="display:none">
+                <label>岗位</label><input type="text" id="onboard-risk-pos" placeholder="如：销售总监">
+                <label>已入职多久</label><input type="text" id="onboard-risk-time" placeholder="如：第7周（试用期6个月）">
+                <label>你观察到的具体表现<span class="hint">写事实，不要写感觉</span></label>
+                <textarea id="onboard-risk-obs" rows="5" placeholder="如：
+- 前2周很积极，第3周开始不怎么主动汇报了
+- 开的3次团队会议，有2次被下属质疑方案
+- 上周承诺的客户拜访计划没按时交
+- 跟他聊过一次，他说"还不适应这里的节奏"
+- 但他在行业里的人脉确实带来了2个潜在客户..."></textarea>
+                <label>你内心真正的担忧</label>
+                <input type="text" id="onboard-risk-worry" placeholder="如：感觉他能力可能不够，但才7周下结论会不会太早？">
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="processOnboard()">🛡️ 生成辅佐指令</button>
+                <button class="btn btn-secondary" onclick="clearOnboard()">清空</button>
+            </div>
+            <div class="result-box" id="onboard-result"></div>
+            <button class="btn btn-outline" id="onboard-copy-btn" style="display:none;margin-top:8px" onclick="copyResult('onboard-result')">📋 复制指令</button>
+            <div class="instruction">💡 <strong>怎么用：</strong>新模式选「90天计划」做规划，入职几周后选「风险诊断」做评估。AI会给出阶段性判断+老板行动清单+止损决策框架</div>
+        </div>
+    </div>
+
+    </div>
+    <div class="wechat-footer">
+        <span>安迪 AI调度师 · AI总参谋</span>&nbsp;&nbsp;|&nbsp;&nbsp;💬 客服微信：<span style="color:#d4af37;font-weight:600">miaoan1913</span>
+        <span class="wx-badge" onclick="copyWechat()">📋 复制</span>
+    </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// 推荐人识别（从URL参数 ?ref=XXX 读取）
+// ============================================================
+(function(){
+    var params = new URLSearchParams(window.location.search);
+    var ref = params.get('ref');
+    if (ref) {
+        sessionStorage.setItem('referrer', ref);
+        var tag = document.getElementById('refTag');
+        var nameEl = document.getElementById('refName');
+        if (tag && nameEl) {
+            nameEl.textContent = decodeURIComponent(ref);
+            tag.style.display = 'inline-block';
+        }
+    } else {
+        var saved = sessionStorage.getItem('referrer');
+        if (saved) {
+            var tag = document.getElementById('refTag');
+            var nameEl = document.getElementById('refName');
+            if (tag && nameEl) {
+                nameEl.textContent = decodeURIComponent(saved);
+                tag.style.display = 'inline-block';
+            }
+        }
+    }
+})();
+
+// ============================================================
+// 激活码验证系统
+// ============================================================
+const SECRET = "miaohan1913_AI_2026_KEY";
+
+function decrypt(encoded, key) {
+    try {
+        encoded = encoded.replace(/[\._]/g, c => ({'.':'+','_':'/'}[c]));
+        while (encoded.length % 4) encoded += '=';
+        var bytes = atob(encoded);
+        var result = '';
+        for (var i = 0; i < bytes.length; i += 2) {
+            var hi = bytes.charCodeAt(i) & 0xFF;
+            var lo = bytes.charCodeAt(i + 1) & 0xFF;
+            var c = (hi << 8) | lo;
+            result += String.fromCharCode(c ^ key.charCodeAt((i / 2) % key.length));
+        }
+        return result;
+    } catch(e) { return ''; }
+}
+
+function simpleHash(str) {
+    var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (var i = 0; i < str.length; i++) {
+        var ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 3266489909);
+    return (h1 ^ h2) >>> 0;
+}
+
+function validateCode(rawCode) {
+    var clean = rawCode.replace(/[-\s]/g, '');
+    if (clean.length < 12) return { valid: false, error: '激活码格式错误' };
+    var hashPart = clean.slice(-4).toUpperCase();
+    var dataPart = clean.slice(0, -4);
+    var expectedHash = simpleHash(dataPart + SECRET).toString(16).slice(0, 4).toUpperCase();
+    if (hashPart !== expectedHash) return { valid: false, error: '激活码无效' };
+    var payload = decrypt(dataPart, SECRET);
+    if (!payload) return { valid: false, error: '激活码数据损坏' };
+    var parts = payload.split('|');
+    if (parts.length < 4) return { valid: false, error: '激活码数据损坏' };
+    var expiryStr = parts[0];
+    var maxUses = parseInt(parts[1]);
+    var userName = parts[2];
+    var expiry = new Date(expiryStr + 'T23:59:59');
+    if (new Date() > expiry) return { valid: false, error: '激活码已于 ' + expiryStr + ' 过期' };
+    return { valid: true, userName: userName, expiry: expiryStr, maxUses: maxUses, expiryDate: expiry };
+}
+
+function getUsageKey(code) {
+    return 'usage_' + simpleHash(code.replace(/[-\s]/g, '').toUpperCase()).toString(16);
+}
+function getUsage(code) {
+    return JSON.parse(localStorage.getItem(getUsageKey(code)) || '{"uses":0,"firstUse":null}');
+}
+function incrementUsage(code) {
+    var key = getUsageKey(code);
+    var data = getUsage(code);
+    data.uses++;
+    if (!data.firstUse) data.firstUse = new Date().toISOString().slice(0, 10);
+    localStorage.setItem(key, JSON.stringify(data));
+    return data;
+}
+
+var currentSession = null;
+var currentBizMode = 'monthly';
+var currentOnboardMode = 'plan';
+
+function activate() {
+    var input = document.getElementById('activationInput').value.trim();
+    var errEl = document.getElementById('loginErr');
+    var btn = document.getElementById('activateBtn');
+    if (!input) { errEl.textContent = '请输入激活码'; return; }
+
+    var storageKey = 'activation_' + simpleHash(input.replace(/[-\s]/g, '').toUpperCase()).toString(16);
+    var cached = localStorage.getItem(storageKey);
+    var validation;
+    if (cached) {
+        validation = JSON.parse(cached);
+        if (new Date() > new Date(validation.expiry + 'T23:59:59')) {
+            localStorage.removeItem(storageKey);
+            errEl.textContent = '激活码已过期，请续费';
+            return;
+        }
+    } else {
+        validation = validateCode(input);
+        if (!validation.valid) { errEl.textContent = validation.error; return; }
+        validation.rawCode = input;
+        localStorage.setItem(storageKey, JSON.stringify(validation));
+    }
+
+    var usage = getUsage(input);
+    if (validation.maxUses > 0 && usage.uses >= validation.maxUses) {
+        errEl.textContent = '使用次数已用完，请联系续费';
+        return;
+    }
+
+    currentSession = { code: input, userName: validation.userName, expiry: validation.expiry, maxUses: validation.maxUses, storageKey: storageKey };
+    var boundWx = localStorage.getItem('bound_wechat');
+    if (boundWx) {
+        btn.disabled = true;
+        btn.textContent = '✅ 激活成功！欢迎回来';
+        setTimeout(function(){ enterApp(); }, 400);
+        return;
+    }
+    btn.disabled = true;
+    btn.textContent = '✅ 验证通过';
+    document.getElementById('wechatBindOverlay').classList.add('show');
+}
+
+function saveWechat() {
+    var wx = document.getElementById('wechatInput').value.trim();
+    if (wx) {
+        localStorage.setItem('bound_wechat', wx);
+        try { if (typeof gtag==='function') gtag('event','wechat_bound',{event_label:wx}); } catch(e){}
+    }
+    document.getElementById('wechatBindOverlay').classList.remove('show');
+    enterApp();
+}
+
+function skipWechat() {
+    document.getElementById('wechatBindOverlay').classList.remove('show');
+    enterApp();
+}
+
+function enterApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').classList.add('show');
+    document.getElementById('userName').textContent = '👤 ' + currentSession.userName;
+    document.getElementById('remainingUses').textContent = currentSession.maxUses === 0 ? '不限' : (currentSession.maxUses - getUsage(currentSession.code).uses);
+    document.getElementById('expiryDate').textContent = currentSession.expiry;
+    var boundWx = localStorage.getItem('bound_wechat');
+    if (boundWx) {
+        document.getElementById('wechatBound').style.display = 'block';
+        document.getElementById('boundWechat').textContent = boundWx;
+    }
+    updateContactBar();
+    updateProfileIndicators();
+    updateHistoryBadge();
+    updateCandidateBadge();
+}
+
+function updateContactBar() {
+    var bar = document.getElementById('contactBar');
+    var msg = document.getElementById('contactBarMsg');
+    var expiry = new Date(currentSession.expiry + 'T23:59:59');
+    var daysLeft = Math.ceil((expiry - new Date()) / (1000*60*60*24));
+    if (daysLeft <= 7) {
+        bar.classList.add('show');
+        msg.textContent = daysLeft <= 0 ? '会员已到期，请续费' : '剩余 ' + daysLeft + ' 天到期';
+    }
+    if (currentSession.maxUses > 0) {
+        var used = getUsage(currentSession.code).uses;
+        var left = currentSession.maxUses - used;
+        if (left <= 10 && left > 0) {
+            bar.classList.add('show');
+            msg.textContent = '剩余 ' + left + ' 次使用';
+        }
+    }
+}
+
+// ============================================================
+// 工具函数
+// ============================================================
+function copyWechat() {
+    navigator.clipboard.writeText('miaoan1913').then(function(){
+        showToast('✅ 客服微信已复制：miaoan1913');
+    }).catch(function(){
+        showToast('miaoan1913', true);
+    });
+}
+
+function copyResult(boxId) {
+    var box = document.getElementById(boxId);
+    var text = box.textContent;
+    navigator.clipboard.writeText(text).then(function(){
+        showToast('✅ 已复制到剪贴板，可粘贴到任意AI工具使用');
+    }).catch(function(){
+        showToast('复制失败，请手动选择复制', true);
+    });
+    incrementUsage(currentSession.code);
+    updateContactBar();
+    document.getElementById('remainingUses').textContent = currentSession.maxUses === 0 ? '不限' : (currentSession.maxUses - getUsage(currentSession.code).uses);
+}
+
+function showToast(msg, warn) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast' + (warn ? ' warn' : '') + ' show';
+    setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(function(el,i){
+        el.classList.toggle('active', el.textContent.includes(
+            tab==='biz'?'经营分析':tab==='talent'?'人才盘点':tab==='decision'?'决策沙盘':tab==='exambank'?'面试题库':tab==='examanalyze'?'面试分析':'试用辅佐'
+        ));
+    });
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+    document.getElementById('panel-' + tab).classList.add('active');
+}
+
+function switchBizMode(mode) {
+    currentBizMode = mode;
+    document.getElementById('mode-monthly').classList.toggle('active', mode==='monthly');
+    document.getElementById('mode-quarterly').classList.toggle('active', mode==='quarterly');
+    document.getElementById('monthlyFields').style.display = mode==='monthly' ? '' : 'none';
+    document.getElementById('quarterlyFields').style.display = mode==='quarterly' ? '' : 'none';
+}
+
+function switchOnboardMode(mode) {
+    currentOnboardMode = mode;
+    document.getElementById('mode-plan').classList.toggle('active', mode==='plan');
+    document.getElementById('mode-risk').classList.toggle('active', mode==='risk');
+    document.getElementById('planFields').style.display = mode==='plan' ? '' : 'none';
+    document.getElementById('riskFields').style.display = mode==='risk' ? '' : 'none';
+}
+
+// ============================================================
+// 公司档案系统
+// ============================================================
+function getCompanyProfile() {
+    try {
+        return JSON.parse(localStorage.getItem('company_profile') || 'null');
+    } catch(e) { return null; }
+}
+
+function getCompanyProfileText() {
+    var cp = getCompanyProfile();
+    if (!cp || !cp.name) return '';
+    return `## 公司档案（已加载，AI回答时请结合以下背景）
+- 公司名称：${cp.name || '未填'}
+- 所属行业：${cp.industry || '未填'}
+- 发展阶段：${cp.stage || '未填'}，员工${cp.size || '未填'}人，年营收约${cp.revenue || '未填'}万元
+- 主营业务：${cp.business || '未填'}
+- 核心产品/服务：${cp.products || '未填'}
+- 核心竞争优势：${cp.advantage || '未填'}
+- 当前主要挑战：${cp.challenges || '未填'}
+- 目标客户：${cp.customers || '未填'}
+
+`;
+}
+
+function openCompanyProfile() {
+    document.getElementById('companyProfileModal').classList.add('show');
+    var cp = getCompanyProfile();
+    if (cp) {
+        document.getElementById('cp-name').value = cp.name || '';
+        document.getElementById('cp-industry').value = cp.industry || '';
+        document.getElementById('cp-stage').value = cp.stage || '';
+        document.getElementById('cp-size').value = cp.size || '';
+        document.getElementById('cp-revenue').value = cp.revenue || '';
+        document.getElementById('cp-business').value = cp.business || '';
+        document.getElementById('cp-products').value = cp.products || '';
+        document.getElementById('cp-advantage').value = cp.advantage || '';
+        document.getElementById('cp-challenges').value = cp.challenges || '';
+        document.getElementById('cp-customers').value = cp.customers || '';
+    }
+}
+
+function closeCompanyProfile() {
+    document.getElementById('companyProfileModal').classList.remove('show');
+}
+
+function saveCompanyProfile() {
+    var cp = {
+        name: document.getElementById('cp-name').value.trim(),
+        industry: document.getElementById('cp-industry').value.trim(),
+        stage: document.getElementById('cp-stage').value.trim(),
+        size: document.getElementById('cp-size').value.trim(),
+        revenue: document.getElementById('cp-revenue').value.trim(),
+        business: document.getElementById('cp-business').value.trim(),
+        products: document.getElementById('cp-products').value.trim(),
+        advantage: document.getElementById('cp-advantage').value.trim(),
+        challenges: document.getElementById('cp-challenges').value.trim(),
+        customers: document.getElementById('cp-customers').value.trim()
+    };
+    localStorage.setItem('company_profile', JSON.stringify(cp));
+    closeCompanyProfile();
+    updateProfileIndicators();
+    showToast('✅ 公司档案已保存，所有模块将自动加载');
+}
+
+function updateProfileIndicators() {
+    var cp = getCompanyProfile();
+    var hasProfile = cp && cp.name;
+    document.querySelectorAll('.profile-indicator').forEach(function(el){
+        if (hasProfile) {
+            el.classList.remove('off');
+            el.innerHTML = '<span class="pi-dot"></span>公司档案已加载：' + cp.name + ' | ' + (cp.industry||'') + ' | ' + (cp.size||'') + '人 | ' + (cp.revenue||'') + '万年收 — <a href="javascript:openCompanyProfile()" style="color:#d4af37;text-decoration:underline">修改</a>';
+        } else {
+            el.classList.add('off');
+            el.innerHTML = '<span class="pi-dot"></span>尚未设置公司档案，AI分析缺少公司背景 — <a href="javascript:openCompanyProfile()" style="color:#ff6b6b;text-decoration:underline">立即设置</a>';
+        }
+    });
+}
+
+// ============================================================
+// 历史记录系统
+// ============================================================
+function getHistory() {
+    try { return JSON.parse(localStorage.getItem('analysis_history') || '[]'); }
+    catch(e) { return []; }
+}
+
+function saveHistory(module, mode, prompt) {
+    var history = getHistory();
+    history.unshift({
+        id: Date.now(),
+        module: module,
+        mode: mode || '',
+        prompt: prompt,
+        preview: prompt.replace(/\n/g,' ').substring(0, 80),
+        date: new Date().toISOString()
+    });
+    if (history.length > 50) history = history.slice(0, 50);
+    localStorage.setItem('analysis_history', JSON.stringify(history));
+    updateHistoryBadge();
+}
+
+function updateHistoryBadge() {
+    var history = getHistory();
+    var badge = document.getElementById('historyBadge');
+    if (history.length > 0) {
+        badge.style.display = 'flex';
+        badge.textContent = history.length > 99 ? '99+' : history.length;
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+function openHistory() {
+    document.getElementById('historyModal').classList.add('show');
+    renderHistoryList();
+}
+
+function closeHistory() {
+    document.getElementById('historyModal').classList.remove('show');
+}
+
+function renderHistoryList() {
+    var history = getHistory();
+    var container = document.getElementById('historyList');
+    if (history.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无记录</div>';
+        return;
+    }
+    var html = '';
+    history.forEach(function(h, i){
+        var d = new Date(h.id);
+        var dateStr = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+        html += '<div class="history-item" onclick="viewHistoryItem('+i+')">';
+        html += '<div class="hi-date">'+dateStr+'</div>';
+        html += '<div class="hi-module">'+h.module+(h.mode?' · '+h.mode:'')+'</div>';
+        html += '<div class="hi-preview">'+h.preview+'...</div>';
+        html += '<div class="hi-actions">';
+        html += '<button onclick="event.stopPropagation();copyHistoryItem('+i+')">📋 复制</button>';
+        html += '<button onclick="event.stopPropagation();deleteHistoryItem('+i+')">🗑️</button>';
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+}
+
+function viewHistoryItem(i) {
+    var history = getHistory();
+    if (!history[i]) return;
+    var text = history[i].prompt;
+    navigator.clipboard.writeText(text).then(function(){
+        closeHistory();
+        showToast('✅ 历史指令已复制到剪贴板');
+    });
+}
+
+function copyHistoryItem(i) {
+    var history = getHistory();
+    if (!history[i]) return;
+    navigator.clipboard.writeText(history[i].prompt).then(function(){
+        showToast('✅ 已复制');
+    });
+}
+
+function deleteHistoryItem(i) {
+    var history = getHistory();
+    history.splice(i, 1);
+    localStorage.setItem('analysis_history', JSON.stringify(history));
+    renderHistoryList();
+    updateHistoryBadge();
+}
+
+function clearAllHistory() {
+    if (confirm('确定要清空所有历史记录吗？此操作不可恢复。')) {
+        localStorage.setItem('analysis_history', '[]');
+        renderHistoryList();
+        updateHistoryBadge();
+        showToast('✅ 历史记录已清空');
+    }
+}
+
+// ============================================================
+// 高管人选追踪系统
+// ============================================================
+function getCandidates() {
+    try { return JSON.parse(localStorage.getItem('tracked_candidates') || '[]'); }
+    catch(e) { return []; }
+}
+
+function saveCandidates(candidates) {
+    localStorage.setItem('tracked_candidates', JSON.stringify(candidates));
+    updateCandidateBadge();
+}
+
+function updateCandidateBadge() {
+    var candidates = getCandidates();
+    var badge = document.getElementById('candidateBadge');
+    var active = candidates.filter(function(c){ return c.status !== '已放弃' && c.status !== '已转正'; });
+    if (active.length > 0) {
+        badge.style.display = 'flex';
+        badge.textContent = active.length > 99 ? '99+' : active.length;
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+function openCandidateTracker() {
+    document.getElementById('candidateTrackerModal').classList.add('show');
+    renderCandidateList();
+}
+
+function closeCandidateTracker() {
+    document.getElementById('candidateTrackerModal').classList.remove('show');
+    hideAddCandidateForm();
+}
+
+function showAddCandidateForm() {
+    document.getElementById('addCandidateForm').style.display = 'block';
+    document.getElementById('cand-name').value = '';
+    document.getElementById('cand-position').value = '';
+    document.getElementById('cand-status').value = '筛选';
+    document.getElementById('cand-source').value = '';
+    document.getElementById('cand-notes').value = '';
+}
+
+function hideAddCandidateForm() {
+    document.getElementById('addCandidateForm').style.display = 'none';
+}
+
+function addCandidate() {
+    var name = document.getElementById('cand-name').value.trim();
+    var position = document.getElementById('cand-position').value.trim();
+    if (!name) { showToast('请填写人选姓名', true); return; }
+    var candidates = getCandidates();
+    candidates.unshift({
+        id: Date.now(),
+        name: name,
+        position: position || '未填',
+        status: document.getElementById('cand-status').value,
+        source: document.getElementById('cand-source').value.trim() || '未填',
+        notes: document.getElementById('cand-notes').value.trim() || '',
+        addedDate: new Date().toISOString().slice(0,10),
+        interviews: []
+    });
+    saveCandidates(candidates);
+    hideAddCandidateForm();
+    renderCandidateList();
+    showToast('✅ 人选已添加');
+}
+
+function updateCandidateStatus(id, newStatus) {
+    var candidates = getCandidates();
+    for (var i = 0; i < candidates.length; i++) {
+        if (candidates[i].id === id) {
+            candidates[i].status = newStatus;
+            break;
+        }
+    }
+    saveCandidates(candidates);
+    renderCandidateList();
+}
+
+function deleteCandidate(id) {
+    if (!confirm('确定删除这个人选吗？')) return;
+    var candidates = getCandidates();
+    candidates = candidates.filter(function(c){ return c.id !== id; });
+    saveCandidates(candidates);
+    renderCandidateList();
+    showToast('已删除');
+}
+
+function renderCandidateList() {
+    var candidates = getCandidates();
+    var container = document.getElementById('candidateList');
+    if (candidates.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无追踪人选</div>';
+        return;
+    }
+    var statusLabels = {
+        '筛选':'初筛中','面试中':'面试中','谈薪':'谈薪阶段','已录用':'已录用','试用中':'试用中','已转正':'已转正','已放弃':'已放弃'
+    };
+    var html = '';
+    candidates.forEach(function(c){
+        html += '<div class="candidate-card">';
+        html += '<div class="cand-header">';
+        html += '<span class="cand-name">'+c.name+'</span>';
+        html += '<span class="cand-status status-'+c.status+'">'+c.status+'</span>';
+        html += '</div>';
+        html += '<div class="cand-info">';
+        html += '📋 '+c.position+' | 📅 '+c.addedDate+' | 🔗 '+c.source;
+        if (c.notes) html += '<br>💬 '+c.notes;
+        html += '</div>';
+        html += '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">';
+        html += '<select onchange="updateCandidateStatus('+c.id+',this.value)" style="font-size:10px;padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.2);color:#ccc;flex:1;min-width:80px">';
+        Object.keys(statusLabels).forEach(function(s){
+            html += '<option value="'+s+'"'+(c.status===s?' selected':'')+'>'+statusLabels[s]+'</option>';
+        });
+        html += '</select>';
+        html += '<button style="font-size:10px;padding:4px 8px;border-radius:6px;border:1px solid rgba(255,107,107,.3);background:rgba(255,107,107,.06);color:#ff6b6b;cursor:pointer" onclick="deleteCandidate('+c.id+')">🗑️</button>';
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+}
+
+// ============================================================
+// 提示词组装辅助：自动加载公司档案 + 历史保存
+// ============================================================
+function wrapPrompt(rawPrompt, moduleName, modeName) {
+    var full = getCompanyProfileText() + rawPrompt;
+    saveHistory(moduleName, modeName, full);
+    return full;
+}
+
+// ============================================================
+// 模块1：企业经营分析（四大板块：财务+业务+运营+人力）
+// ============================================================
+function processBiz() {
+    var resultBox = document.getElementById('biz-result');
+    resultBox.classList.add('show','loading');
+    resultBox.innerHTML = '<div class="spinner"></div>正在生成四大板块经营分析指令...';
+    document.getElementById('biz-copy-btn').style.display = 'none';
+
+    var raw;
+    if (currentBizMode === 'monthly') {
+        raw = buildMonthlyPrompt();
+    } else {
+        raw = buildQuarterlyPrompt();
+    }
+    var prompt = wrapPrompt(raw, '企业经营分析', currentBizMode==='monthly'?'月度快诊':'季度深盘');
+
+    setTimeout(function(){
+        resultBox.classList.remove('loading');
+        resultBox.textContent = prompt;
+        document.getElementById('biz-copy-btn').style.display = 'inline-block';
+    }, 300);
+}
+
+function buildMonthlyPrompt() {
+    var revenue = document.getElementById('biz-month-revenue').value || '【未提供】';
+    var cost = document.getElementById('biz-month-cost').value || '【未提供】';
+    var expense = document.getElementById('biz-month-expense').value || '【未提供】';
+    var profit = document.getElementById('biz-month-profit').value || '【未提供】';
+    var cashflow = document.getElementById('biz-month-cashflow').value || '【未提供】';
+    var cash = document.getElementById('biz-month-cash').value || '【未提供】';
+    var ar = document.getElementById('biz-month-ar').value || '【未提供】';
+    var ap = document.getElementById('biz-month-ap').value || '【未提供】';
+    var orders = document.getElementById('biz-month-orders').value || '【未提供】';
+    var customers = document.getElementById('biz-month-customers').value || '【未提供】';
+    var channels = document.getElementById('biz-month-channels').value || '【未提供】';
+    var products = document.getElementById('biz-month-products').value || '【未提供】';
+    var delivery = document.getElementById('biz-month-delivery').value || '【未提供】';
+    var complaints = document.getElementById('biz-month-complaints').value || '【未提供】';
+    var inventory = document.getElementById('biz-month-inventory').value || '【未提供】';
+    var projects = document.getElementById('biz-month-projects').value || '【未提供】';
+    var headcount = document.getElementById('biz-month-headcount').value || '【未提供】';
+    var laborcost = document.getElementById('biz-month-laborcost').value || '【未提供】';
+    var turnover = document.getElementById('biz-month-turnover').value || '【未提供】';
+    var coreposts = document.getElementById('biz-month-coreposts').value || '【未提供】';
+    var worry = document.getElementById('biz-month-worry').value || '无';
+
+    return `你是一位资深企业经营分析顾问，拥有20年中小企业咨询经验，服务过500+家企业。请根据以下四大板块的经营数据，为这家企业做一次月度经营综合分析。
+
+## 板块一：财务健康数据
+- 上月营收：${revenue}
+- 上月营业成本：${cost}
+- 上月费用合计：${expense}
+- 上月净利润/净利率：${profit}
+- 经营性现金流：${cashflow}
+- 账上现金余额：${cash}万元
+- 应收账款：${ar}
+- 应付账款：${ap}
+
+## 板块二：业务增长数据
+- 订单量/客单价：${orders}
+- 新客户数/老客复购率：${customers}
+- 各渠道收入占比&ROI：${channels}
+- 各产品线收入占比&毛利率：${products}
+
+## 板块三：运营效率数据
+- 发货及时率/退货率：${delivery}
+- 客户投诉：${complaints}
+- 库存周转/滞销库存：${inventory}
+- 关键项目进度：${projects}
+
+## 板块四：人力效能数据
+- 员工总数/人均营收：${headcount}
+- 人力成本占营收比：${laborcost}
+- 入职/离职情况：${turnover}
+- 核心岗位变动：${coreposts}
+
+## 老板最担心的事
+${worry}
+
+## 请按以下框架输出月度经营分析报告
+
+### 一、本月经营概览（一页纸总结）
+- 核心指标仪表盘（从四个板块中提取最关键8-10个指标，用🔴🟡🟢标注健康度）
+- 一句话总结本月经营状况
+- 与上月对比：整体变好了还是变差了？
+
+### 二、财务健康诊断
+- 收入分析：营收达成率？增长是"健康增长"（毛利同步）还是"虚胖增长"（增收不增利）？
+- 利润分析：毛利率变化原因（成本端还是价格端）？费用结构是否合理？哪项费用增长异常？
+- 现金流预警：经营性现金流是否为正？应收在恶化还是改善？按当前消耗速度，现金能撑多久？
+- 本月财务最需要关注的2个问题
+
+### 三、业务增长诊断
+- 增长质量：增长来自新客还是老客？哪个更健康？
+- 渠道效率：哪个渠道ROI最高/最低？哪个渠道转化率在下降？资源分配需要调整吗？
+- 产品结构：哪条产品线是"现金牛"（高收入+高毛利）？哪条是"问题儿童"（低毛利或衰退）？产品结构是否需要调整？
+- 客户分析：新客获取效率趋势？老客复购率是否健康？获客成本在升还是降？
+- 本月业务最大的2个发现（好的和坏的都要说）
+
+### 四、运营效率扫描
+- 交付效率：发货及时率是否达标？退货率是否在合理范围？退货TOP3原因中最需要关注什么？
+- 客户体验：投诉量趋势？哪类投诉最需要优先解决？
+- 供应链健康：库存周转是否合理？滞销库存是否需要清理？缺货和滞销并存说明什么？
+- 运营效率提升的2个优先行动
+
+### 五、人力效能评估
+- 人效趋势：人均营收在升还是降？人力成本占比是否合理？
+- 编制健康度：哪个部门人员冗余？哪个部门人手不足？哪些岗位在招但一直招不到？
+- 人员稳定性：离职率是否在健康范围？离职原因中最需要关注什么？核心人才是否有流失风险？
+- 组织健康预警：有没有"温水煮青蛙"的隐患（如人效持续下降但没人关注）？
+
+### 六、交叉分析（看关联）
+- 财务和业务之间：营收涨了但利润跌了？可能是渠道ROI下降或获客成本上升吃掉利润
+- 业务和运营之间：退货率上升是否拉低了实际毛利率？投诉增多是否影响复购率？
+- 运营和人力之间：人效下降是因为人多了还是产出少了？核心岗位空缺是否导致运营指标恶化？
+- 找出1-2个"一个根因导致的连锁反应"
+
+### 七、本月最需要关注的3个问题和行动建议
+- 按紧迫程度排序
+- 每个问题：现象是什么→根因是什么→如果不解决会怎样→建议的具体行动（不是"加强管理"这种废话）
+- 如果老板担心的事"${worry}"确实值得担心，给出具体应对方案；如果不用太担心，告诉老板为什么
+
+### 八、下月重点关注
+- 基于本月趋势，下月最需要盯紧的3个指标
+- 建议下月经营分析会重点讨论的议题
+
+## 重要规则
+- 用老板能听懂的话，禁止堆砌专业术语
+- 每个判断必须有数据支撑，数据不足的地方标注"信息不足，建议补充XX数据"
+- 既要指出问题，也要肯定做得好的地方（不能只报忧不报喜）
+- 禁止"加强管理""优化流程""降本增效"这类正确的废话，每条建议必须说具体动作
+- 如果有危险信号，直接说出来，不要委婉
+- 各板块之间要交叉分析，不要孤立地看每个指标`;
+}
+
+function buildQuarterlyPrompt() {
+    var revenue = document.getElementById('biz-q-revenue').value || '【未提供】';
+    var totalcost = document.getElementById('biz-q-totalcost').value || '【未提供】';
+    var profit = document.getElementById('biz-q-profit').value || '【未提供】';
+    var cashflow = document.getElementById('biz-q-cashflow').value || '【未提供】';
+    var arap = document.getElementById('biz-q-arap').value || '【未提供】';
+    var orders = document.getElementById('biz-q-orders').value || '【未提供】';
+    var customers = document.getElementById('biz-q-customers').value || '【未提供】';
+    var channels = document.getElementById('biz-q-channels').value || '【未提供】';
+    var products = document.getElementById('biz-q-products').value || '【未提供】';
+    var funnel = document.getElementById('biz-q-funnel').value || '【未提供】';
+    var returns = document.getElementById('biz-q-returns').value || '【未提供】';
+    var satisfaction = document.getElementById('biz-q-satisfaction').value || '【未提供】';
+    var inventory = document.getElementById('biz-q-inventory').value || '【未提供】';
+    var supply = document.getElementById('biz-q-supply').value || '【未提供】';
+    var projects = document.getElementById('biz-q-projects').value || '【未提供】';
+    var headcount = document.getElementById('biz-q-headcount').value || '【未提供】';
+    var laborcost = document.getElementById('biz-q-laborcost').value || '【未提供】';
+    var turnover = document.getElementById('biz-q-turnover').value || '【未提供】';
+    var hiring = document.getElementById('biz-q-hiring').value || '【未提供】';
+    var culture = document.getElementById('biz-q-culture').value || '【未提供】';
+    var worry = document.getElementById('biz-q-worry').value || '无';
+
+    return `你是一位资深企业经营分析顾问，拥有20年中小企业咨询经验，擅长从经营数据中发现深层问题并提供战略级建议。请根据以下四大板块的季度经营数据，做一次深度经营复盘。
+
+## 板块一：财务健康（季度）
+- 本季度总营收：${revenue}
+- 总成本+费用：${totalcost}
+- 净利润/净利率趋势：${profit}
+- 经营性现金流/期末现金：${cashflow}
+- 应收&应付现状：${arap}
+
+## 板块二：业务增长（季度）
+- 季度订单量/客单价：${orders}
+- 新客/复购率/获客成本：${customers}
+- 各渠道收入占比&ROI趋势：${channels}
+- 各产品线收入占比&毛利率变化：${products}
+- 销售漏斗转化：${funnel}
+
+## 板块三：运营效率（季度）
+- 退货率/退货原因：${returns}
+- 客户满意度/投诉趋势：${satisfaction}
+- 库存周转/滞销库存：${inventory}
+- 供应商/缺货率：${supply}
+- 关键项目完成情况：${projects}
+
+## 板块四：人力效能（季度）
+- 季度末人数/人均营收：${headcount}
+- 人力成本占比/编制满足率：${laborcost}
+- 离职率/核心人才变动：${turnover}
+- 试用期通过率/招聘周期：${hiring}
+- 组织氛围/团队状态：${culture}
+
+## 老板最担心的事
+${worry}
+
+## 请按以下框架输出季度经营深度复盘报告
+
+### 一、季度经营概览（Executive Summary）
+- 核心指标仪表盘（从四个板块提取12-15个核心指标，用🔴🟡🟢标注健康度和趋势方向↑→↓）
+- 一句话总结本季度经营状况
+- 本季度最大的3个变化（与上季对比，好的和坏的）
+
+### 二、财务健康深度诊断
+- 收入与利润趋势：本季营收和利润的环比/同比/预算达成三维对比，趋势是向好还是恶化？
+- 利润质量分析：毛利率变化根因（成本推动还是价格推动？）净利率变化来自哪个环节？
+- 费用结构效率：各项费用率的趋势，哪项失控了？与行业平均水平对比如何？
+- 现金流安全评估：经营现金流与净利润的关系（利润有没有变成现金？）按当前消耗速度现金够撑几个月？乐观/中性/悲观三种情景预测
+- 应收/应付健康度：账龄结构是否恶化？有没有坏账风险？
+
+### 三、业务增长深度复盘
+- 增长引擎诊断：本季度增长靠什么驱动（量×价×新产品×新渠道）？这个驱动力可持续吗？
+- 渠道效率矩阵：按ROI×增长贡献两个维度画矩阵，标注哪些渠道该加投/维持/缩减
+- 产品组合分析：按收入占比×毛利率画矩阵，标注现金牛/明星/问题/瘦狗四类，建议产品组合怎么调整
+- 客户资产分析：新客获取效率趋势，LTV/CAC比值变化，客户分层（高价值/普通/低价值客户占比变化）
+- 销售漏斗健康度：哪个环节转化率最低？哪个环节在恶化？如果只优化一个环节能带来多少增量？
+
+### 四、运营效率深度扫描
+- 交付与退货：退货率趋势及根因（是产品质量问题还是客户预期管理问题？）退货成本对利润的真实影响
+- 客户体验：投诉趋势和根因分布，NPS/满意度变化，哪类客户最不满意？
+- 供应链诊断：库存周转趋势（是变快还是变慢？）滞销库存处理方案，缺货与滞销是否同时存在（说明预测或采购有问题）
+- 项目执行：关键项目完成率和延期原因分析，延期项目的补救方案
+
+### 五、人力效能与组织健康
+- 人效深度分析：人均营收/人均利润趋势，与行业标杆差距，各部门人效对比（哪个部门拉高了/拉低了整体人效？）
+- 编制与招聘：编制缺口对业务的实质影响有多大？招聘周期过长丢失了多少机会成本？
+- 人才风险：季度离职率趋势和核心原因，核心人才流失预警（谁走了影响最大？现在该做什么？）
+- 组织健康度：加班趋势、团队氛围、新老融合——有没有"温水煮青蛙"式的组织问题？
+
+### 六、交叉分析与系统诊断
+- 财务×业务：营收增长但利润下降？→ 追踪到具体渠道/产品/客户环节
+- 业务×运营：退货率或投诉率上升 → 是否已经体现在客户流失和复购下降上？
+- 运营×人力：人效下降 → 是人多了还是产出少了？核心岗位空缺是否导致运营指标恶化？
+- 人力×财务：人力成本上升 → 换来了人效提升还是单纯的成本膨胀？
+- 找出1-3个系统性根因（一个根因导致多个板块指标异常）
+
+### 七、战略校准
+- 对照年初/季度初目标：各维度达成率评估
+- 按当前趋势，全年目标还靠谱吗？差距有多大？
+- 如果差距大：建议目标怎么调整？节奏怎么调整？资源怎么重新分配？
+- 下季度最重要的3个战略重点
+
+### 八、本季度最需要关注的5个问题和行动方案
+- 按紧急×重要程度排序
+- 每个问题必须包含：现象→根因→如果不解决的后果→具体行动方案→建议责任人→建议完成时间→验收标准
+- 如果问题之间有关联，标注出来，建议打包解决
+- 对于老板最担心的"${worry}"——认真分析，给出明确判断和行动建议
+
+### 九、下季度经营预测与风险雷达
+- 基于本季趋势，预测下季度4个板块各3个关键指标的变化方向
+- 下季度最可能出现的3个风险，每个标注：可能性×影响程度×提前应对方案
+- 下季度最值得抓住的2个机会
+
+## 重要规则
+- 用老板能听懂的语言，控制专业术语密度
+- 每个判断必须有数据或逻辑支撑，数据不足的维度明确标注"建议补充XX数据"
+- 既要诚实指出问题（不报喜不报忧），又要肯定做得好的地方
+- 禁止"加强管理""优化流程""降本增效""提升效率"这类正确的废话
+- 每条建议必须是"谁+做什么+什么时间+怎么算成功"的具体动作
+- 四板块必须交叉分析，找出系统性关联，不要孤立地看每个指标
+- 战略校准建议要务实——既不要画大饼，也不要过度悲观`;
+}
+
+function clearBiz() {
+    document.querySelectorAll('#monthlyFields input, #monthlyFields textarea, #quarterlyFields input, #quarterlyFields textarea').forEach(function(el){ el.value = ''; });
+    document.getElementById('biz-result').classList.remove('show');
+    document.getElementById('biz-copy-btn').style.display = 'none';
+}
+
+// ============================================================
+// 模块2：高管人才盘点
+// ============================================================
+function processTalent() {
+    var resultBox = document.getElementById('talent-result');
+    resultBox.classList.add('show','loading');
+    resultBox.innerHTML = '<div class="spinner"></div>正在生成人才盘点指令...';
+    document.getElementById('talent-copy-btn').style.display = 'none';
+
+    var stage = document.getElementById('talent-stage').value || '【请填写】';
+    var goals = document.getElementById('talent-goals').value || '【请填写】';
+    var list = document.getElementById('talent-list').value || '【请填写高管信息】';
+    var worry = document.getElementById('talent-worry').value || '无';
+
+    var raw = `你是一位资深组织与人才顾问，拥有20年高管评估经验，服务过500+家企业的人才盘点项目。请帮我做一次核心团队的人才盘点。
+
+## 背景信息
+- 公司当前阶段：${stage}
+- 今年最重要的战略目标：${goals}
+- 老板最大的隐忧：${worry}
+
+## 核心高管信息
+${list}
+
+## 请按以下框架输出人才盘点报告
+
+### 一、九宫格人才地图
+把每个人放进"绩效×潜力"九宫格：
+- 超级明星（高绩效+高潜力）：重点保留+加速培养，未来的接班人
+- 核心培养对象（中绩效+高潜力）：给机会和辅导，可能是放错了位置
+- 业绩骨干（高绩效+中/低潜力）：保持现状，给足激励，不一定非要升管理
+- 稳定贡献者（中绩效+中潜力）：企业的基本盘
+- 待发展之星（低绩效+高潜力）：深入诊断，是能力问题还是意愿问题还是位置问题
+- 专业老兵（高绩效+低潜力）：尊重并保留，不一定非要晋升
+- 需要关注（中绩效+低潜力）：明确改进计划和时间表
+- 勉强胜任/淘汰候选（低绩效+低/中潜力）：需要果断处理
+
+### 二、关键岗位板凳深度
+- 每个核心岗位：现任是谁？如果有人离职，有谁能接？
+- 标注每个岗位的接替准备度：马上能接 / 1年后能接 / 没有接班人
+- 没有接班人的关键岗位 = 公司的单点风险
+
+### 三、离职风险TOP3
+- 谁最可能走？（综合留任意愿+市场机会+内部状态）
+- 如果走了影响多大？
+- 现在该做什么来降低风险？
+
+### 四、能力缺口分析
+- 对照今年战略目标，团队最缺什么能力？
+- 这个缺口是"内部培养"还是"外部引进"？哪个更快？
+- 如果战略目标要调整，人才策略要跟着怎么调？
+
+### 五、行动建议
+- 未来3个月人才端最重要的3件事
+- 谁该谈？谁该奖？谁该调？谁该走？
+- 给老板的一句话人才结论
+
+## 重要规则
+- 对事不对人，每个判断都要有依据
+- 既要诚实（该淘汰就淘汰），也要务实（有时候"能用"比"优秀"更现实）
+- 不要用HR术语堆砌，老板要的是判断不是论文
+- 如果老板提供的评分跟事实逻辑矛盾，指出来`;
+    var prompt = wrapPrompt(raw, '高管人才盘点', '');
+    setTimeout(function(){
+        resultBox.classList.remove('loading');
+        resultBox.textContent = prompt;
+        document.getElementById('talent-copy-btn').style.display = 'inline-block';
+    }, 300);
+}
+
+function clearTalent() {
+    document.querySelectorAll('#panel-talent input, #panel-talent textarea').forEach(function(el){ el.value = ''; });
+    document.getElementById('talent-result').classList.remove('show');
+    document.getElementById('talent-copy-btn').style.display = 'none';
+}
+
+// ============================================================
+// 模块3：企业决策沙盘
+// ============================================================
+function processDecision() {
+    var resultBox = document.getElementById('decision-result');
+    resultBox.classList.add('show','loading');
+    resultBox.innerHTML = '<div class="spinner"></div>正在生成决策推演指令...';
+    document.getElementById('decision-copy-btn').style.display = 'none';
+
+    var question = document.getElementById('dec-question').value || '【请填写】';
+    var context = document.getElementById('dec-context').value || '【请填写】';
+    var options = document.getElementById('dec-options').value || '【请填写至少2个方案】';
+    var risk = document.getElementById('dec-risk').value || '【请填写】';
+    var deadline = document.getElementById('dec-deadline').value || '无特定时间窗口';
+
+    var raw = `你是一位资深企业战略顾问，服务过300+家企业的重大决策咨询。现在有一位老板面临一个关键决策，请你帮他做一次系统的决策推演。你不替他做决定，但帮他把每个选项想清楚。
+
+## 决策背景
+- 核心问题：${question}
+- 当前情况：${context}
+- 时间窗口：${deadline}
+- 老板最担心的风险：${risk}
+
+## 可选方案
+${options}
+
+## 请按以下框架输出决策推演报告
+
+### 一、决策的本质
+- 这个决策真正在决定什么？（往往不是表面上那个问题）
+- 这个决策的一阶效应和二阶效应分别是什么？
+- 不做决策（维持现状）的代价是什么？
+
+### 二、各方案情景推演
+
+对每个方案，按以下维度推演：
+
+**最佳情景：**
+- 什么条件下会发生？
+- 最好能好到什么程度？
+- 达成最佳结果的概率有多大？
+
+**最差情景：**
+- 什么情况下会翻车？
+- 最差能差到什么程度？
+- 能承受吗？
+
+**最可能情景：**
+- 正常发展下去大概什么结果？
+- 12个月后会是什么状态？
+
+### 三、关键前提条件检验
+- 每个方案成立需要哪些前提条件？
+- 这些条件现在具备吗？如果不具备，能创造吗？
+- 哪个前提条件是最脆弱的？（一旦不成立，方案就垮了）
+
+### 四、风险矩阵
+| 风险 | 可能性 | 影响程度 | 应对预案 |
+每个方案列出TOP3风险
+
+### 五、决策建议
+- 如果只看确定性，选哪个？
+- 如果看的是上限空间，选哪个？
+- 有没有"先小试再放大"的渐进路径？
+- 有没有方案A+B的组合可能性？
+- 建议的决策节奏：是现在必须定，还是可以分步走？
+
+### 六、决策后管理
+- 选定了之后，最大的执行风险是什么？
+- 什么信号出现说明决策错了，需要调整？
+- 建议设置什么检查点？
+
+## 重要规则
+- 不替老板做决定，但帮他看见他可能忽略的角度
+- 对每个方案要公平推演，不要预设哪个好
+- 如果老板的信息不够做判断，明确指出"还需要什么信息"
+- 老板最担心的风险如果确实重要，认真分析；如果不重要，告诉他为什么不用太担心
+- 禁止模棱两可的废话，每个判断都要有逻辑链条`;
+    var prompt = wrapPrompt(raw, '企业决策沙盘', '');
+    setTimeout(function(){
+        resultBox.classList.remove('loading');
+        resultBox.textContent = prompt;
+        document.getElementById('decision-copy-btn').style.display = 'inline-block';
+    }, 300);
+}
+
+function clearDecision() {
+    document.querySelectorAll('#panel-decision input, #panel-decision textarea').forEach(function(el){ el.value = ''; });
+    document.getElementById('decision-result').classList.remove('show');
+    document.getElementById('decision-copy-btn').style.display = 'none';
+}
+
+// ============================================================
+// 模块4：高管面试题库
+// ============================================================
+function processExamBank() {
+    var resultBox = document.getElementById('exambank-result');
+    resultBox.classList.add('show','loading');
+    resultBox.innerHTML = '<div class="spinner"></div>正在生成面试题库指令...';
+    document.getElementById('exambank-copy-btn').style.display = 'none';
+
+    var position = document.getElementById('exam-position').value || '【请填写】';
+    var stage = document.getElementById('exam-stage').value || '【请填写】';
+    var battles = document.getElementById('exam-battles').value || '【请填写】';
+    var musthave = document.getElementById('exam-musthave').value || '【请填写】';
+    var worry = document.getElementById('exam-worry').value || '无';
+
+    var raw = `你是一位资深高管猎头兼面试顾问，拥有20年高管招聘经验，面试过2000+位高管候选人。请帮我为以下岗位设计一套完整的高管面试题库。
+
+## 岗位信息
+- 岗位：${position}
+- 公司阶段与规模：${stage}
+- 这个岗位要打赢的3场硬仗：${battles}
+- 硬性门槛：${musthave}
+- 老板最担心的问题：${worry}
+
+## 请按以下框架输出高管面试题库（共约24题）
+
+### 模块A：业绩真实性验证（8题）
+目标：区分"他做的""他团队做的"还是"他蹭的"
+- 追问式问题，用STAR法则深挖（情境-任务-行动-结果）
+- 每道题有递进追问链：如果候选人回答X，你应该追问什么？
+- 包含1-2道"交叉验证题"：从不同角度问同一件事，看前后是否一致
+- 包含1道"数字题"：他说的业绩，能用什么数字来验证？
+
+### 模块B：战略思维深度（5题）
+目标：判断他能不能看到全局，能不能想清楚
+- 给一个跟你们公司相关的真实业务场景，让他当场分析
+- 考察维度：行业洞察、竞争判断、资源分配、风险意识、创新能力
+- 每道题标注：好回答长什么样？什么回答是红旗信号？
+
+### 模块C：领导力验证（5题）
+目标：判断他能不能带团队、做决策、处理冲突
+- 追问具体案例：带过多大的团队？经历过什么冲突？做过什么艰难决定？
+- 包含1道"失败题"：让他讲一次失败经历，看他的反思深度
+- 包含1道"团队题"：让他评价团队中最强和最弱的人
+
+### 模块D：文化匹配探测（3题）
+目标：判断他的价值观和工作风格是否匹配你的公司
+- 用情景模拟题探测真实价值观（不是问"你的价值观是什么"）
+- 针对${stage}阶段的公司特性，设计文化匹配问题
+
+### 模块E：压力与边界测试（3题）
+目标：看他在压力下和边界情况下的真实反应
+- 1道两难情境题
+- 1道质疑/挑战式问题
+- 1道关于"钱"的直接问题（薪资期望、对钱的态度、过往薪酬结构）
+
+## 每道题标配标注
+1. 这道题在考察什么？
+2. 好回答的特征（不是标准答案，是判断标准）
+3. 红旗信号（什么回答意味着这人大概率不行）
+4. 如果候选人回答得模糊，应该怎么追问？
+
+## 重要规则
+- 问题要有穿透力，避免候选人能猜到你想听什么
+- 禁止"你的优点是什么""你最大的缺点是什么"这类无效问题
+- 针对老板最担心的${worry}，重点设计2-3道验证题
+- 题目要适配中小企业的实际场景，不要大厂面试套路`;
+    var prompt = wrapPrompt(raw, '高管面试题库', '');
+    setTimeout(function(){
+        resultBox.classList.remove('loading');
+        resultBox.textContent = prompt;
+        document.getElementById('exambank-copy-btn').style.display = 'inline-block';
+    }, 300);
+}
+
+function clearExamBank() {
+    document.querySelectorAll('#panel-exambank input, #panel-exambank textarea').forEach(function(el){ el.value = ''; });
+    document.getElementById('exambank-result').classList.remove('show');
+    document.getElementById('exambank-copy-btn').style.display = 'none';
+}
+
+// ============================================================
+// 模块5：高管面试分析
+// ============================================================
+function processExamAnalyze() {
+    var resultBox = document.getElementById('examanalyze-result');
+    resultBox.classList.add('show','loading');
+    resultBox.innerHTML = '<div class="spinner"></div>正在生成面试分析指令...';
+    document.getElementById('examanalyze-copy-btn').style.display = 'none';
+
+    var position = document.getElementById('analyze-position').value || '【请填写】';
+    var bg = document.getElementById('analyze-bg').value || '【请填写】';
+    var transcript = document.getElementById('analyze-transcript').value || '【请粘贴面试录音转写文字】';
+    var gut = document.getElementById('analyze-gut').value || '无';
+
+    var raw = `你是一位资深高管面试评估专家，拥有20年面试评估经验，参与过1000+次高管面试评估。请帮我对以下面试记录做结构化分析。
+
+## 面试信息
+- 应聘岗位：${position}
+- 候选人背景：${bg}
+- 老板面试后的直觉感受：${gut}
+
+## 面试录音转写文字
+${transcript}
+
+## 请按以下框架输出面试评估报告
+
+### 一、四维打分（每项10分，共40分）
+
+**维度1：业绩真实性（/10）**
+- 他说的业绩有足够证据支撑吗？
+- 有没有前后矛盾或模糊的地方？
+- 哪些是他做的？哪些是团队做的？哪些他不该居功？
+
+**维度2：战略思维（/10）**
+- 他对行业的理解是深是浅？
+- 他分析问题的框架清晰吗？
+- 他想到的东西你有没有没想到的？
+
+**维度3：领导力（/10）**
+- 他带团队的具体案例可信吗？
+- 他做决策的方式跟你期望的一致吗？
+- 他对人的判断准不准？
+
+**维度4：文化匹配（/10）**
+- 他的工作风格和价值观跟你的公司匹配吗？
+- 有没有隐约"不对路"的地方？
+
+**综合评分及解读：**
+- 总得分和等级（强烈推荐/推荐/待定/不推荐）
+- 最强维度和最弱维度
+- 这个人的弱点是你能接受的吗？
+
+### 二、证据链分析
+- 哪些能力维度有充分的行为证据？
+- 哪些维度"听起来不错但没证据"？
+- 面试中他回避了哪些话题？
+- 哪些关键信息还没问到？
+
+### 三、红旗信号清单
+检查以下信号：
+- 频繁换工作的模式
+- 业绩描述含糊不清
+- 把团队功劳说成个人功劳
+- 过度贬低前公司/前老板
+- 工资期望跟能力不匹配
+- 面试表现跟简历描述差距大
+- 对风险的意识过低或过高
+- 其他让你"隐约不舒服"的点
+
+### 四、认知偏差提醒
+老板，请自检以下偏差是否在影响你的判断：
+- 光环效应：他某一个方面很强，你是不是就觉得他什么都强？
+- 相似偏好：他跟你背景/性格相似，你是不是就更喜欢他？
+- 首因效应：开场5分钟的印象是否主导了你的判断？
+- 确认偏误：你是否只在找他"行"的证据，忽略了"不行"的信号？
+- 稀缺偏差：是不是因为"太难招了"而降低了标准？
+对照老板的直觉感受"${gut}"，AI帮你检验这个直觉靠谱吗。
+
+### 五、背调方案
+- 应该去哪些地方验证这个人的哪些信息？
+- 找谁问？（前同事/前下属/前老板/合作伙伴 各问什么）
+- 什么问题在背调中最关键？
+
+### 六、下一步建议
+- 如果继续推进：下一轮面试该重点验证什么？
+- 如果淘汰：为什么？
+- 如果待定：什么时候再判断？还需要什么信息？
+- 老板的直觉"${gut}"——AI的客观判断跟你的直觉一致吗？
+
+## 重要规则
+- 基于面试内容做判断，不要编造信息
+- 明确指出"有证据的判断"和"推测"的区别
+- 如果面试内容不足以做完整评估，明确说"信息不足，建议再问XX"
+- 对抗认知偏差，不要迎合老板的直觉感受`;
+    var prompt = wrapPrompt(raw, '高管面试分析', '');
+    setTimeout(function(){
+        resultBox.classList.remove('loading');
+        resultBox.textContent = prompt;
+        document.getElementById('examanalyze-copy-btn').style.display = 'inline-block';
+    }, 300);
+}
+
+function clearExamAnalyze() {
+    document.querySelectorAll('#panel-examanalyze input, #panel-examanalyze textarea').forEach(function(el){ el.value = ''; });
+    document.getElementById('examanalyze-result').classList.remove('show');
+    document.getElementById('examanalyze-copy-btn').style.display = 'none';
+}
+
+// ============================================================
+// 模块6：高管试用辅佐
+// ============================================================
+function processOnboard() {
+    var resultBox = document.getElementById('onboard-result');
+    resultBox.classList.add('show','loading');
+    resultBox.innerHTML = '<div class="spinner"></div>正在生成辅佐指令...';
+    document.getElementById('onboard-copy-btn').style.display = 'none';
+
+    var raw;
+    if (currentOnboardMode === 'plan') {
+        raw = buildOnboardPlanPrompt();
+    } else {
+        raw = buildOnboardRiskPrompt();
+    }
+    var prompt = wrapPrompt(raw, '高管试用辅佐', currentOnboardMode==='plan'?'90天融入计划':'风险诊断');
+
+    setTimeout(function(){
+        resultBox.classList.remove('loading');
+        resultBox.textContent = prompt;
+        document.getElementById('onboard-copy-btn').style.display = 'inline-block';
+    }, 300);
+}
+
+function buildOnboardPlanPrompt() {
+    var position = document.getElementById('onboard-position').value || '【请填写】';
+    var stage = document.getElementById('onboard-stage').value || '【请填写】';
+    var teamsize = document.getElementById('onboard-teamsize').value || '【请填写】';
+    var battles = document.getElementById('onboard-battles').value || '【请填写】';
+    var culture = document.getElementById('onboard-culture').value || '【请填写】';
+
+    return `你是一位资深企业教练，专门帮助新高管成功度过试用期，服务过300+位高管的入职融入辅导。请帮我为一位新高管设计一套90天融入计划。
+
+## 背景信息
+- 岗位：${position}
+- 公司阶段：${stage}
+- 团队情况：${teamsize}
+- 需要打赢的3场硬仗：${battles}
+- 公司文化特征：${culture}
+
+## 请按以下框架输出90天融入计划
+
+### 一、融入总纲
+- 这个岗位90天成功的定义是什么？（不是"活下来"，要有具体的、可验证的标准）
+- 前90天最重要的事排序：先做什么、后做什么、为什么是这个顺序
+- 最大的融入风险是什么？
+
+### 二、分阶段行动计划
+
+**第1-30天：了解期（主题：听、看、建关系）**
+- 周1-2：应该跟谁聊？看什么数据？了解什么流程？
+- 周3-4：应该形成什么初步判断？产出什么？
+- 30天检查点：这30天后他应该呈现出什么状态算正常？
+- 老板在第1个月应该做什么？（每周至少1次1v1，但不要微管理）
+
+**第31-60天：切入期（主题：小胜、立威、定方向）**
+- 应该选哪件事作为第一个突破口？（建议选能快速见效的小胜利）
+- 跟团队的关系应该怎么建立？（尤其是老员工）
+- 60天检查点：什么进展算"正常"？什么算"偏慢"？
+
+**第61-90天：发力期（主题：推进关键战役、建立节奏）**
+- 3场硬仗的进度如何评估？
+- 90天检查点：什么算通过试用期？什么算需要延长观察？什么算考虑止损？
+
+### 三、老板行动清单
+- 每周/每两周该做什么来支持他？
+- 什么信号出现时该介入？什么信号出现时该放手？
+- 如何平衡"给他空间"和"不能失控"？
+
+### 四、融入风险预案
+- 如果老团队抗拒他，怎么办？
+- 如果他的做事风格跟公司文化冲突，怎么办？
+- 如果他前30天看起来"什么都没做"，怎么办？
+
+### 五、试用期评估框架
+- 90天结束时用什么标准判断"过"还是"不过"？
+- 哪些是应该容忍的短期问题？哪些是一票否决的红线？
+- 如果决定"再观察30天"，观察什么？`;
+}
+
+function buildOnboardRiskPrompt() {
+    var position = document.getElementById('onboard-risk-pos').value || '【请填写】';
+    var time = document.getElementById('onboard-risk-time').value || '【请填写】';
+    var obs = document.getElementById('onboard-risk-obs').value || '【请填写观察到的具体表现】';
+    var worry = document.getElementById('onboard-risk-worry').value || '【请填写】';
+
+    return `你是一位资深企业教练，专门帮老板处理高管试用期的疑难问题。现在有一位老板对新高管有疑虑，请帮他做一次系统的风险诊断。
+
+## 情况描述
+- 岗位：${position}
+- 已入职时间：${time}
+- 观察到的具体表现：${obs}
+- 老板内心的担忧：${worry}
+
+## 请按以下框架输出风险诊断报告
+
+### 一、表现评估
+对照该岗位试用期该阶段应有状态：
+- 哪些表现是正常的？（新环境适应、文化磨合、关系建立都需要时间）
+- 哪些表现是值得警惕的？
+- 哪些表现说明这个人可能根本不行？
+- 区分"水土不服"和"能力不足"——这是两个完全不同的问题
+
+### 二、问题诊断
+如果确实存在问题，问题出在哪一层？
+- 是能力问题：他真的不会？
+- 是意愿问题：他不想干？
+- 是环境问题：公司给他的条件不够？
+- 是期望问题：老板的期望跟他理解的差距太大？
+- 是文化问题：做事方式跟公司冲突？
+
+### 三、止损决策框架
+- 现在是该"继续观察"还是"果断止损"？
+- 如果继续观察：看到什么时候必须做决定？观察到什么信号说明不行？
+- 如果止损：最佳时机是什么？怎么操作损失最小？（钱、团队士气、业务连续性）
+- 评估沉默成本——不要因为"已经花了时间和钱"而继续错下去
+
+### 四、针对性行动建议
+基于上面的诊断，给出具体行动方案：
+- 如果继续观察：老板接下来4周该做什么？跟他怎么谈？
+- 如果调整方向：能给他换个位置吗？还是必须让他走？
+- 如果要止损：跟团队怎么沟通？业务怎么过渡？
+
+### 五、反思
+- 这次招聘过程有没有教训？当初面试时有没有漏掉什么？
+- 以后招这个岗位，应该增加什么验证环节？
+
+## 重要规则
+- 诚实但不要轻易下结论——有时候真的是还没到时间
+- 但也不要用"再看看"无限拖延——拖得越久代价越大
+- 每一条建议都要有理由支撑
+- 如果老板的直觉跟观察到的事实一致，告诉他；如果不一致，也告诉他`;
+}
+
+function clearOnboard() {
+    document.querySelectorAll('#planFields input, #planFields textarea, #riskFields input, #riskFields textarea').forEach(function(el){ el.value = ''; });
+    document.getElementById('onboard-result').classList.remove('show');
+    document.getElementById('onboard-copy-btn').style.display = 'none';
+}
+</script>
+</body>
+</html>
