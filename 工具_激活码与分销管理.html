@@ -124,15 +124,15 @@ select option{background:#161f18;color:#d8d8d8}
             <div class="plan-row" style="margin-top:8px">
                 <div><label>套餐类型</label>
                 <select id="plan">
-                    <option value="month" selected>月卡 — ¥199/20次</option>
-                    <option value="quarter">季卡 — ¥499/100次</option>
-                    <option value="year">年卡 — ¥1199/500次</option>
+                    <option value="month" selected>月卡 — ¥999/30次</option>
+                    <option value="halfyear">半年卡 — ¥4999/200次</option>
+                    <option value="year">年卡 — ¥9999/500次</option>
                     <option value="custom">自定义天数</option>
                 </select></div>
                 <div><label>使用次数上限</label>
                 <select id="uses">
-                    <option value="20" selected>20次（月卡）</option>
-                    <option value="100">100次（季卡）</option>
+                    <option value="30" selected>30次（月卡）</option>
+                    <option value="200">200次（半年卡）</option>
                     <option value="500">500次（年卡）</option>
                     <option value="10">10次（体验）</option>
                     <option value="50">50次</option>
@@ -141,6 +141,17 @@ select option{background:#161f18;color:#d8d8d8}
             </div>
 
             <div id="customDaysBox" style="display:none"><label>自定义天数</label><input type="number" id="customDays" value="30" min="1" max="365"></div>
+
+            <label>最大使用人数（微信号限制）</label>
+            <select id="maxUsers">
+                <option value="3" selected>3人（默认，小团队使用）</option>
+                <option value="1">1人（仅购买者本人）</option>
+                <option value="2">2人</option>
+                <option value="5">5人</option>
+                <option value="10">10人</option>
+                <option value="0">不限人数</option>
+            </select>
+            <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:3px">超过人数上限后，新微信号无法激活此码</div>
 
             <button class="btn btn-gen" onclick="generateCode()">🎫 生成激活码</button>
 
@@ -156,10 +167,11 @@ select option{background:#161f18;color:#d8d8d8}
 
             <div class="note">
                 <strong>📌 操作流程：</strong><br>
-                1. 客户付款（说明介绍人）→ 填信息选分销人 → 点生成<br>
+                1. 客户付款（说明介绍人）→ 填信息选分销人 → 设置最大使用人数 → 点生成<br>
                 2. 把激活码发给客户 → 手动点「标记已发送」<br>
-                3. 客户在工作台激活后 → 手动点「标记已激活」<br>
-                4. 佣金在「分销看板」中自动计算
+                3. 客户在工作台输入激活码+绑定微信号 → 手动点「标记已激活」<br>
+                4. 同一激活码被不同微信号使用时，达到人数上限后自动拒绝新微信号<br>
+                5. 佣金在「分销看板」中自动计算
             </div>
         </div>
     </div>
@@ -185,7 +197,7 @@ select option{background:#161f18;color:#d8d8d8}
                 <strong>💡 两种分销方式：</strong><br>
                 <strong>方式一（手动）：</strong>客户找你购买 → 你问"谁介绍的" → 生成激活码时选分销人 → 佣金自动计算<br>
                 <strong>方式二（自动）：</strong>把下面的专属链接发给分销人 → 他转发给客户 → 客户打开工作台会看到"推荐人：XX" → 客户加你微信时主动报名字<br>
-                <strong>佣金：</strong>套餐价格 × 佣金比例（月卡¥199×15%=¥30, 季卡¥499×15%=¥75, 年卡¥1199×15%=¥180）<br>
+                <strong>佣金：</strong>套餐价格 × 佣金比例（月卡¥999×15%=¥150, 半年卡¥4999×15%=¥750, 年卡¥9999×15%=¥1500）<br>
                 <strong>建议：</strong>两种方式同时用，链接自动追踪 + 手动选分销人双重保险
             </div>
         </div>
@@ -226,9 +238,9 @@ select option{background:#161f18;color:#d8d8d8}
 
 <script>
 const SECRET = "miaohan1913_AI_2026_KEY";
-const PLAN_DAYS = { month: 30, quarter: 90, year: 365 };
-const PLAN_PRICES = { month: 199, quarter: 499, year: 500 };
-const PLAN_NAMES = { month: '月卡', quarter: '季卡', year: '年卡' };
+const PLAN_DAYS = { month: 30, halfyear: 180, year: 365 };
+const PLAN_PRICES = { month: 999, halfyear: 4999, year: 9999 };
+const PLAN_NAMES = { month: '月卡', halfyear: '半年卡', year: '年卡' };
 
 // ============ Tab Switching ============
 function switchTab(name) {
@@ -357,7 +369,7 @@ function simpleHash(str) {
 // ============ Generate Code ============
 document.getElementById('plan').addEventListener('change', function() {
     document.getElementById('customDaysBox').style.display = this.value === 'custom' ? 'block' : 'none';
-    var usesMap = { month: 20, quarter: 100, year: 500 };
+    var usesMap = { month: 30, halfyear: 200, year: 500 };
     if (usesMap[this.value]) document.getElementById('uses').value = usesMap[this.value];
 });
 
@@ -374,15 +386,16 @@ function generateCode() {
     var expiryStr = expiryDate.toISOString().slice(0, 10);
     var randomId = Math.random().toString(36).substring(2, 6).toUpperCase();
 
-    // Payload: expiry|uses|name|randomId|referrerId
-    var payload = expiryStr + '|' + uses + '|' + name + '|' + randomId + '|' + (referrerId || 'DIRECT');
+    // Payload: expiry|uses|name|randomId|maxUsers|referrerId
+    var maxUsers = parseInt(document.getElementById('maxUsers').value) || 0;
+    var payload = expiryStr + '|' + uses + '|' + name + '|' + randomId + '|' + maxUsers + '|' + (referrerId || 'DIRECT');
     var encrypted = encrypt(payload, SECRET);
     var hash = simpleHash(encrypted + SECRET).toString(16).slice(0, 4).toUpperCase();
     var fullCode = encrypted + hash;
     var formatted = fullCode.match(/.{1,4}/g).join('-');
 
     document.getElementById('codeDisplay').textContent = formatted;
-    document.getElementById('codeInfo').textContent = '到期日：'+expiryStr+' · 可用次数：'+(uses===0?'不限':uses+'次')+' · 客户：'+name + (referrerId ? ' · 分销人：'+(getReferrers().find(function(r){return r.id===referrerId})||{}).name||'' : '');
+    document.getElementById('codeInfo').textContent = '到期日：'+expiryStr+' · 可用次数：'+(uses===0?'不限':uses+'次')+' · 客户：'+name + (maxUsers > 0 ? ' · 限'+maxUsers+'人使用' : ' · 不限人数') + (referrerId ? ' · 分销人：'+(getReferrers().find(function(r){return r.id===referrerId})||{}).name||'' : '');
     document.getElementById('output').classList.add('show');
 
     // Calculate commission
@@ -403,6 +416,7 @@ function generateCode() {
         fullCode: fullCode,
         expiry: expiryStr,
         uses: uses,
+        maxUsers: maxUsers,
         plan: plan,
         planName: PLAN_NAMES[plan] || (days+'天'),
         price: plan === 'custom' ? 0 : (PLAN_PRICES[plan] || 0),

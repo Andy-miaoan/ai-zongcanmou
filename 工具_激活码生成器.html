@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>激活码生成器 · 安迪 AI调度师</title>
+<link rel="icon" href="logo.png" type="image/png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;background:#080c0a;color:#d8d8d8;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.card{background:rgba(16,24,20,.95);border:1px solid rgba(212,175,55,.12);border-radius:18px;padding:34px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6);backdrop-filter:blur(10px)}
+.logo-img{width:48px;height:48px;border-radius:12px;margin-bottom:8px;object-fit:cover}
+.brand{font-size:12px;color:rgba(212,175,55,.6);letter-spacing:2px;margin-bottom:4px;font-weight:500}
+h1{font-size:22px;margin-bottom:4px;color:#e8ddc0}
+.sub{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:24px;line-height:1.6}
+label{display:block;font-size:13px;color:rgba(255,255,255,.55);margin:14px 0 4px;font-weight:600}
+input,select{width:100%;padding:10px 14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(0,0,0,.25);color:#d8d8d8;font-size:14px;font-family:inherit}
+input:focus,select:focus{outline:none;border-color:#d4af37;box-shadow:0 0 0 3px rgba(212,175,55,.06)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+select option{background:#161f18;color:#d8d8d8}
+.plan-row{display:flex;gap:12px}
+.plan-row>div{flex:1}
+.btn{width:100%;padding:13px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:18px;transition:.2s;letter-spacing:.5px}
+.btn-gen{background:linear-gradient(135deg,#d4af37,#b8960f);color:#0a0a0a;box-shadow:0 4px 16px rgba(212,175,55,.2)}
+.btn-gen:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(212,175,55,.3)}
+.btn-copy{background:rgba(212,175,55,.08);color:#d4af37;margin-top:8px;border:1px solid rgba(212,175,55,.15)}
+.btn-copy:hover{background:rgba(212,175,55,.14)}
+.output-section{margin-top:20px;display:none}
+.output-section.show{display:block}
+.code-box{background:rgba(0,0,0,.25);border:1px solid rgba(212,175,55,.15);border-radius:12px;padding:22px;text-align:center;margin-top:10px}
+.code{font-size:26px;font-weight:700;color:#d4af37;letter-spacing:3px;font-family:'Courier New',monospace;word-break:break-all}
+.code-info{font-size:12px;color:rgba(255,255,255,.35);margin-top:8px}
+.history{margin-top:24px;border-top:1px solid rgba(255,255,255,.06);padding-top:16px}
+.history h3{font-size:14px;color:rgba(255,255,255,.4);margin-bottom:10px}
+.history-item{font-size:12px;color:rgba(255,255,255,.35);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px}
+.history-item span{color:rgba(255,255,255,.55)}
+.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:rgba(212,175,55,.95);color:#0a0a0a;padding:10px 24px;border-radius:20px;font-size:14px;z-index:99;opacity:0;transition:.3s;pointer-events:none;box-shadow:0 8px 32px rgba(212,175,55,.25)}
+.toast.show{opacity:1}
+.note{background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.08);border-radius:10px;padding:13px;margin-top:16px;font-size:12px;color:rgba(212,175,55,.55);line-height:1.8}
+</style>
+</head>
+<body>
+<div class="card">
+    <img class="logo-img" src="logo.png" alt="安迪 AI调度师" onerror="this.style.display='none'">
+    <div class="brand">安迪 AI调度师</div>
+    <h1>🔐 激活码生成器</h1>
+    <p class="sub">⚠️ 此工具仅你自己使用，不要发给任何人<br>产品：AI总参谋</p>
+    <label>客户称呼</label>
+    <input type="text" id="name" placeholder="如：张总 / XX公司老板">
+
+    <div class="plan-row">
+        <div><label>套餐类型</label>
+        <select id="plan">
+            <option value="month" selected>月卡 — ¥999/30次</option>
+            <option value="halfyear">半年卡 — ¥4999/200次</option>
+            <option value="year">年卡 — ¥9999/500次</option>
+            <option value="custom">自定义天数</option>
+        </select></div>
+        <div><label>使用次数上限</label>
+        <select id="uses">
+            <option value="30" selected>30次（月卡）</option>
+            <option value="200">200次（半年卡）</option>
+            <option value="500">500次（年卡）</option>
+            <option value="10">10次（体验）</option>
+            <option value="50">50次</option>
+            <option value="0">不限次数</option>
+        </select></div>
+    </div>
+
+    <div id="customDaysBox" style="display:none"><label>自定义天数</label><input type="number" id="customDays" value="30" min="1" max="365"></div>
+
+    <label>最大使用人数（微信号限制）</label>
+    <select id="maxUsers">
+        <option value="3" selected>3人（默认）</option>
+        <option value="1">1人（仅本人）</option>
+        <option value="2">2人</option>
+        <option value="5">5人</option>
+        <option value="10">10人</option>
+        <option value="0">不限人数</option>
+    </select>
+
+    <button class="btn btn-gen" onclick="generateCode()">🎫 生成激活码</button>
+
+    <div class="output-section" id="output">
+        <div class="code-box">
+            <div style="font-size:12px;color:rgba(255,255,255,.3);margin-bottom:6px">激活码</div>
+            <div class="code" id="codeDisplay"></div>
+            <div class="code-info" id="codeInfo"></div>
+        </div>
+        <button class="btn btn-copy" onclick="copyCode()">📋 一键复制激活码</button>
+        <button class="btn btn-copy" onclick="copySendMsg()">💬 复制发给客户的话术</button>
+    </div>
+
+    <div class="note">
+        <strong>📌 使用说明：</strong><br>
+        1. 客户付款后，填客户名+选套餐 → 点生成<br>
+        2. 把激活码发给客户<br>
+        3. 客户在AI总参谋工作台输入激活码即可使用<br>
+        4. 激活码从<strong>首次激活当天</strong>开始计时<br>
+        5. 用完次数或到期后，工作台会提示续费<br>
+        6. 本工具可离线使用，生成记录保存在浏览器里
+    </div>
+
+    <div class="history" id="history">
+        <h3>📋 生成记录（仅存储在本机）</h3>
+        <div id="historyList" style="color:rgba(255,255,255,.3);font-size:12px">暂无记录</div>
+    </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SECRET = "miaohan1913_AI_2026_KEY";
+const PLAN_DAYS = { month: 30, halfyear: 180, year: 365 };
+
+document.getElementById('plan').addEventListener('change', function() {
+    document.getElementById('customDaysBox').style.display = this.value === 'custom' ? 'block' : 'none';
+    var plan = this.value;
+    var usesMap = { month: 30, halfyear: 200, year: 500 };
+    if (usesMap[plan]) {
+        document.getElementById('uses').value = usesMap[plan];
+    }
+});
+
+function encrypt(text, key) {
+    let bytes = '';
+    for (let i = 0; i < text.length; i++) {
+        let c = text.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+        bytes += String.fromCharCode((c >> 8) & 0xFF);
+        bytes += String.fromCharCode(c & 0xFF);
+    }
+    return btoa(bytes).replace(/[+/=]/g, c => ({'+':'.','/':'_','=':''}[c]));
+}
+
+function simpleHash(str) {
+    let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (let i = 0; i < str.length; i++) {
+        let ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 3266489909);
+    return (h1 ^ h2) >>> 0;
+}
+
+function generateCode() {
+    const name = document.getElementById('name').value.trim();
+    if (!name) { showToast('请填写客户称呼'); return; }
+    const plan = document.getElementById('plan').value;
+    let days = plan === 'custom' ? parseInt(document.getElementById('customDays').value) || 30 : PLAN_DAYS[plan];
+    const uses = parseInt(document.getElementById('uses').value);
+    const now = new Date();
+    const expiryDate = new Date(now.getTime() + days * 86400000);
+    const expiryStr = expiryDate.toISOString().slice(0, 10);
+    const randomId = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const maxUsers = parseInt(document.getElementById('maxUsers').value) || 0;
+    const payload = expiryStr + '|' + uses + '|' + name + '|' + randomId + '|' + maxUsers;
+    const encrypted = encrypt(payload, SECRET);
+    const hash = simpleHash(encrypted + SECRET).toString(16).slice(0, 4).toUpperCase();
+    const fullCode = encrypted + hash;
+    const formatted = fullCode.match(/.{1,4}/g).join('-');
+    document.getElementById('codeDisplay').textContent = formatted;
+    document.getElementById('codeInfo').textContent = '到期日：'+expiryStr+' · 可用次数：'+(uses===0?'不限':uses+'次')+' · 客户：'+name + (maxUsers > 0 ? ' · 限'+maxUsers+'人使用' : ' · 不限人数');
+    document.getElementById('output').classList.add('show');
+    saveHistory(name, formatted, expiryStr, uses);
+    showToast('✅ 激活码已生成！');
+}
+
+function copyCode() {
+    const code = document.getElementById('codeDisplay').textContent;
+    if (!code) return;
+    navigator.clipboard.writeText(code).then(() => showToast('✅ 激活码已复制！发给客户即可'));
+}
+
+function copySendMsg() {
+    const code = document.getElementById('codeDisplay').textContent;
+    const info = document.getElementById('codeInfo').textContent;
+    if (!code) return;
+    const msg = '您好，您的「AI总参谋」已开通！\n\n🔑 激活码：'+code+'\n📅 '+info+'\n\n使用步骤：\n1. 打开AI总参谋工作台链接\n2. 输入激活码\n3. 选择功能模块，填写经营数据，生成分析指令\n4. 复制指令到任意AI工具（ChatGPT/DeepSeek/Kimi/通义千问）即可获得专业分析\n\n💬 使用问题随时找我。';
+    navigator.clipboard.writeText(msg).then(() => showToast('✅ 话术已复制！粘贴发给客户'));
+}
+
+function saveHistory(name, code, expiry, uses) {
+    let history = JSON.parse(localStorage.getItem('activation_history') || '[]');
+    history.unshift({ name, code, expiry, uses, time: new Date().toLocaleString() });
+    if (history.length > 50) history = history.slice(0, 50);
+    localStorage.setItem('activation_history', JSON.stringify(history));
+    renderHistory();
+}
+
+function renderHistory() {
+    let history = JSON.parse(localStorage.getItem('activation_history') || '[]');
+    if (history.length === 0) {
+        document.getElementById('historyList').innerHTML = '暂无记录';
+        return;
+    }
+    document.getElementById('historyList').innerHTML = history.map(h =>
+        '<div class="history-item"><span>'+h.name+'</span> <span style="color:#d4af37">'+h.code+'</span> <span>到期'+h.expiry+' · '+(h.uses===0?'不限':h.uses+'次')+'</span><span style="color:rgba(255,255,255,.2)">'+h.time+'</span></div>'
+    ).join('');
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+renderHistory();
+</script>
+</body>
+</html>

@@ -242,7 +242,7 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
         <input type="text" id="activationInput" placeholder="请输入激活码" maxlength="200" autocomplete="off">
         <div class="login-err" id="loginErr"></div>
         <button class="btn btn-activate" id="activateBtn" onclick="activate()">激活使用</button>
-        <div class="login-info">还没有激活码？<br>💬 加微信：miaoan1913 获取<br><br>💰 月卡 ¥199(20次) · 季卡 ¥499(100次) · 年卡 ¥1199(500次)</div>
+        <div class="login-info">还没有激活码？<br>💬 加微信：miaoan1913 获取<br><br>💰 月卡 ¥999(30次) · 半年卡 ¥4999(200次) · 年卡 ¥9999(500次)<br><br><span id="syncStatusLogin" style="cursor:pointer;color:rgba(212,175,55,.6);font-size:11px;text-decoration:underline" onclick="showTokenSetup()">⚙️ 设置云端同步（跨设备共享次数）</span></div>
     </div>
 </div>
 
@@ -251,11 +251,12 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
     <div class="wechat-bind-card">
         <div class="icon">📱</div>
         <h3>绑定微信，不怕到期</h3>
-        <div class="subt">到期前3天微信自动提醒续费<br>避免正在用突然中断</div>
-        <div class="benefits"><span>✅</span> 到期前3天微信提醒续费<br><span>✅</span> 换设备时一键恢复会员<br><span>✅</span> 新功能上线第一时间通知<br><span>🚫</span> 不打扰、不群发、不营销</div>
+        <div class="subt" id="wechatBindSubt">到期前3天微信自动提醒续费<br>避免正在用突然中断</div>
+        <div class="benefits" id="wechatBindBenefits"><span>✅</span> 到期前3天微信提醒续费<br><span>✅</span> 换设备时一键恢复会员<br><span>✅</span> 新功能上线第一时间通知<br><span>🚫</span> 不打扰、不群发、不营销</div>
         <input type="text" id="wechatInput" placeholder="输入微信号（选填）">
+        <div class="login-err" id="wechatBindErr" style="margin-top:6px;min-height:18px"></div>
         <button class="btn btn-save" onclick="saveWechat()">💚 绑定，开始使用</button>
-        <button class="btn btn-skip" onclick="skipWechat()">先跳过，直接使用</button>
+        <button class="btn btn-skip" id="wechatBindSkipBtn" onclick="skipWechat()">先跳过，直接使用</button>
     </div>
 </div>
 
@@ -689,9 +690,36 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
 })();
 
 // ============================================================
+// 云端同步 Token 设置
+// ============================================================
+function showTokenSetup() {
+    var token = localStorage.getItem('gh_sync_token') || '';
+    var newToken = prompt((token ? '当前已配置云端同步。\n\n输入新 Token 替换，或点取消保持现有设置：' : '输入 GitHub Token 开启云端同步（跨设备共享次数）：\n\n获取方式见：backend/使用说明_GitHub同步.md'), token);
+    if (newToken !== null) {
+        if (newToken.trim() === '') {
+            localStorage.removeItem('gh_sync_token');
+            alert('已清除云端同步设置，切换为本地模式。');
+        } else {
+            localStorage.setItem('gh_sync_token', newToken.trim());
+            alert('云端同步已配置！刷新页面后生效。');
+        }
+        location.reload();
+    }
+}
+
+// ============================================================
 // 激活码验证系统
 // ============================================================
 const SECRET = "miaohan1913_AI_2026_KEY";
+// GitHub Gist 作为跨设备共享后端（不需要注册任何新服务）
+// 1. 打开 https://github.com/settings/tokens → Generate new token (classic)
+// 2. 勾选 gist 权限 → 生成 → 复制 token
+// 3. 把 token 粘贴到下面引号里，如 'ghp_xxxxxxxxxxxx'
+const GH_TOKEN = localStorage.getItem('gh_sync_token') || '';
+const GIST_DESC = 'AI总参谋-跨设备状态同步';
+const GIST_FILENAME = 'ai-zongcanmou-state.json';
+// 旧版 Cloudflare Worker（可选，二选一）
+const API_BASE = '';
 
 function decrypt(encoded, key) {
     try {
@@ -735,9 +763,84 @@ function validateCode(rawCode) {
     var expiryStr = parts[0];
     var maxUses = parseInt(parts[1]);
     var userName = parts[2];
+    var maxWechatUsers = parts.length >= 5 ? (parseInt(parts[4]) || 0) : 0;
     var expiry = new Date(expiryStr + 'T23:59:59');
     if (new Date() > expiry) return { valid: false, error: '激活码已于 ' + expiryStr + ' 过期' };
-    return { valid: true, userName: userName, expiry: expiryStr, maxUses: maxUses, expiryDate: expiry };
+    return { valid: true, userName: userName, expiry: expiryStr, maxUses: maxUses, maxWechatUsers: maxWechatUsers, expiryDate: expiry };
+}
+
+// ========== GitHub Gist API（跨设备共享状态）==========
+function ghApi(path, options) {
+    if (!GH_TOKEN) return Promise.resolve(null);
+    options = options || {};
+    options.headers = options.headers || {};
+    options.headers['Authorization'] = 'Bearer ' + GH_TOKEN;
+    options.headers['Accept'] = 'application/vnd.github.v3+json';
+    if (options.body && typeof options.body === 'object') {
+        options.body = JSON.stringify(options.body);
+    }
+    return fetch('https://api.github.com' + path, options)
+        .then(function(r){ return r.json(); })
+        .catch(function(){ return null; });
+}
+
+function getOrCreateGist() {
+    var cached = localStorage.getItem('gist_sync_id');
+    if (cached) return Promise.resolve(cached);
+    if (!GH_TOKEN) return Promise.resolve(null);
+    // 搜索已有的同步 Gist
+    return ghApi('/gists?per_page=50').then(function(gists) {
+        if (gists && Array.isArray(gists)) {
+            var found = gists.find(function(g){
+                return g.description === GIST_DESC;
+            });
+            if (found) {
+                localStorage.setItem('gist_sync_id', found.id);
+                return found.id;
+            }
+        }
+        // 自动创建
+        return ghApi('/gists', {
+            method: 'POST',
+            body: { description: GIST_DESC, public: false, files: (_a={}, _a[GIST_FILENAME]={content:JSON.stringify({codes:{}})}, _a) }
+        }).then(function(g) {
+            if (g && g.id) { localStorage.setItem('gist_sync_id', g.id); return g.id; }
+            return null;
+        });
+    });
+    var _a;
+}
+
+function readSharedState(gistId) {
+    return ghApi('/gists/' + gistId).then(function(gist) {
+        if (gist && gist.files && gist.files[GIST_FILENAME]) {
+            try { return JSON.parse(gist.files[GIST_FILENAME].content); } catch(e){}
+        }
+        return { codes: {} };
+    });
+}
+
+function writeSharedState(gistId, state) {
+    return ghApi('/gists/' + gistId, {
+        method: 'PATCH',
+        body: { files: (_b={}, _b[GIST_FILENAME]={content:JSON.stringify(state)}, _b) }
+    });
+    var _b;
+}
+
+function apiPost(endpoint, body) {
+    if (!API_BASE) return Promise.resolve(null);
+    return fetch(API_BASE + endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+    }).then(function(r){ return r.json(); }).catch(function(){ return null; });
+}
+
+function apiGetState(code) {
+    if (!API_BASE) return Promise.resolve(null);
+    return fetch(API_BASE + '/state?code=' + encodeURIComponent(code))
+        .then(function(r){ return r.json(); }).catch(function(){ return null; });
 }
 
 function getUsageKey(code) {
@@ -788,21 +891,97 @@ function activate() {
         return;
     }
 
-    currentSession = { code: input, userName: validation.userName, expiry: validation.expiry, maxUses: validation.maxUses, storageKey: storageKey };
+    currentSession = { code: input, userName: validation.userName, expiry: validation.expiry, maxUses: validation.maxUses, maxWechatUsers: validation.maxWechatUsers, storageKey: storageKey };
+
+    btn.disabled = true;
+    btn.textContent = '✅ 验证通过';
+
     var boundWx = localStorage.getItem('bound_wechat');
-    if (boundWx) {
-        btn.disabled = true;
+    if (validation.maxWechatUsers > 0) {
+        // 限制人数模式：必须绑定微信号
+        document.getElementById('wechatBindSubt').textContent = '该激活码限 ' + validation.maxWechatUsers + ' 人使用';
+        document.getElementById('wechatBindBenefits').style.display = 'none';
+        document.getElementById('wechatBindSkipBtn').style.display = 'none';
+        document.getElementById('wechatInput').placeholder = '请输入微信号（必填，用于身份识别）';
+        document.getElementById('wechatBindErr').textContent = '';
+        document.getElementById('wechatBindOverlay').classList.add('show');
+    } else if (boundWx) {
         btn.textContent = '✅ 激活成功！欢迎回来';
         setTimeout(function(){ enterApp(); }, 400);
         return;
+    } else {
+        document.getElementById('wechatBindSubt').textContent = '到期前3天微信自动提醒续费，避免正在用突然中断';
+        document.getElementById('wechatBindBenefits').style.display = '';
+        document.getElementById('wechatBindSkipBtn').style.display = '';
+        document.getElementById('wechatInput').placeholder = '输入微信号（选填）';
+        document.getElementById('wechatBindOverlay').classList.add('show');
     }
-    btn.disabled = true;
-    btn.textContent = '✅ 验证通过';
-    document.getElementById('wechatBindOverlay').classList.add('show');
 }
 
 function saveWechat() {
     var wx = document.getElementById('wechatInput').value.trim();
+    if (!wx && currentSession.maxWechatUsers > 0) {
+        document.getElementById('wechatBindErr').textContent = '此激活码需要绑定微信号才能使用，请输入微信号';
+        return;
+    }
+    var btn = document.querySelector('.wechat-bind-card .btn-save');
+    if (wx && currentSession.maxWechatUsers > 0) {
+        // 本地预检
+        var bindings = getWechatBindings(currentSession.code);
+        if (bindings.indexOf(wx) === -1) {
+            if (bindings.length >= currentSession.maxWechatUsers) {
+                document.getElementById('wechatBindErr').textContent = '该激活码已达人数上限（最多' + currentSession.maxWechatUsers + '人），如需更多名额请联系客服微信：miaoan1913';
+                return;
+            }
+        }
+        // GitHub Gist 同步
+        if (GH_TOKEN) {
+            btn.textContent = '⏳ 云端验证中...';
+            btn.disabled = true;
+            getOrCreateGist().then(function(gistId){
+                if (!gistId) { failFallback('网络异常，请稍后重试'); return; }
+                return readSharedState(gistId).then(function(state){
+                    var ch = currentSession.code.replace(/[-\s]/g, '').toUpperCase();
+                    var hash = simpleHash(ch).toString(16);
+                    var cs = state.codes[hash];
+                    if (!cs) {
+                        cs = { wechatIds:[], uses:0, maxUses:currentSession.maxUses, maxWechatUsers:currentSession.maxWechatUsers, expiry:currentSession.expiry, userName:currentSession.userName };
+                        state.codes[hash] = cs;
+                    }
+                    cs.maxUses = currentSession.maxUses;
+                    cs.maxWechatUsers = currentSession.maxWechatUsers;
+                    cs.expiry = currentSession.expiry;
+                    if (cs.wechatIds.indexOf(wx) === -1) {
+                        if (cs.wechatIds.length >= cs.maxWechatUsers) {
+                            failFallback('已达人数上限（最多' + cs.maxWechatUsers + '人），如需更多名额请联系客服微信：miaoan1913');
+                            return;
+                        }
+                        cs.wechatIds.push(wx);
+                    }
+                    return writeSharedState(gistId, state).then(function(){
+                        // 同步本地
+                        var key = getUsageKey(currentSession.code);
+                        var usage = getUsage(currentSession.code);
+                        usage.uses = cs.uses;
+                        localStorage.setItem(key, JSON.stringify(usage));
+                        saveWechatBindings(currentSession.code, cs.wechatIds);
+                        localStorage.setItem('bound_wechat', wx);
+                        document.getElementById('wechatBindOverlay').classList.remove('show');
+                        enterApp();
+                    });
+                });
+            }).catch(function(){ failFallback('云端同步失败，请稍后重试'); });
+            function failFallback(msg) {
+                btn.textContent = '💚 绑定，开始使用';
+                btn.disabled = false;
+                document.getElementById('wechatBindErr').textContent = msg;
+            }
+            return;
+        }
+        // 无 Token：仅本地
+        bindings.push(wx);
+        saveWechatBindings(currentSession.code, bindings);
+    }
     if (wx) {
         localStorage.setItem('bound_wechat', wx);
         try { if (typeof gtag==='function') gtag('event','wechat_bound',{event_label:wx}); } catch(e){}
@@ -812,8 +991,23 @@ function saveWechat() {
 }
 
 function skipWechat() {
+    if (currentSession.maxWechatUsers > 0) {
+        document.getElementById('wechatBindErr').textContent = '此激活码需要绑定微信号才能使用';
+        return;
+    }
     document.getElementById('wechatBindOverlay').classList.remove('show');
     enterApp();
+}
+
+// WeChat绑定追踪（同一浏览器内，记录该激活码被哪些微信号用过）
+function getWechatBindingsKey(code) {
+    return 'wxb_' + simpleHash(code.replace(/[-\s]/g, '').toUpperCase()).toString(16);
+}
+function getWechatBindings(code) {
+    try { return JSON.parse(localStorage.getItem(getWechatBindingsKey(code)) || '[]'); } catch(e) { return []; }
+}
+function saveWechatBindings(code, list) {
+    localStorage.setItem(getWechatBindingsKey(code), JSON.stringify(list));
 }
 
 function enterApp() {
@@ -825,12 +1019,51 @@ function enterApp() {
     var boundWx = localStorage.getItem('bound_wechat');
     if (boundWx) {
         document.getElementById('wechatBound').style.display = 'block';
-        document.getElementById('boundWechat').textContent = boundWx;
+        var bindCount = currentSession.maxWechatUsers > 0 ? getWechatBindings(currentSession.code).length : 0;
+        var bindInfo = '💚 微信号：' + boundWx;
+        if (currentSession.maxWechatUsers > 0) {
+            bindInfo += ' （第' + bindCount + '/' + currentSession.maxWechatUsers + '人）';
+        }
+        document.getElementById('boundWechat').textContent = bindInfo;
     }
     updateContactBar();
     updateProfileIndicators();
     updateHistoryBadge();
     updateCandidateBadge();
+    // 从云端同步最新状态（GitHub Gist 或 Cloudflare Worker）
+    if (GH_TOKEN) {
+        getOrCreateGist().then(function(gistId){
+            if (!gistId) return;
+            return readSharedState(gistId).then(function(state){
+                var ch = currentSession.code.replace(/[-\s]/g, '').toUpperCase();
+                var h = simpleHash(ch).toString(16);
+                var cs = state.codes[h];
+                if (cs) {
+                    var key = getUsageKey(currentSession.code);
+                    var usage = getUsage(currentSession.code);
+                    usage.uses = cs.uses;
+                    localStorage.setItem(key, JSON.stringify(usage));
+                    saveWechatBindings(currentSession.code, cs.wechatIds);
+                    refreshUsageDisplay();
+                    if (cs.wechatIds.length > 0) {
+                        document.getElementById('wechatBound').style.display = 'block';
+                        var wx = localStorage.getItem('bound_wechat') || '';
+                        document.getElementById('boundWechat').textContent = '💚 云同步 · ' + cs.wechatIds.length + '/' + cs.maxWechatUsers + '人使用中';
+                    }
+                }
+            });
+        });
+    } else if (API_BASE) {
+        apiGetState(currentSession.code).then(function(r) {
+            if (r && r.exists) {
+                var key = getUsageKey(currentSession.code);
+                var usage = getUsage(currentSession.code);
+                usage.uses = r.uses;
+                localStorage.setItem(key, JSON.stringify(usage));
+                refreshUsageDisplay();
+            }
+        });
+    }
 }
 
 function updateContactBar() {
@@ -871,7 +1104,42 @@ function copyResult(boxId) {
     }).catch(function(){
         showToast('复制失败，请手动选择复制', true);
     });
-    incrementUsage(currentSession.code);
+    // 优先走 GitHub Gist 共享计数
+    if (GH_TOKEN) {
+        getOrCreateGist().then(function(gistId){
+            if (!gistId) { localIncrement(); return; }
+            return readSharedState(gistId).then(function(state){
+                var ch = currentSession.code.replace(/[-\s]/g, '').toUpperCase();
+                var hash = simpleHash(ch).toString(16);
+                var cs = state.codes[hash];
+                if (!cs) {
+                    cs = { wechatIds:[], uses:0, maxUses:currentSession.maxUses, maxWechatUsers:currentSession.maxWechatUsers, expiry:currentSession.expiry, userName:currentSession.userName };
+                    state.codes[hash] = cs;
+                }
+                if (cs.maxUses > 0 && cs.uses >= cs.maxUses) {
+                    showToast('⚠️ 次数已用完，请联系续费', true);
+                    return;
+                }
+                cs.uses++;
+                return writeSharedState(gistId, state).then(function(){
+                    var key = getUsageKey(currentSession.code);
+                    var usage = getUsage(currentSession.code);
+                    usage.uses = cs.uses;
+                    localStorage.setItem(key, JSON.stringify(usage));
+                    refreshUsageDisplay();
+                });
+            });
+        }).catch(function(){ localIncrement(); });
+    } else {
+        localIncrement();
+    }
+    function localIncrement() {
+        incrementUsage(currentSession.code);
+        refreshUsageDisplay();
+    }
+}
+
+function refreshUsageDisplay() {
     updateContactBar();
     document.getElementById('remainingUses').textContent = currentSession.maxUses === 0 ? '不限' : (currentSession.maxUses - getUsage(currentSession.code).uses);
 }
@@ -1982,6 +2250,17 @@ function clearOnboard() {
     document.getElementById('onboard-result').classList.remove('show');
     document.getElementById('onboard-copy-btn').style.display = 'none';
 }
+// 云端同步状态指示
+(function(){
+    var el = document.getElementById('syncStatusLogin');
+    if (el) {
+        var token = localStorage.getItem('gh_sync_token');
+        if (token) {
+            el.textContent = '🟢 云端同步已开启 · 点击修改';
+            el.style.color = 'rgba(72,199,142,.7)';
+        }
+    }
+})();
 </script>
 </body>
 </html>

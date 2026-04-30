@@ -1,0 +1,15 @@
+# AI总参谋 · Cloudflare Worker 配置
+# 部署步骤见 README.md
+
+name = "ai-zongcanmou-api"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# KV 命名空间 — 先运行以下命令创建，然后把输出的 id 填到下面：
+# npx wrangler kv:namespace create CODE_STORE
+# npx wrangler kv:namespace create CODE_STORE --preview  # 预览环境
+
+[[kv_namespaces]]
+binding = "CODE_STORE"
+id = "YOUR_KV_ID_HERE"
+preview_id = "YOUR_PREVIEW_KV_ID_HERE"
