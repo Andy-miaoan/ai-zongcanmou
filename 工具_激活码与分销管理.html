@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>激活码与分销管理 · 安迪 AI调度师</title>
+<link rel="icon" href="logo.png" type="image/png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;background:#080c0a;color:#d8d8d8;min-height:100vh}
+.container{max-width:700px;margin:0 auto;padding:24px 16px}
+.card{background:rgba(16,24,20,.95);border:1px solid rgba(212,175,55,.12);border-radius:18px;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,.6);margin-bottom:20px}
+.logo-img{width:44px;height:44px;border-radius:12px;margin-bottom:6px;object-fit:cover}
+.brand{font-size:12px;color:rgba(212,175,55,.6);letter-spacing:2px;margin-bottom:2px;font-weight:500}
+h1{font-size:20px;margin-bottom:2px;color:#e8ddc0}
+h2{font-size:16px;color:#e8ddc0;margin-bottom:12px}
+.sub{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:18px;line-height:1.6}
+
+/* Tabs */
+.tabs{display:flex;gap:0;margin-bottom:20px;border:1px solid rgba(212,175,55,.15);border-radius:10px;overflow:hidden}
+.tab{flex:1;text-align:center;padding:10px;font-size:13px;font-weight:600;cursor:pointer;background:rgba(0,0,0,.2);color:rgba(255,255,255,.45);transition:.2s;border:none;font-family:inherit}
+.tab.active{background:rgba(212,175,55,.12);color:#d4af37}
+.tab:hover:not(.active){color:rgba(255,255,255,.7)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+label{display:block;font-size:13px;color:rgba(255,255,255,.55);margin:14px 0 4px;font-weight:600}
+input,select{width:100%;padding:10px 14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(0,0,0,.25);color:#d8d8d8;font-size:14px;font-family:inherit}
+input:focus,select:focus{outline:none;border-color:#d4af37;box-shadow:0 0 0 3px rgba(212,175,55,.06)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+select option{background:#161f18;color:#d8d8d8}
+.plan-row{display:flex;gap:12px}
+.plan-row>div{flex:1}
+
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;letter-spacing:.5px}
+.btn-gen{background:linear-gradient(135deg,#d4af37,#b8960f);color:#0a0a0a;box-shadow:0 4px 16px rgba(212,175,55,.2);margin-top:16px}
+.btn-gen:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(212,175,55,.3)}
+.btn-copy{background:rgba(212,175,55,.08);color:#d4af37;margin-top:8px;border:1px solid rgba(212,175,55,.15)}
+.btn-copy:hover{background:rgba(212,175,55,.14)}
+.btn-sm{padding:7px 14px;font-size:12px;width:auto;border-radius:8px}
+.btn-danger{background:rgba(255,80,80,.1);color:#ff6b6b;border:1px solid rgba(255,80,80,.2)}
+.btn-danger:hover{background:rgba(255,80,80,.2)}
+.btn-export{background:rgba(72,199,142,.1);color:#48c78e;border:1px solid rgba(72,199,142,.2);margin-top:8px}
+
+.output-section{margin-top:18px;display:none}
+.output-section.show{display:block}
+.code-box{background:rgba(0,0,0,.25);border:1px solid rgba(212,175,55,.15);border-radius:12px;padding:20px;text-align:center;margin-top:10px}
+.code{font-size:24px;font-weight:700;color:#d4af37;letter-spacing:2px;font-family:'Courier New',monospace;word-break:break-all}
+.code-info{font-size:12px;color:rgba(255,255,255,.35);margin-top:8px;line-height:1.6}
+
+/* Referrer management */
+.ref-list{margin-top:12px}
+.ref-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.06);border-radius:10px;margin-bottom:6px;flex-wrap:wrap;gap:8px}
+.ref-item .info{flex:1;min-width:150px}
+.ref-item .info .name{font-size:14px;font-weight:600;color:#e8ddc0}
+.ref-item .info .detail{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px}
+.ref-item .stats{text-align:right}
+.ref-item .stats .num{font-size:18px;font-weight:700;color:#d4af37}
+.ref-item .stats .lbl{font-size:11px;color:rgba(255,255,255,.35)}
+.add-ref-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.add-ref-row input{flex:1;min-width:100px}
+.add-ref-row .btn-sm{flex-shrink:0}
+
+/* Table */
+.data-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+.data-table th{text-align:left;padding:8px 6px;color:rgba(255,255,255,.4);font-weight:600;border-bottom:1px solid rgba(255,255,255,.08);font-size:11px}
+.data-table td{padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.04);color:rgba(255,255,255,.6)}
+.data-table .code-col{color:#d4af37;font-family:'Courier New',monospace;font-size:11px}
+.status-badge{display:inline-block;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:600}
+.status-generated{background:rgba(255,255,255,.06);color:rgba(255,255,255,.4)}
+.status-sent{background:rgba(72,199,142,.1);color:#48c78e}
+.status-active{background:rgba(212,175,55,.15);color:#d4af37}
+.clickable{cursor:pointer;transition:.15s}
+.clickable:hover{color:#d4af37}
+
+/* Dashboard */
+.stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.stat-card{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:16px;text-align:center}
+.stat-card .num{font-size:28px;font-weight:700;color:#d4af37}
+.stat-card .num.green{color:#48c78e}
+.stat-card .lbl{font-size:11px;color:rgba(255,255,255,.4);margin-top:4px}
+
+.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:rgba(212,175,55,.95);color:#0a0a0a;padding:10px 24px;border-radius:20px;font-size:14px;z-index:99;opacity:0;transition:.3s;pointer-events:none;box-shadow:0 8px 32px rgba(212,175,55,.25)}
+.toast.show{opacity:1}
+.toast.err{background:rgba(255,80,80,.95)}
+.note{background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.08);border-radius:10px;padding:12px;margin-top:14px;font-size:11px;color:rgba(212,175,55,.55);line-height:1.8}
+
+@media(max-width:480px){
+  .plan-row{flex-direction:column;gap:0}
+  .stat-cards{grid-template-columns:repeat(2,1fr)}
+  .add-ref-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div style="text-align:center;margin-bottom:16px">
+        <img class="logo-img" src="logo.png" alt="安迪 AI调度师" onerror="this.style.display='none'">
+        <div class="brand">安迪 AI调度师</div>
+        <h1>激活码与分销管理</h1>
+        <p class="sub">激活码生成 + 分销人管理 + 佣金看板 · 三合一<br>所有数据仅存储在本机浏览器，不上传任何服务器</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('generate')">🎫 生成激活码</button>
+        <button class="tab" onclick="switchTab('referrer')">👥 分销人管理</button>
+        <button class="tab" onclick="switchTab('dashboard')">📊 分销看板</button>
+    </div>
+
+    <!-- Tab 1: Generate Code -->
+    <div class="tab-panel active" id="panel-generate">
+        <div class="card">
+            <h2>生成激活码</h2>
+            <label>客户称呼</label>
+            <input type="text" id="name" placeholder="如：张总 / XX公司老板">
+
+            <label>分销来源（谁介绍的）</label>
+            <select id="referrer">
+                <option value="">无分销来源（直接客户）</option>
+            </select>
+            <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:3px">如无可选项，先去「分销人管理」添加分销人</div>
+
+            <div class="plan-row" style="margin-top:8px">
+                <div><label>套餐类型</label>
+                <select id="plan">
+                    <option value="month" selected>月卡 — ¥199/20次</option>
+                    <option value="quarter">季卡 — ¥499/100次</option>
+                    <option value="year">年卡 — ¥1199/500次</option>
+                    <option value="custom">自定义天数</option>
+                </select></div>
+                <div><label>使用次数上限</label>
+                <select id="uses">
+                    <option value="20" selected>20次（月卡）</option>
+                    <option value="100">100次（季卡）</option>
+                    <option value="500">500次（年卡）</option>
+                    <option value="10">10次（体验）</option>
+                    <option value="50">50次</option>
+                    <option value="0">不限次数</option>
+                </select></div>
+            </div>
+
+            <div id="customDaysBox" style="display:none"><label>自定义天数</label><input type="number" id="customDays" value="30" min="1" max="365"></div>
+
+            <button class="btn btn-gen" onclick="generateCode()">🎫 生成激活码</button>
+
+            <div class="output-section" id="output">
+                <div class="code-box">
+                    <div style="font-size:12px;color:rgba(255,255,255,.3);margin-bottom:6px">激活码</div>
+                    <div class="code" id="codeDisplay"></div>
+                    <div class="code-info" id="codeInfo"></div>
+                </div>
+                <button class="btn btn-copy" onclick="copyCode()">📋 一键复制激活码</button>
+                <button class="btn btn-copy" onclick="copySendMsg()">💬 复制发给客户的话术</button>
+            </div>
+
+            <div class="note">
+                <strong>📌 操作流程：</strong><br>
+                1. 客户付款（说明介绍人）→ 填信息选分销人 → 点生成<br>
+                2. 把激活码发给客户 → 手动点「标记已发送」<br>
+                3. 客户在工作台激活后 → 手动点「标记已激活」<br>
+                4. 佣金在「分销看板」中自动计算
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 2: Referrer Management -->
+    <div class="tab-panel" id="panel-referrer">
+        <div class="card">
+            <h2>分销人管理</h2>
+            <p style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:4px">添加你的分销伙伴，每个分销人有独立的ID用于追踪</p>
+
+            <div class="add-ref-row">
+                <input type="text" id="refName" placeholder="姓名/称呼">
+                <input type="text" id="refWx" placeholder="微信号（可选）">
+                <input type="number" id="refCommission" placeholder="佣金%" value="15" min="0" max="50" style="max-width:80px">
+                <button class="btn btn-copy btn-sm" onclick="addReferrer()" style="margin-top:0">+ 添加</button>
+            </div>
+
+            <div class="ref-list" id="refList" style="margin-top:14px">
+                <div style="font-size:12px;color:rgba(255,255,255,.3);text-align:center;padding:20px">暂无分销人，上方添加</div>
+            </div>
+
+            <div class="note" style="margin-top:16px">
+                <strong>💡 两种分销方式：</strong><br>
+                <strong>方式一（手动）：</strong>客户找你购买 → 你问"谁介绍的" → 生成激活码时选分销人 → 佣金自动计算<br>
+                <strong>方式二（自动）：</strong>把下面的专属链接发给分销人 → 他转发给客户 → 客户打开工作台会看到"推荐人：XX" → 客户加你微信时主动报名字<br>
+                <strong>佣金：</strong>套餐价格 × 佣金比例（月卡¥199×15%=¥30, 季卡¥499×15%=¥75, 年卡¥1199×15%=¥180）<br>
+                <strong>建议：</strong>两种方式同时用，链接自动追踪 + 手动选分销人双重保险
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 3: Dashboard -->
+    <div class="tab-panel" id="panel-dashboard">
+        <div class="card">
+            <h2>分销看板</h2>
+            <div class="stat-cards" id="statCards">
+                <div class="stat-card"><div class="num" id="statTotalSales">0</div><div class="lbl">总销售额 (元)</div></div>
+                <div class="stat-card"><div class="num green" id="statTotalCommission">0</div><div class="lbl">总佣金待付 (元)</div></div>
+                <div class="stat-card"><div class="num" id="statTotalRefs">0</div><div class="lbl">总分销人</div></div>
+                <div class="stat-card"><div class="num" id="statTotalCustomers">0</div><div class="lbl">总分销客户</div></div>
+            </div>
+
+            <h2 style="margin-top:20px">分销人业绩排行</h2>
+            <div id="refRanking" style="font-size:12px;color:rgba(255,255,255,.35);padding:10px 0">暂无数据</div>
+
+            <button class="btn btn-export" onclick="exportData()">📥 导出分销数据 (CSV)</button>
+        </div>
+
+        <div class="card">
+            <h2>全部激活码记录</h2>
+            <div style="overflow-x:auto">
+            <table class="data-table">
+                <thead><tr>
+                    <th>时间</th><th>客户</th><th>套餐</th><th>分销人</th><th>佣金</th><th>状态</th><th>操作</th>
+                </tr></thead>
+                <tbody id="historyTable"><tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.3);padding:16px">暂无记录</td></tr></tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SECRET = "miaohan1913_AI_2026_KEY";
+const PLAN_DAYS = { month: 30, quarter: 90, year: 365 };
+const PLAN_PRICES = { month: 199, quarter: 499, year: 500 };
+const PLAN_NAMES = { month: '月卡', quarter: '季卡', year: '年卡' };
+
+// ============ Tab Switching ============
+function switchTab(name) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector('.tab[onclick*="'+name+'"]').classList.add('active');
+    document.getElementById('panel-'+name).classList.add('active');
+    if (name === 'dashboard') refreshDashboard();
+    if (name === 'generate') refreshReferrerSelect();
+}
+
+// ============ Referrer Management ============
+function getReferrers() {
+    try { return JSON.parse(localStorage.getItem('referrers') || '[]'); } catch(e) { return []; }
+}
+function saveReferrers(list) {
+    localStorage.setItem('referrers', JSON.stringify(list));
+}
+
+function addReferrer() {
+    var name = document.getElementById('refName').value.trim();
+    if (!name) { showToast('请填写分销人姓名', 'err'); return; }
+    var wx = document.getElementById('refWx').value.trim();
+    var commission = parseInt(document.getElementById('refCommission').value) || 15;
+    var list = getReferrers();
+    if (list.find(function(r){ return r.name === name; })) { showToast('该分销人已存在', 'err'); return; }
+    list.push({ id: 'REF' + Date.now().toString(36).toUpperCase(), name: name, wx: wx, commission: commission, createdAt: new Date().toISOString().slice(0,10) });
+    saveReferrers(list);
+    document.getElementById('refName').value = '';
+    document.getElementById('refWx').value = '';
+    renderReferrers();
+    refreshReferrerSelect();
+    showToast('✅ 分销人已添加');
+}
+
+function deleteReferrer(id) {
+    if (!confirm('确定删除该分销人？历史记录中的佣金数据会保留。')) return;
+    var list = getReferrers().filter(function(r){ return r.id !== id; });
+    saveReferrers(list);
+    renderReferrers();
+    refreshReferrerSelect();
+    showToast('已删除');
+}
+
+function renderReferrers() {
+    var list = getReferrers();
+    var container = document.getElementById('refList');
+    if (list.length === 0) {
+        container.innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,.3);text-align:center;padding:20px">暂无分销人，上方添加</div>';
+        return;
+    }
+    var history = getHistory();
+    var workbenchUrl = 'https://andy-miaoan.github.io/ai-zongcanmou/';
+    container.innerHTML = list.map(function(r){
+        var refHistory = history.filter(function(h){ return h.referrerId === r.id; });
+        var activeCount = refHistory.filter(function(h){ return h.status === 'active'; }).length;
+        var totalCommission = refHistory.filter(function(h){ return h.status === 'active'; }).reduce(function(s,h){ return s + (h.commission || 0); }, 0);
+        var refLink = workbenchUrl + '?ref=' + encodeURIComponent(r.name);
+        return '<div class="ref-item" style="flex-direction:column;align-items:stretch">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">' +
+            '<div class="info"><div class="name">'+escHtml(r.name)+' <span style="font-size:11px;color:rgba(255,255,255,.3);font-weight:400">佣金'+r.commission+'%</span></div>' +
+            '<div class="detail">' + (r.wx ? '微信:'+escHtml(r.wx)+' · ' : '') + '添加于'+r.createdAt+'</div></div>' +
+            '<div style="display:flex;align-items:center;gap:8px">' +
+            '<div class="stats"><div class="num">'+activeCount+'</div><div class="lbl">已激活客户</div></div>' +
+            '<div class="stats" style="margin-left:8px"><div class="num" style="font-size:14px">¥'+totalCommission+'</div><div class="lbl">佣金待付</div></div>' +
+            '<button class="btn btn-sm btn-danger" onclick="deleteReferrer(\''+r.id+'\')" style="margin-left:auto">删除</button>' +
+            '</div>' +
+            '<div style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:8px 12px;margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+            '<span style="font-size:11px;color:rgba(255,255,255,.45);flex-shrink:0">🔗 专属推广链接：</span>' +
+            '<code style="font-size:11px;color:#d4af37;word-break:break-all;flex:1;min-width:140px">'+escHtml(refLink)+'</code>' +
+            '<button class="btn btn-copy btn-sm" onclick="copyRefLink(\''+escHtml(refLink)+'\')" style="margin-top:0;flex-shrink:0">📋 复制链接</button>' +
+            '</div>' +
+            '</div>';
+    }).join('');
+}
+
+function copyRefLink(link) {
+    navigator.clipboard.writeText(link).then(function(){ showToast('✅ 专属链接已复制！发给分销人即可'); });
+}
+
+function refreshReferrerSelect() {
+    var select = document.getElementById('referrer');
+    var list = getReferrers();
+    select.innerHTML = '<option value="">无分销来源（直接客户）</option>' +
+        list.map(function(r){ return '<option value="'+r.id+'">'+escHtml(r.name)+' ('+r.commission+'%佣金)</option>'; }).join('');
+}
+
+// ============ History Management ============
+function getHistory() {
+    try { return JSON.parse(localStorage.getItem('activation_history') || '[]'); } catch(e) { return []; }
+}
+function saveHistory(list) {
+    if (list.length > 200) list = list.slice(0, 200);
+    localStorage.setItem('activation_history', JSON.stringify(list));
+}
+
+function saveRecord(record) {
+    var history = getHistory();
+    history.unshift(record);
+    saveHistory(history);
+}
+
+// ============ Encryption ============
+function encrypt(text, key) {
+    var bytes = '';
+    for (var i = 0; i < text.length; i++) {
+        var c = text.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+        bytes += String.fromCharCode((c >> 8) & 0xFF);
+        bytes += String.fromCharCode(c & 0xFF);
+    }
+    return btoa(bytes).replace(/[+/=]/g, function(c){ return ({'+':'.','/':'_','=':''})[c]; });
+}
+
+function simpleHash(str) {
+    var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (var i = 0; i < str.length; i++) {
+        var ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 3266489909);
+    return (h1 ^ h2) >>> 0;
+}
+
+// ============ Generate Code ============
+document.getElementById('plan').addEventListener('change', function() {
+    document.getElementById('customDaysBox').style.display = this.value === 'custom' ? 'block' : 'none';
+    var usesMap = { month: 20, quarter: 100, year: 500 };
+    if (usesMap[this.value]) document.getElementById('uses').value = usesMap[this.value];
+});
+
+function generateCode() {
+    var name = document.getElementById('name').value.trim();
+    if (!name) { showToast('请填写客户称呼', 'err'); return; }
+    var plan = document.getElementById('plan').value;
+    var days = plan === 'custom' ? parseInt(document.getElementById('customDays').value) || 30 : PLAN_DAYS[plan];
+    if (plan === 'custom' && days < 1) { showToast('请填写有效天数', 'err'); return; }
+    var uses = parseInt(document.getElementById('uses').value);
+    var referrerId = document.getElementById('referrer').value;
+    var now = new Date();
+    var expiryDate = new Date(now.getTime() + days * 86400000);
+    var expiryStr = expiryDate.toISOString().slice(0, 10);
+    var randomId = Math.random().toString(36).substring(2, 6).toUpperCase();
+
+    // Payload: expiry|uses|name|randomId|referrerId
+    var payload = expiryStr + '|' + uses + '|' + name + '|' + randomId + '|' + (referrerId || 'DIRECT');
+    var encrypted = encrypt(payload, SECRET);
+    var hash = simpleHash(encrypted + SECRET).toString(16).slice(0, 4).toUpperCase();
+    var fullCode = encrypted + hash;
+    var formatted = fullCode.match(/.{1,4}/g).join('-');
+
+    document.getElementById('codeDisplay').textContent = formatted;
+    document.getElementById('codeInfo').textContent = '到期日：'+expiryStr+' · 可用次数：'+(uses===0?'不限':uses+'次')+' · 客户：'+name + (referrerId ? ' · 分销人：'+(getReferrers().find(function(r){return r.id===referrerId})||{}).name||'' : '');
+    document.getElementById('output').classList.add('show');
+
+    // Calculate commission
+    var commission = 0;
+    var refName = '';
+    if (referrerId) {
+        var ref = getReferrers().find(function(r){ return r.id === referrerId; });
+        if (ref) {
+            var price = plan === 'custom' ? 0 : (PLAN_PRICES[plan] || 0);
+            commission = Math.round(price * ref.commission / 100);
+            refName = ref.name;
+        }
+    }
+
+    saveRecord({
+        name: name,
+        code: formatted,
+        fullCode: fullCode,
+        expiry: expiryStr,
+        uses: uses,
+        plan: plan,
+        planName: PLAN_NAMES[plan] || (days+'天'),
+        price: plan === 'custom' ? 0 : (PLAN_PRICES[plan] || 0),
+        referrerId: referrerId || '',
+        referrerName: refName,
+        commission: commission,
+        status: 'generated',
+        time: new Date().toLocaleString(),
+        isoTime: new Date().toISOString()
+    });
+
+    refreshReferrerSelect();
+    showToast('✅ 激活码已生成！' + (commission > 0 ? ' 佣金¥'+commission : ''));
+}
+
+function updateStatus(code, newStatus) {
+    var history = getHistory();
+    var record = history.find(function(h){ return h.code === code || h.fullCode === code; });
+    if (record) {
+        record.status = newStatus;
+        saveHistory(history);
+        refreshDashboard();
+        showToast(newStatus === 'sent' ? '已标记为发送' : '已标记为激活');
+    }
+}
+
+// ============ Copy ============
+function copyCode() {
+    var code = document.getElementById('codeDisplay').textContent;
+    if (!code) return;
+    navigator.clipboard.writeText(code).then(function(){ showToast('✅ 激活码已复制！'); });
+}
+
+function copySendMsg() {
+    var code = document.getElementById('codeDisplay').textContent;
+    var info = document.getElementById('codeInfo').textContent;
+    if (!code) return;
+    var msg = '您好，您的「AI总参谋」已开通！\n\n🔑 激活码：'+code+'\n📅 '+info+'\n\n使用步骤：\n1. 打开工作台：https://andy-miaoan.github.io/ai-zongcanmou/\n2. 输入激活码\n3. 选择功能模块，填写经营数据\n4. 生成分析指令，复制到任意AI工具（ChatGPT/DeepSeek/Kimi/通义千问）即可获得专业分析\n\n💬 使用问题随时找我。';
+    navigator.clipboard.writeText(msg).then(function(){ showToast('✅ 话术已复制！'); });
+}
+
+// ============ Dashboard ============
+function refreshDashboard() {
+    var history = getHistory();
+    var referrers = getReferrers();
+
+    // Stats
+    var totalSales = history.reduce(function(s,h){ return s + (h.price || 0); }, 0);
+    var totalCommission = history.filter(function(h){ return h.status === 'active'; }).reduce(function(s,h){ return s + (h.commission || 0); }, 0);
+    var totalCustomers = history.filter(function(h){ return h.referrerId && h.referrerId !== 'DIRECT'; }).length;
+
+    document.getElementById('statTotalSales').textContent = totalSales.toLocaleString();
+    document.getElementById('statTotalCommission').textContent = totalCommission.toLocaleString();
+    document.getElementById('statTotalRefs').textContent = referrers.length;
+    document.getElementById('statTotalCustomers').textContent = totalCustomers;
+
+    // Referrer ranking
+    var ranking = referrers.map(function(r){
+        var refHistory = history.filter(function(h){ return h.referrerId === r.id; });
+        var active = refHistory.filter(function(h){ return h.status === 'active'; });
+        return {
+            name: r.name,
+            commission: r.commission,
+            total: refHistory.length,
+            active: active.length,
+            totalCommission: active.reduce(function(s,h){ return s + (h.commission || 0); }, 0)
+        };
+    }).sort(function(a,b){ return b.active - a.active; });
+
+    var rankingHtml = '';
+    if (ranking.length === 0) {
+        rankingHtml = '<div style="font-size:12px;color:rgba(255,255,255,.35);padding:10px 0">暂无分销人</div>';
+    } else {
+        rankingHtml = ranking.map(function(r, i){
+            return '<div class="ref-item">' +
+                '<div class="info"><span style="color:#d4af37;font-weight:700;margin-right:8px">#'+(i+1)+'</span> <span class="name">'+escHtml(r.name)+'</span>' +
+                '<div class="detail">佣金'+r.commission+'% · 共'+r.total+'个客户 · '+r.active+'个已激活</div></div>' +
+                '<div class="stats"><div class="num">¥'+r.totalCommission+'</div><div class="lbl">佣金待付</div></div></div>';
+        }).join('');
+    }
+    document.getElementById('refRanking').innerHTML = rankingHtml;
+
+    // History table
+    if (history.length === 0) {
+        document.getElementById('historyTable').innerHTML = '<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.3);padding:16px">暂无记录</td></tr>';
+    } else {
+        document.getElementById('historyTable').innerHTML = history.map(function(h){
+            var statusClass = h.status === 'generated' ? 'status-generated' : (h.status === 'sent' ? 'status-sent' : 'status-active');
+            var statusText = h.status === 'generated' ? '已生成' : (h.status === 'sent' ? '已发送' : '已激活');
+            var ops = '';
+            if (h.status === 'generated') ops = '<span class="clickable" onclick="updateStatus(\''+h.code+'\',\'sent\')">标记已发送</span>';
+            if (h.status === 'sent') ops = '<span class="clickable" onclick="updateStatus(\''+h.code+'\',\'active\')">标记已激活</span>';
+            if (h.status === 'active') ops = '<span style="color:rgba(255,255,255,.2)">-</span>';
+            return '<tr>' +
+                '<td>'+h.time.split(' ')[0]+'</td>' +
+                '<td>'+escHtml(h.name)+'</td>' +
+                '<td>'+h.planName+' ¥'+h.price+'</td>' +
+                '<td>'+(h.referrerName || '<span style="color:rgba(255,255,255,.2)">直接</span>')+'</td>' +
+                '<td style="color:#d4af37">'+(h.commission > 0 ? '¥'+h.commission : '-')+'</td>' +
+                '<td><span class="status-badge '+statusClass+'">'+statusText+'</span></td>' +
+                '<td>'+ops+'</td>' +
+                '</tr>';
+        }).join('');
+    }
+}
+
+function exportData() {
+    var history = getHistory();
+    if (history.length === 0) { showToast('暂无数据可导出', 'err'); return; }
+    var csv = '﻿时间,客户,套餐,价格,分销人,佣金,状态,到期日,可用次数\n';
+    csv += history.map(function(h){
+        return [h.time, h.name, h.planName, h.price, h.referrerName||'直接', h.commission||0, h.status==='generated'?'已生成':(h.status==='sent'?'已发送':'已激活'), h.expiry, h.uses].join(',');
+    }).join('\n');
+    var blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'AI总参谋_分销数据_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('✅ 数据已导出');
+}
+
+// ============ Utility ============
+function escHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+
+function showToast(msg, type) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + (type || '');
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 2000);
+}
+
+// ============ Init ============
+function init() {
+    renderReferrers();
+    refreshReferrerSelect();
+    refreshDashboard();
+}
+init();
+</script>
+</body>
+</html>
