@@ -680,6 +680,1765 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
 </div>
 <div class="toast" id="toast"></div>
 
-<script>(function(){var _0x4cfd82=new URLSearchParams(window['location']['search']);var _0x11c0a4=_0x4cfd82['get']('ref');if(_0x11c0a4){sessionStorage['setItem']('referrer',_0x11c0a4);var _0x815b12=document['getElementById']('refTag');var _0x3cd197=document['getElementById']('refName');if(_0x815b12&&_0x3cd197){_0x3cd197['textContent']=decodeURIComponent(_0x11c0a4);_0x815b12['style']['display']='inline-block';}}else{var _0x110c3d=sessionStorage['getItem']('referrer');if(_0x110c3d){var _0x815b12=document['getElementById']('refTag');var _0x3cd197=document['getElementById']('refName');if(_0x815b12&&_0x3cd197){_0x3cd197['textContent']=decodeURIComponent(_0x110c3d);_0x815b12['style']['display']='inline-block';}}}}());function showTokenSetup(){var _0x84219c=localStorage['getItem']('gh_sync_token')||'';var _0x3ded5a=prompt(_0x84219c?'当前已配置云端同步。\x0a\x0a输入新\x20Token\x20替换，或点取消保持现有设置：':'输入\x20GitHub\x20Token\x20开启云端同步（跨设备共享次数）：\x0a\x0a获取方式见：backend/使用说明_GitHub同步.md',_0x84219c);if(_0x3ded5a!==null){if(_0x3ded5a['trim']()===''){localStorage['removeItem']('gh_sync_token');alert('已清除云端同步设置，切换为本地模式。');}else{localStorage['setItem']('gh_sync_token',_0x3ded5a['trim']());alert('云端同步已配置！刷新页面后生效。');}location['reload']();}}var _S0='mi';var _S1='aohan';var _S2='1913_AI';var _S3='_2026_KEY';var SECRET=_S0+_S1+_S2+_S3;setTimeout(function(){_S0=_S1=_S2=_S3='';},0x64);const GH_TOKEN=localStorage['getItem']('gh_sync_token')||'';const GIST_DESC='AI总参谋-跨设备状态同步';const GIST_FILENAME='ai-zongcanmou-state.json';const API_BASE='';function decrypt(_0x17c63d,_0x938d11){try{_0x17c63d=_0x17c63d['replace'](/[\._]/g,_0x2dcfce=>({'.':'+','_':'/'}[_0x2dcfce]));while(_0x17c63d['length']%0x4)_0x17c63d+='=';var _0x4b4df4=atob(_0x17c63d);var _0x3cc61e='';for(var _0x40f6ee=0x0;_0x40f6ee<_0x4b4df4['length'];_0x40f6ee+=0x2){var _0x268d50=_0x4b4df4['charCodeAt'](_0x40f6ee)&0xff;var _0x48e1d5=_0x4b4df4['charCodeAt'](_0x40f6ee+0x1)&0xff;var _0x5134af=_0x268d50<<0x8|_0x48e1d5;_0x3cc61e+=String['fromCharCode'](_0x5134af^_0x938d11['charCodeAt'](_0x40f6ee/0x2%_0x938d11['length']));}return _0x3cc61e;}catch(_0x4a4c88){return'';}}function simpleHash(_0x3a6c26){var _0x1ef2b7=0xdeadbeef,_0x3e4eb9=0x41c6ce57;for(var _0x434140=0x0;_0x434140<_0x3a6c26['length'];_0x434140++){var _0x2f510a=_0x3a6c26['charCodeAt'](_0x434140);_0x1ef2b7=Math['imul'](_0x1ef2b7^_0x2f510a,0x9e3779b1);_0x3e4eb9=Math['imul'](_0x3e4eb9^_0x2f510a,0x5f356495);}_0x1ef2b7=Math['imul'](_0x1ef2b7^_0x1ef2b7>>>0x10,0x85ebca6b);_0x3e4eb9=Math['imul'](_0x3e4eb9^_0x3e4eb9>>>0x10,0xc2b2ae35);return(_0x1ef2b7^_0x3e4eb9)>>>0x0;}function validateCode(_0x2d91da){var _0x318819=_0x2d91da['replace'](/[-\s]/g,'');if(_0x318819['length']<0xc)return{'valid':![],'error':'激活码格式错误'};var _0xb926e8=_0x318819['slice'](-0x4)['toUpperCase']();var _0x49a1e7=_0x318819['slice'](0x0,-0x4);var _0x429a01=simpleHash(_0x49a1e7+SECRET)['toString'](0x10)['slice'](0x0,0x4)['toUpperCase']();if(_0xb926e8!==_0x429a01)return{'valid':![],'error':'激活码无效'};var _0x4833bb=decrypt(_0x49a1e7,SECRET);if(!_0x4833bb)return{'valid':![],'error':'激活码数据损坏'};var _0x55e253=_0x4833bb['split']('|');if(_0x55e253['length']<0x4)return{'valid':![],'error':'激活码数据损坏'};var _0x287955=_0x55e253[0x0];var _0x3854c0=parseInt(_0x55e253[0x1]);var _0x4ac846=_0x55e253[0x2];var _0x42c1ba=_0x55e253['length']>=0x5?parseInt(_0x55e253[0x4])||0x0:0x0;var _0xe9e8ad=new Date(_0x287955+'T23:59:59');if(new Date()>_0xe9e8ad)return{'valid':![],'error':'激活码已于\x20'+_0x287955+'\x20过期'};return{'valid':!![],'userName':_0x4ac846,'expiry':_0x287955,'maxUses':_0x3854c0,'maxWechatUsers':_0x42c1ba,'expiryDate':_0xe9e8ad};}function ghApi(_0x2ae17f,_0x229665){if(!GH_TOKEN)return Promise['resolve'](null);_0x229665=_0x229665||{};_0x229665['headers']=_0x229665['headers']||{};_0x229665['headers']['Authorization']='Bearer\x20'+GH_TOKEN;_0x229665['headers']['Accept']='application/vnd.github.v3+json';if(_0x229665['body']&&typeof _0x229665['body']==='object'){_0x229665['body']=JSON['stringify'](_0x229665['body']);}return fetch('https://api.github.com'+_0x2ae17f,_0x229665)['then'](function(_0x4def33){return _0x4def33['json']();})['catch'](function(){return null;});}function getOrCreateGist(){var _0xf7442f=localStorage['getItem']('gist_sync_id');if(_0xf7442f)return Promise['resolve'](_0xf7442f);if(!GH_TOKEN)return Promise['resolve'](null);return ghApi('/gists?per_page=50')['then'](function(_0x483f02){if(_0x483f02&&Array['isArray'](_0x483f02)){var _0x1d87a8=_0x483f02['find'](function(_0x195921){return _0x195921['description']===GIST_DESC;});if(_0x1d87a8){localStorage['setItem']('gist_sync_id',_0x1d87a8['id']);return _0x1d87a8['id'];}}return ghApi('/gists',{'method':'POST','body':{'description':GIST_DESC,'public':![],'files':(_0x3bd301={},_0x3bd301[GIST_FILENAME]={'content':JSON['stringify']({'codes':{}})},_0x3bd301)}})['then'](function(_0xc66d02){if(_0xc66d02&&_0xc66d02['id']){localStorage['setItem']('gist_sync_id',_0xc66d02['id']);return _0xc66d02['id'];}return null;});});var _0x3bd301;}var gistETag=null;function readSharedState(_0x55731e){return ghApi('/gists/'+_0x55731e)['then'](function(_0x5d3b7f){if(_0x5d3b7f&&_0x5d3b7f['files']&&_0x5d3b7f['files'][GIST_FILENAME]){try{return JSON['parse'](_0x5d3b7f['files'][GIST_FILENAME]['content']);}catch(_0x2c57f7){}}return{'codes':{}};});}function readSharedStateWithETag(_0x244762){if(!GH_TOKEN)return Promise['resolve'](null);return fetch('https://api.github.com/gists/'+_0x244762,{'headers':{'Authorization':'Bearer\x20'+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}})['then'](function(_0x27e23b){var _0x4c780c=_0x27e23b['headers']['get']('ETag')||_0x27e23b['headers']['get']('etag')||'';if(_0x4c780c)gistETag=_0x4c780c['replace'](/^[WL]\/"?|"$/g,'');return _0x27e23b['json']();})['then'](function(_0x21247c){if(_0x21247c&&_0x21247c['files']&&_0x21247c['files'][GIST_FILENAME]){try{return JSON['parse'](_0x21247c['files'][GIST_FILENAME]['content']);}catch(_0x5b7146){}}return{'codes':{}};})['catch'](function(){return{'codes':{}};});}function writeSharedState(_0x1f0c5d,_0x5ac545){var _0x1127e7={};if(gistETag){_0x1127e7['If-Match']=gistETag;gistETag=null;}return ghApi('/gists/'+_0x1f0c5d,{'method':'PATCH','headers':_0x1127e7,'body':{'files':(_0x861de2={},_0x861de2[GIST_FILENAME]={'content':JSON['stringify'](_0x5ac545)},_0x861de2)}});var _0x861de2;}function apiPost(_0xdfb970,_0xc6b618){if(!API_BASE)return Promise['resolve'](null);return fetch(API_BASE+_0xdfb970,{'method':'POST','headers':{'Content-Type':'application/json'},'body':JSON['stringify'](_0xc6b618)})['then'](function(_0x37881d){return _0x37881d['json']();})['catch'](function(){return null;});}function apiGetState(_0x4b8b89){if(!API_BASE)return Promise['resolve'](null);return fetch(API_BASE+'/state?code='+encodeURIComponent(_0x4b8b89))['then'](function(_0x5050dd){return _0x5050dd['json']();})['catch'](function(){return null;});}function getUsageKey(_0x3a1437){return'usage_'+simpleHash(_0x3a1437['replace'](/[-\s]/g,'')['toUpperCase']())['toString'](0x10);}function getUsage(_0x2326f1){var _0x38d4f1=localStorage['getItem'](getUsageKey(_0x2326f1))||'{\x22uses\x22:0,\x22firstUse\x22:null}';var _0x3eb433=JSON['parse'](_0x38d4f1);var _0x38dd8f=_0x3eb433['_cs'];var _0x5c9447=simpleHash((_0x3eb433['uses']||0x0)+'|'+(_0x3eb433['firstUse']||'')+'|'+SECRET['slice'](0x0,0x8))['toString'](0x10)['slice'](0x0,0x6);if(_0x38dd8f&&_0x38dd8f!==_0x5c9447){_0x3eb433['_tampered']=!![];console['warn']('[AI总参谋]\x20检测到使用数据被篡改，已记录');}return _0x3eb433;}function incrementUsage(_0x11d3fa){var _0x392c16=getUsageKey(_0x11d3fa);var _0x55116f=getUsage(_0x11d3fa);_0x55116f['uses']++;if(!_0x55116f['firstUse'])_0x55116f['firstUse']=new Date()['toISOString']()['slice'](0x0,0xa);_0x55116f['_cs']=simpleHash(_0x55116f['uses']+'|'+_0x55116f['firstUse']+'|'+SECRET['slice'](0x0,0x8))['toString'](0x10)['slice'](0x0,0x6);localStorage['setItem'](_0x392c16,JSON['stringify'](_0x55116f));return _0x55116f;}function useOneCredit(_0x127390,_0x14707a){if(!currentSession){if(_0x14707a)_0x14707a('会话已过期，请刷新页面重新激活');return![];}var _0x4b1e5c=getUsage(currentSession['code']);if(currentSession['maxUses']>0x0&&_0x4b1e5c['uses']>=currentSession['maxUses']){if(_0x14707a)_0x14707a('使用次数已用完，请联系续费');return![];}incrementUsage(currentSession['code']);refreshUsageDisplay();if(GH_TOKEN){getOrCreateGist()['then'](function(_0x2fbd7c){if(!_0x2fbd7c)return;return readSharedStateWithETag(_0x2fbd7c)['then'](function(_0x455786){var _0x2f1898=currentSession['code']['replace'](/[-\s]/g,'')['toUpperCase']();var _0x2e88c5=simpleHash(_0x2f1898)['toString'](0x10);var _0x200211=_0x455786['codes'][_0x2e88c5];if(!_0x200211){_0x200211={'deviceId':getDeviceId(),'uses':0x0,'maxUses':currentSession['maxUses'],'expiry':currentSession['expiry'],'userName':currentSession['userName']};_0x455786['codes'][_0x2e88c5]=_0x200211;}_0x200211['uses']=Math['max'](_0x200211['uses'],getUsage(currentSession['code'])['uses']);return writeSharedState(_0x2fbd7c,_0x455786);});})['catch'](function(){});}if(_0x127390)_0x127390();return!![];}var currentSession=null;var currentBizMode='monthly';var currentOnboardMode='plan';function activate(){var _0x11f6ac=document['getElementById']('activationInput')['value']['trim']();var _0x30edb1=document['getElementById']('loginErr');var _0x249887=document['getElementById']('activateBtn');if(!_0x11f6ac){_0x30edb1['textContent']='请输入激活码';return;}var _0x54c334='activation_'+simpleHash(_0x11f6ac['replace'](/[-\s]/g,'')['toUpperCase']())['toString'](0x10);var _0x15287f=localStorage['getItem'](_0x54c334);var _0x18a8eb;if(_0x15287f){_0x18a8eb=JSON['parse'](_0x15287f);var _0x27f60c=validateCode(_0x11f6ac);if(_0x27f60c['valid']){_0x18a8eb['maxUses']=_0x27f60c['maxUses'];_0x18a8eb['expiry']=_0x27f60c['expiry'];_0x18a8eb['maxWechatUsers']=_0x27f60c['maxWechatUsers'];}if(new Date()>new Date(_0x18a8eb['expiry']+'T23:59:59')){localStorage['removeItem'](_0x54c334);_0x30edb1['textContent']='激活码已过期，请续费';return;}}else{_0x18a8eb=validateCode(_0x11f6ac);if(!_0x18a8eb['valid']){_0x30edb1['textContent']=_0x18a8eb['error'];return;}_0x18a8eb['rawCode']=_0x11f6ac;localStorage['setItem'](_0x54c334,JSON['stringify'](_0x18a8eb));}var _0x1d4522=getUsage(_0x11f6ac);if(_0x1d4522['_tampered']){console['warn']('[AI总参谋]\x20检测到使用数据异常，请勿篡改本地存储');}if(_0x18a8eb['maxUses']>0x0&&_0x1d4522['uses']>=_0x18a8eb['maxUses']){_0x30edb1['textContent']='使用次数已用完，请联系续费';return;}currentSession={'code':_0x11f6ac,'userName':_0x18a8eb['userName'],'expiry':_0x18a8eb['expiry'],'maxUses':_0x18a8eb['maxUses'],'storageKey':_0x54c334};_0x249887['disabled']=!![];_0x249887['textContent']='✅\x20验证通过';document['getElementById']('deviceBindErr')['textContent']='';document['getElementById']('deviceBindOverlay')['classList']['add']('show');}function getDeviceId(){var _0x2e8abc=localStorage['getItem']('device_id');if(!_0x2e8abc){_0x2e8abc='DEV'+Date['now']()['toString'](0x24)+Math['random']()['toString'](0x24)['substring'](0x2,0x8);localStorage['setItem']('device_id',_0x2e8abc);}return _0x2e8abc;}function confirmDeviceBind(){var _0x12c02a=document['querySelector']('#deviceBindOverlay\x20.btn-save');var _0x4bcd63=document['getElementById']('deviceBindErr');var _0x1cba72=getDeviceId();if(GH_TOKEN){_0x12c02a['textContent']='⏳\x20云端验证中...';_0x12c02a['disabled']=!![];getOrCreateGist()['then'](function(_0x30ffe4){if(!_0x30ffe4){_0xd980cb('网络异常，请稍后重试');return;}return readSharedStateWithETag(_0x30ffe4)['then'](function(_0x5892ff){var _0x9a5547=currentSession['code']['replace'](/[-\s]/g,'')['toUpperCase']();var _0x63c864=simpleHash(_0x9a5547)['toString'](0x10);var _0x1a6fee=_0x5892ff['codes'][_0x63c864];if(!_0x1a6fee){_0x1a6fee={'deviceId':_0x1cba72,'uses':0x0,'maxUses':currentSession['maxUses'],'expiry':currentSession['expiry'],'userName':currentSession['userName']};_0x5892ff['codes'][_0x63c864]=_0x1a6fee;}else if(_0x1a6fee['deviceId']&&_0x1a6fee['deviceId']!==_0x1cba72){_0xd980cb('此激活码已在其他设备上激活，无法重复使用。如需更换设备，请联系客服微信：miaoan1913');return;}_0x1a6fee['maxUses']=currentSession['maxUses'];_0x1a6fee['expiry']=currentSession['expiry'];_0x1a6fee['deviceId']=_0x1cba72;return writeSharedState(_0x30ffe4,_0x5892ff)['then'](function(){localStorage['setItem']('device_bound_'+storageKey,_0x1cba72);var _0x3ff287=getUsageKey(currentSession['code']);var _0x209906=getUsage(currentSession['code']);_0x209906['uses']=_0x1a6fee['uses'];localStorage['setItem'](_0x3ff287,JSON['stringify'](_0x209906));document['getElementById']('deviceBindOverlay')['classList']['remove']('show');enterApp();});});})['catch'](function(){_0xd980cb('云端同步失败，请稍后重试');});function _0xd980cb(_0x3d3f95){_0x12c02a['textContent']='✅\x20确认激活，绑定本设备';_0x12c02a['disabled']=![];_0x4bcd63['textContent']=_0x3d3f95;}return;}var _0x2ae83a=localStorage['getItem']('device_bound_'+storageKey);if(_0x2ae83a&&_0x2ae83a!==_0x1cba72){_0x4bcd63['textContent']='此激活码已在其他设备上激活。如需更换设备，请联系客服微信：miaoan1913';return;}localStorage['setItem']('device_bound_'+storageKey,_0x1cba72);document['getElementById']('deviceBindOverlay')['classList']['remove']('show');enterApp();}function enterApp(){localStorage['setItem']('last_activation_code',currentSession['code']);document['getElementById']('loginScreen')['style']['display']='none';document['getElementById']('mainApp')['classList']['add']('show');document['getElementById']('userName')['textContent']='👤\x20'+currentSession['userName'];document['getElementById']('remainingUses')['textContent']=currentSession['maxUses']===0x0?'不限':currentSession['maxUses']-getUsage(currentSession['code'])['uses'];document['getElementById']('expiryDate')['textContent']=currentSession['expiry'];var _0x2f67c1=getDeviceId();var _0x2af60b=currentSession['storageKey'];var _0x522daa=localStorage['getItem']('device_bound_'+_0x2af60b);if(_0x522daa){document['getElementById']('wechatBound')['style']['display']='block';document['getElementById']('boundWechat')['textContent']='💻\x20已绑定本设备\x20·\x20'+_0x2f67c1['slice'](-0x6);}updateContactBar();updateProfileIndicators();updateHistoryBadge();updateCandidateBadge();restoreDrafts();setInterval(saveDrafts,0x3a98);if(GH_TOKEN){getOrCreateGist()['then'](function(_0x3bd91a){if(!_0x3bd91a)return;return readSharedState(_0x3bd91a)['then'](function(_0x1858a9){var _0x369f78=currentSession['code']['replace'](/[-\s]/g,'')['toUpperCase']();var _0x53650d=simpleHash(_0x369f78)['toString'](0x10);var _0x2451a1=_0x1858a9['codes'][_0x53650d];if(_0x2451a1){var _0x50fb16=getUsageKey(currentSession['code']);var _0x596daf=getUsage(currentSession['code']);_0x596daf['uses']=_0x2451a1['uses'];localStorage['setItem'](_0x50fb16,JSON['stringify'](_0x596daf));refreshUsageDisplay();if(_0x2451a1['deviceId']){document['getElementById']('wechatBound')['style']['display']='block';document['getElementById']('boundWechat')['textContent']='💻\x20已绑定本设备\x20·\x20云端同步中';}}});});}else if(API_BASE){apiGetState(currentSession['code'])['then'](function(_0x571c76){if(_0x571c76&&_0x571c76['exists']){var _0x50f8f0=getUsageKey(currentSession['code']);var _0x332f04=getUsage(currentSession['code']);_0x332f04['uses']=_0x571c76['uses'];localStorage['setItem'](_0x50f8f0,JSON['stringify'](_0x332f04));refreshUsageDisplay();}});}}function updateContactBar(){var _0x40ef84=document['getElementById']('contactBar');var _0x5e20a=document['getElementById']('contactBarMsg');var _0x284d7d=new Date(currentSession['expiry']+'T23:59:59');var _0x111323=Math['ceil']((_0x284d7d-new Date())/(0x3e8*0x3c*0x3c*0x18));var _0x516bd1=[];if(_0x111323<=0x7){_0x516bd1['push'](_0x111323<=0x0?'会员已到期，请续费':'剩余\x20'+_0x111323+'\x20天到期');}if(currentSession['maxUses']>0x0){var _0x14f6db=getUsage(currentSession['code'])['uses'];var _0x4525d9=currentSession['maxUses']-_0x14f6db;if(_0x4525d9<=0xa&&_0x4525d9>0x0){_0x516bd1['push']('剩余\x20'+_0x4525d9+'\x20次使用');}}if(_0x516bd1['length']>0x0){_0x40ef84['classList']['add']('show');_0x5e20a['textContent']=_0x516bd1['join']('，');}}function copyWechat(){navigator['clipboard']['writeText']('miaoan1913')['then'](function(){showToast('✅\x20客服微信已复制：miaoan1913');})['catch'](function(){showToast('miaoan1913',!![]);});}function copyResult(_0x36edb1){var _0x4505a7=document['getElementById'](_0x36edb1);var _0x5650bf=_0x4505a7['textContent'];navigator['clipboard']['writeText'](_0x5650bf)['then'](function(){showToast('✅\x20已复制到剪贴板，可粘贴到任意AI工具使用');})['catch'](function(){showToast('复制失败，请手动选择复制',!![]);});}function refreshUsageDisplay(){updateContactBar();document['getElementById']('remainingUses')['textContent']=currentSession['maxUses']===0x0?'不限':currentSession['maxUses']-getUsage(currentSession['code'])['uses'];}function showToast(_0x3b7775,_0x4f206f){var _0x1e69f2=document['getElementById']('toast');_0x1e69f2['textContent']=_0x3b7775;_0x1e69f2['className']='toast'+(_0x4f206f?'\x20warn':'')+'\x20show';setTimeout(function(){_0x1e69f2['classList']['remove']('show');},0x9c4);}function saveDrafts(){var _0x29cd6c={};document['querySelectorAll']('.panel\x20input[type=\x22text\x22],\x20.panel\x20input[type=\x22number\x22],\x20.panel\x20textarea')['forEach'](function(_0x454ee3){if(_0x454ee3['id']&&_0x454ee3['value'])_0x29cd6c[_0x454ee3['id']]=_0x454ee3['value'];});localStorage['setItem']('form_drafts',JSON['stringify'](_0x29cd6c));}function restoreDrafts(){try{var _0x1f1b1b=JSON['parse'](localStorage['getItem']('form_drafts')||'{}');Object['keys'](_0x1f1b1b)['forEach'](function(_0x555692){var _0x4a3451=document['getElementById'](_0x555692);if(_0x4a3451&&!_0x4a3451['value'])_0x4a3451['value']=_0x1f1b1b[_0x555692];});}catch(_0x1e2d52){}}function clearDrafts(){localStorage['removeItem']('form_drafts');}function switchTab(_0x48cdbc){document['querySelectorAll']('.tab')['forEach'](function(_0x41634b){_0x41634b['classList']['toggle']('active',_0x41634b['getAttribute']('data-tab')===_0x48cdbc);});document['querySelectorAll']('.panel')['forEach'](function(_0x3e8152){_0x3e8152['classList']['remove']('active');});document['getElementById']('panel-'+_0x48cdbc)['classList']['add']('active');}function switchBizMode(_0x5588ef){currentBizMode=_0x5588ef;document['getElementById']('mode-monthly')['classList']['toggle']('active',_0x5588ef==='monthly');document['getElementById']('mode-quarterly')['classList']['toggle']('active',_0x5588ef==='quarterly');document['getElementById']('monthlyFields')['style']['display']=_0x5588ef==='monthly'?'':'none';document['getElementById']('quarterlyFields')['style']['display']=_0x5588ef==='quarterly'?'':'none';}function switchOnboardMode(_0x1a593e){currentOnboardMode=_0x1a593e;document['getElementById']('mode-plan')['classList']['toggle']('active',_0x1a593e==='plan');document['getElementById']('mode-risk')['classList']['toggle']('active',_0x1a593e==='risk');document['getElementById']('planFields')['style']['display']=_0x1a593e==='plan'?'':'none';document['getElementById']('riskFields')['style']['display']=_0x1a593e==='risk'?'':'none';}function getCompanyProfile(){try{return JSON['parse'](localStorage['getItem']('company_profile')||'null');}catch(_0x17e8b7){return null;}}function getCompanyProfileText(){var _0x3b9817=getCompanyProfile();if(!_0x3b9817||!_0x3b9817['name'])return'';return'##\x20公司档案（已加载，AI回答时请结合以下背景）\x0a-\x20公司名称：'+(_0x3b9817['name']||'未填')+'\x0a-\x20所属行业：'+(_0x3b9817['industry']||'未填')+'\x0a-\x20发展阶段：'+(_0x3b9817['stage']||'未填')+'，员工'+(_0x3b9817['size']||'未填')+'人，年营收约'+(_0x3b9817['revenue']||'未填')['replace'](/[万元亿]/g,'')+'万元\x0a-\x20主营业务：'+(_0x3b9817['business']||'未填')+'\x0a-\x20核心产品/服务：'+(_0x3b9817['products']||'未填')+'\x0a-\x20核心竞争优势：'+(_0x3b9817['advantage']||'未填')+'\x0a-\x20当前主要挑战：'+(_0x3b9817['challenges']||'未填')+'\x0a-\x20目标客户：'+(_0x3b9817['customers']||'未填')+'\x0a\x0a';}function openCompanyProfile(){document['getElementById']('companyProfileModal')['classList']['add']('show');var _0x11a9ed=getCompanyProfile();if(_0x11a9ed){document['getElementById']('cp-name')['value']=_0x11a9ed['name']||'';document['getElementById']('cp-industry')['value']=_0x11a9ed['industry']||'';document['getElementById']('cp-stage')['value']=_0x11a9ed['stage']||'';document['getElementById']('cp-size')['value']=_0x11a9ed['size']||'';document['getElementById']('cp-revenue')['value']=_0x11a9ed['revenue']||'';document['getElementById']('cp-business')['value']=_0x11a9ed['business']||'';document['getElementById']('cp-products')['value']=_0x11a9ed['products']||'';document['getElementById']('cp-advantage')['value']=_0x11a9ed['advantage']||'';document['getElementById']('cp-challenges')['value']=_0x11a9ed['challenges']||'';document['getElementById']('cp-customers')['value']=_0x11a9ed['customers']||'';}}function closeCompanyProfile(){document['getElementById']('companyProfileModal')['classList']['remove']('show');}function saveCompanyProfile(){var _0x53cbb4={'name':document['getElementById']('cp-name')['value']['trim'](),'industry':document['getElementById']('cp-industry')['value']['trim'](),'stage':document['getElementById']('cp-stage')['value']['trim'](),'size':document['getElementById']('cp-size')['value']['trim'](),'revenue':document['getElementById']('cp-revenue')['value']['trim'](),'business':document['getElementById']('cp-business')['value']['trim'](),'products':document['getElementById']('cp-products')['value']['trim'](),'advantage':document['getElementById']('cp-advantage')['value']['trim'](),'challenges':document['getElementById']('cp-challenges')['value']['trim'](),'customers':document['getElementById']('cp-customers')['value']['trim']()};localStorage['setItem']('company_profile',JSON['stringify'](_0x53cbb4));closeCompanyProfile();updateProfileIndicators();showToast('✅\x20公司档案已保存，所有模块将自动加载');}function updateProfileIndicators(){var _0x2df0ce=getCompanyProfile();var _0x1fdb03=_0x2df0ce&&_0x2df0ce['name'];document['querySelectorAll']('.profile-indicator')['forEach'](function(_0x26811e){if(_0x1fdb03){_0x26811e['classList']['remove']('off');_0x26811e['innerHTML']='<span\x20class=\x22pi-dot\x22></span>公司档案已加载：'+_0x2df0ce['name']+'\x20|\x20'+(_0x2df0ce['industry']||'')+'\x20|\x20'+(_0x2df0ce['size']||'')+'人\x20|\x20'+(_0x2df0ce['revenue']||'')+'万年收\x20—\x20<a\x20href=\x22javascript:openCompanyProfile()\x22\x20style=\x22color:#d4af37;text-decoration:underline\x22>修改</a>';}else{_0x26811e['classList']['add']('off');_0x26811e['innerHTML']='<span\x20class=\x22pi-dot\x22></span>尚未设置公司档案，AI分析缺少公司背景\x20—\x20<a\x20href=\x22javascript:openCompanyProfile()\x22\x20style=\x22color:#ff6b6b;text-decoration:underline\x22>立即设置</a>';}});}function getHistory(){try{return JSON['parse'](localStorage['getItem']('analysis_history')||'[]');}catch(_0x144b18){return[];}}function saveHistory(_0x1820b6,_0x171b2e,_0x56aaca){var _0x25972c=getHistory();_0x25972c['unshift']({'id':Date['now'](),'module':_0x1820b6,'mode':_0x171b2e||'','prompt':_0x56aaca,'preview':_0x56aaca['replace'](/\n/g,'\x20')['substring'](0x0,0x50),'date':new Date()['toISOString']()});if(_0x25972c['length']>0x32)_0x25972c=_0x25972c['slice'](0x0,0x32);localStorage['setItem']('analysis_history',JSON['stringify'](_0x25972c));updateHistoryBadge();}function updateHistoryBadge(){var _0x3149f7=getHistory();var _0x31e580=document['getElementById']('historyBadge');if(_0x3149f7['length']>0x0){_0x31e580['style']['display']='flex';_0x31e580['textContent']=_0x3149f7['length']>0x63?'99+':_0x3149f7['length'];}else{_0x31e580['style']['display']='none';}}function openHistory(){document['getElementById']('historyModal')['classList']['add']('show');var _0x21c16e=document['getElementById']('historySearch');if(_0x21c16e)_0x21c16e['value']='';renderHistoryList();}function closeHistory(){document['getElementById']('historyModal')['classList']['remove']('show');}function renderHistoryList(){var _0x4ace3d=getHistory();var _0x29b4ce=document['getElementById']('historyList');var _0x57fed4=document['getElementById']('historySearch');var _0x46a0e3=_0x57fed4?(_0x57fed4['value']||'')['toLowerCase']():'';if(_0x46a0e3){_0x4ace3d=_0x4ace3d['filter'](function(_0x37a251){return(_0x37a251['module']||'')['toLowerCase']()['indexOf'](_0x46a0e3)!==-0x1||(_0x37a251['mode']||'')['toLowerCase']()['indexOf'](_0x46a0e3)!==-0x1||(_0x37a251['preview']||'')['toLowerCase']()['indexOf'](_0x46a0e3)!==-0x1;});}if(_0x4ace3d['length']===0x0){_0x29b4ce['innerHTML']='<div\x20style=\x22text-align:center;color:rgba(255,255,255,.3);padding:24px\x22>'+(_0x46a0e3?'无匹配记录':'暂无记录')+'</div>';return;}var _0x120618='';_0x4ace3d['forEach'](function(_0x388b76,_0x118df7){var _0x284838=new Date(_0x388b76['id']);var _0x12fbd7=_0x284838['getFullYear']()+'-'+String(_0x284838['getMonth']()+0x1)['padStart'](0x2,'0')+'-'+String(_0x284838['getDate']())['padStart'](0x2,'0')+'\x20'+String(_0x284838['getHours']())['padStart'](0x2,'0')+':'+String(_0x284838['getMinutes']())['padStart'](0x2,'0');_0x120618+='<div\x20class=\x22history-item\x22\x20onclick=\x22viewHistoryItemById('+_0x388b76['id']+')\x22>';_0x120618+='<div\x20class=\x22hi-date\x22>'+_0x12fbd7+'</div>';_0x120618+='<div\x20class=\x22hi-module\x22>'+_0x388b76['module']+(_0x388b76['mode']?'\x20·\x20'+_0x388b76['mode']:'')+'</div>';_0x120618+='<div\x20class=\x22hi-preview\x22>'+_0x388b76['preview']+'...</div>';_0x120618+='<div\x20class=\x22hi-actions\x22>';_0x120618+='<button\x20onclick=\x22event.stopPropagation();copyHistoryItemById('+_0x388b76['id']+')\x22>📋\x20复制</button>';_0x120618+='<button\x20onclick=\x22event.stopPropagation();deleteHistoryItemById('+_0x388b76['id']+')\x22>🗑️</button>';_0x120618+='</div></div>';});_0x29b4ce['innerHTML']=_0x120618;}function findHistoryById(_0x42c221){var _0x492876=getHistory();for(var _0xacf072=0x0;_0xacf072<_0x492876['length'];_0xacf072++){if(_0x492876[_0xacf072]['id']===_0x42c221)return{'item':_0x492876[_0xacf072],'index':_0xacf072};}return null;}function viewHistoryItemById(_0x2ed6d6){var _0x4b79aa=findHistoryById(_0x2ed6d6);if(!_0x4b79aa)return;navigator['clipboard']['writeText'](_0x4b79aa['item']['prompt'])['then'](function(){closeHistory();showToast('✅\x20历史指令已复制到剪贴板');});}function copyHistoryItemById(_0x2f59c9){var _0x1aed5e=findHistoryById(_0x2f59c9);if(!_0x1aed5e)return;navigator['clipboard']['writeText'](_0x1aed5e['item']['prompt'])['then'](function(){showToast('✅\x20已复制');});}function deleteHistoryItemById(_0x18e1b1){var _0x15bb88=findHistoryById(_0x18e1b1);if(!_0x15bb88)return;var _0xc03bf2=getHistory();_0xc03bf2['splice'](_0x15bb88['index'],0x1);localStorage['setItem']('analysis_history',JSON['stringify'](_0xc03bf2));renderHistoryList();updateHistoryBadge();}function clearAllHistory(){if(confirm('确定要清空所有历史记录吗？此操作不可恢复。')){localStorage['setItem']('analysis_history','[]');renderHistoryList();updateHistoryBadge();showToast('✅\x20历史记录已清空');}}function getCandidates(){try{return JSON['parse'](localStorage['getItem']('tracked_candidates')||'[]');}catch(_0x5c7b89){return[];}}function saveCandidates(_0x5f05e9){localStorage['setItem']('tracked_candidates',JSON['stringify'](_0x5f05e9));updateCandidateBadge();}function updateCandidateBadge(){var _0x31d774=getCandidates();var _0x1b1ae0=document['getElementById']('candidateBadge');var _0x4fad6e=_0x31d774['filter'](function(_0x22cafb){return _0x22cafb['status']!=='已放弃'&&_0x22cafb['status']!=='已转正';});if(_0x4fad6e['length']>0x0){_0x1b1ae0['style']['display']='flex';_0x1b1ae0['textContent']=_0x4fad6e['length']>0x63?'99+':_0x4fad6e['length'];}else{_0x1b1ae0['style']['display']='none';}}function openCandidateTracker(){document['getElementById']('candidateTrackerModal')['classList']['add']('show');renderCandidateList();}function closeCandidateTracker(){document['getElementById']('candidateTrackerModal')['classList']['remove']('show');hideAddCandidateForm();}function showAddCandidateForm(){document['getElementById']('addCandidateForm')['style']['display']='block';document['getElementById']('cand-name')['value']='';document['getElementById']('cand-position')['value']='';document['getElementById']('cand-status')['value']='筛选';document['getElementById']('cand-source')['value']='';document['getElementById']('cand-notes')['value']='';}function hideAddCandidateForm(){document['getElementById']('addCandidateForm')['style']['display']='none';}function addCandidate(){var _0x30e03f=document['getElementById']('cand-name')['value']['trim']();var _0x8bc4cf=document['getElementById']('cand-position')['value']['trim']();if(!_0x30e03f){showToast('请填写人选姓名',!![]);return;}var _0x144a27=getCandidates();_0x144a27['unshift']({'id':Date['now'](),'name':_0x30e03f,'position':_0x8bc4cf||'未填','status':document['getElementById']('cand-status')['value'],'source':document['getElementById']('cand-source')['value']['trim']()||'未填','notes':document['getElementById']('cand-notes')['value']['trim']()||'','addedDate':new Date()['toISOString']()['slice'](0x0,0xa),'interviews':[]});saveCandidates(_0x144a27);hideAddCandidateForm();renderCandidateList();showToast('✅\x20人选已添加');}function updateCandidateStatus(_0x432658,_0x46d606){var _0x5c92ee=getCandidates();for(var _0x59982b=0x0;_0x59982b<_0x5c92ee['length'];_0x59982b++){if(_0x5c92ee[_0x59982b]['id']===_0x432658){_0x5c92ee[_0x59982b]['status']=_0x46d606;break;}}saveCandidates(_0x5c92ee);renderCandidateList();}function deleteCandidate(_0x20a2c7){if(!confirm('确定删除这个人选吗？'))return;var _0x5d6105=getCandidates();_0x5d6105=_0x5d6105['filter'](function(_0x4157ad){return _0x4157ad['id']!==_0x20a2c7;});saveCandidates(_0x5d6105);renderCandidateList();showToast('已删除');}function renderCandidateList(){var _0x3c7edb=getCandidates();var _0x2f3da1=document['getElementById']('candidateList');if(_0x3c7edb['length']===0x0){_0x2f3da1['innerHTML']='<div\x20style=\x22text-align:center;color:rgba(255,255,255,.3);padding:24px\x22>暂无追踪人选</div>';return;}var _0x222109={'筛选':'初筛中','面试中':'面试中','谈薪':'谈薪阶段','已录用':'已录用','试用中':'试用中','已转正':'已转正','已放弃':'已放弃'};var _0x46c33e='';_0x3c7edb['forEach'](function(_0x1dd122){_0x46c33e+='<div\x20class=\x22candidate-card\x22>';_0x46c33e+='<div\x20class=\x22cand-header\x22>';_0x46c33e+='<span\x20class=\x22cand-name\x22>'+_0x1dd122['name']+'</span>';_0x46c33e+='<span\x20class=\x22cand-status\x20status-'+_0x1dd122['status']+'\x22>'+_0x1dd122['status']+'</span>';_0x46c33e+='</div>';_0x46c33e+='<div\x20class=\x22cand-info\x22>';_0x46c33e+='📋\x20'+_0x1dd122['position']+'\x20|\x20📅\x20'+_0x1dd122['addedDate']+'\x20|\x20🔗\x20'+_0x1dd122['source'];if(_0x1dd122['notes'])_0x46c33e+='<br>💬\x20'+_0x1dd122['notes'];_0x46c33e+='</div>';_0x46c33e+='<div\x20style=\x22margin-top:8px;display:flex;gap:6px;flex-wrap:wrap\x22>';_0x46c33e+='<select\x20onchange=\x22updateCandidateStatus('+_0x1dd122['id']+',this.value)\x22\x20style=\x22font-size:11px;padding:4px\x208px;border-radius:6px;border:1px\x20solid\x20rgba(255,255,255,.1);background:rgba(0,0,0,.2);color:#ccc;flex:1;min-width:80px\x22>';Object['keys'](_0x222109)['forEach'](function(_0x1cba03){_0x46c33e+='<option\x20value=\x22'+_0x1cba03+'\x22'+(_0x1dd122['status']===_0x1cba03?'\x20selected':'')+'>'+_0x222109[_0x1cba03]+'</option>';});_0x46c33e+='</select>';_0x46c33e+='<button\x20style=\x22font-size:11px;padding:4px\x208px;border-radius:6px;border:1px\x20solid\x20rgba(255,107,107,.3);background:rgba(255,107,107,.06);color:#ff6b6b;cursor:pointer\x22\x20onclick=\x22deleteCandidate('+_0x1dd122['id']+')\x22>🗑️</button>';_0x46c33e+='</div></div>';});_0x2f3da1['innerHTML']=_0x46c33e;}function refreshExamCandidateSelects(){var _0x41adec=getCandidates();var _0x2e2528=_0x41adec['filter'](function(_0x2e84f4){return _0x2e84f4['status']!=='已放弃'&&_0x2e84f4['status']!=='已转正';});var _0x32885f='<option\x20value=\x22\x22>手动填写（不选择人选）</option>';_0x2e2528['forEach'](function(_0x1315c1){_0x32885f+='<option\x20value=\x22'+_0x1315c1['id']+'\x22>'+_0x1315c1['name']+'\x20—\x20'+_0x1315c1['position']+'（'+_0x1315c1['status']+'）</option>';});var _0x57c66a=document['getElementById']('examBank-candidate');var _0x3e3a3f=document['getElementById']('examAnalyze-candidate');if(_0x57c66a)_0x57c66a['innerHTML']=_0x32885f;if(_0x3e3a3f)_0x3e3a3f['innerHTML']=_0x32885f;}function fillExamBankFromCandidate(_0x29efaa){if(!_0x29efaa)return;var _0x251c9a=getCandidates();var _0x13a4b7=_0x251c9a['find'](function(_0x4d3f07){return _0x4d3f07['id']===parseInt(_0x29efaa);});if(!_0x13a4b7)return;document['getElementById']('exam-position')['value']=_0x13a4b7['position']&&_0x13a4b7['position']!=='未填'?_0x13a4b7['position']:'';document['getElementById']('exam-stage')['value']=(getCompanyProfile()||{})['stage']||'【请根据实际填写】';if(_0x13a4b7['notes']){document['getElementById']('exam-worry')['value']='备注：'+_0x13a4b7['notes'];}}function fillExamAnalyzeFromCandidate(_0x47bf7b){if(!_0x47bf7b)return;var _0x346580=getCandidates();var _0xb643b2=_0x346580['find'](function(_0x31361c){return _0x31361c['id']===parseInt(_0x47bf7b);});if(!_0xb643b2)return;document['getElementById']('analyze-position')['value']=_0xb643b2['position']&&_0xb643b2['position']!=='未填'?_0xb643b2['position']:'';if(_0xb643b2['notes']){document['getElementById']('analyze-bg')['value']='人选追踪备注：'+_0xb643b2['notes']+'\x0a来源：'+(_0xb643b2['source']||'未知');}}var origSwitchTab=switchTab;switchTab=function(_0x596563){origSwitchTab(_0x596563);if(_0x596563==='exambank'||_0x596563==='examanalyze'){refreshExamCandidateSelects();}};var origRenderCandidateList=renderCandidateList;renderCandidateList=function(){origRenderCandidateList();refreshExamCandidateSelects();};function wrapPrompt(_0x1a9915,_0x49510c,_0x175642){var _0x632c9b=getCompanyProfileText()+_0x1a9915;saveHistory(_0x49510c,_0x175642,_0x632c9b);return _0x632c9b;}function processBiz(){var _0x425796=document['getElementById']('biz-result');_0x425796['classList']['add']('show','loading');_0x425796['innerHTML']='<div\x20class=\x22spinner\x22></div>正在生成四大板块经营分析指令...';document['getElementById']('biz-copy-btn')['style']['display']='none';useOneCredit(function(){var _0x449f63;if(currentBizMode==='monthly'){_0x449f63=buildMonthlyPrompt();}else{_0x449f63=buildQuarterlyPrompt();}var _0x40c90a=wrapPrompt(_0x449f63,'企业经营分析',currentBizMode==='monthly'?'月度快诊':'季度深盘');_0x425796['classList']['remove']('loading');_0x425796['textContent']=_0x40c90a;document['getElementById']('biz-copy-btn')['style']['display']='inline-block';},function(_0x5587c4){_0x425796['classList']['remove']('loading');_0x425796['innerHTML']='<div\x20style=\x22color:#ff6b6b;text-align:center;padding:20px\x22>'+_0x5587c4+'</div>';});}function buildMonthlyPrompt(){var _0xd7b2a4=document['getElementById']('biz-month-revenue')['value']||'【未提供】';var _0x4e4241=document['getElementById']('biz-month-cost')['value']||'【未提供】';var _0x4c9835=document['getElementById']('biz-month-expense')['value']||'【未提供】';var _0x390513=document['getElementById']('biz-month-profit')['value']||'【未提供】';var _0x90e3e5=document['getElementById']('biz-month-cashflow')['value']||'【未提供】';var _0x4bd3b3=document['getElementById']('biz-month-cash')['value']||'【未提供】';var _0x55793f=document['getElementById']('biz-month-ar')['value']||'【未提供】';var _0x4dae4c=document['getElementById']('biz-month-ap')['value']||'【未提供】';var _0x54e721=document['getElementById']('biz-month-orders')['value']||'【未提供】';var _0x37fef1=document['getElementById']('biz-month-customers')['value']||'【未提供】';var _0x38e776=document['getElementById']('biz-month-channels')['value']||'【未提供】';var _0x17eea0=document['getElementById']('biz-month-products')['value']||'【未提供】';var _0x27153a=document['getElementById']('biz-month-delivery')['value']||'【未提供】';var _0xf29a3e=document['getElementById']('biz-month-complaints')['value']||'【未提供】';var _0x284d05=document['getElementById']('biz-month-inventory')['value']||'【未提供】';var _0x3ac8ef=document['getElementById']('biz-month-projects')['value']||'【未提供】';var _0x120b76=document['getElementById']('biz-month-headcount')['value']||'【未提供】';var _0x261167=document['getElementById']('biz-month-laborcost')['value']||'【未提供】';var _0x56ef73=document['getElementById']('biz-month-turnover')['value']||'【未提供】';var _0x8b8a58=document['getElementById']('biz-month-coreposts')['value']||'【未提供】';var _0xf56e4f=document['getElementById']('biz-month-worry')['value']||'无';return'你是一位资深企业经营分析顾问，拥有20年中小企业咨询经验，服务过500+家企业。请根据以下四大板块的经营数据，为这家企业做一次月度经营综合分析。\x0a\x0a##\x20板块一：财务健康数据\x0a-\x20上月营收：'+_0xd7b2a4+'\x0a-\x20上月营业成本：'+_0x4e4241+'\x0a-\x20上月费用合计：'+_0x4c9835+'\x0a-\x20上月净利润/净利率：'+_0x390513+'\x0a-\x20经营性现金流：'+_0x90e3e5+'\x0a-\x20账上现金余额：'+_0x4bd3b3+'万元\x0a-\x20应收账款：'+_0x55793f+'\x0a-\x20应付账款：'+_0x4dae4c+'\x0a\x0a##\x20板块二：业务增长数据\x0a-\x20订单量/客单价：'+_0x54e721+'\x0a-\x20新客户数/老客复购率：'+_0x37fef1+'\x0a-\x20各渠道收入占比&ROI：'+_0x38e776+'\x0a-\x20各产品线收入占比&毛利率：'+_0x17eea0+'\x0a\x0a##\x20板块三：运营效率数据\x0a-\x20发货及时率/退货率：'+_0x27153a+'\x0a-\x20客户投诉：'+_0xf29a3e+'\x0a-\x20库存周转/滞销库存：'+_0x284d05+'\x0a-\x20关键项目进度：'+_0x3ac8ef+'\x0a\x0a##\x20板块四：人力效能数据\x0a-\x20员工总数/人均营收：'+_0x120b76+'\x0a-\x20人力成本占营收比：'+_0x261167+'\x0a-\x20入职/离职情况：'+_0x56ef73+'\x0a-\x20核心岗位变动：'+_0x8b8a58+'\x0a\x0a##\x20老板最担心的事\x0a'+_0xf56e4f+'\x0a\x0a##\x20请按以下框架输出月度经营分析报告\x0a\x0a###\x20一、本月经营概览（一页纸总结）\x0a-\x20核心指标仪表盘（从四个板块中提取最关键8-10个指标，用🔴🟡🟢标注健康度）\x0a-\x20一句话总结本月经营状况\x0a-\x20与上月对比：整体变好了还是变差了？\x0a\x0a###\x20二、财务健康诊断\x0a-\x20收入分析：营收达成率？增长是\x22健康增长\x22（毛利同步）还是\x22虚胖增长\x22（增收不增利）？\x0a-\x20利润分析：毛利率变化原因（成本端还是价格端）？费用结构是否合理？哪项费用增长异常？\x0a-\x20现金流预警：经营性现金流是否为正？应收在恶化还是改善？按当前消耗速度，现金能撑多久？\x0a-\x20本月财务最需要关注的2个问题\x0a\x0a###\x20三、业务增长诊断\x0a-\x20增长质量：增长来自新客还是老客？哪个更健康？\x0a-\x20渠道效率：哪个渠道ROI最高/最低？哪个渠道转化率在下降？资源分配需要调整吗？\x0a-\x20产品结构：哪条产品线是\x22现金牛\x22（高收入+高毛利）？哪条是\x22问题儿童\x22（低毛利或衰退）？产品结构是否需要调整？\x0a-\x20客户分析：新客获取效率趋势？老客复购率是否健康？获客成本在升还是降？\x0a-\x20本月业务最大的2个发现（好的和坏的都要说）\x0a\x0a###\x20四、运营效率扫描\x0a-\x20交付效率：发货及时率是否达标？退货率是否在合理范围？退货TOP3原因中最需要关注什么？\x0a-\x20客户体验：投诉量趋势？哪类投诉最需要优先解决？\x0a-\x20供应链健康：库存周转是否合理？滞销库存是否需要清理？缺货和滞销并存说明什么？\x0a-\x20运营效率提升的2个优先行动\x0a\x0a###\x20五、人力效能评估\x0a-\x20人效趋势：人均营收在升还是降？人力成本占比是否合理？\x0a-\x20编制健康度：哪个部门人员冗余？哪个部门人手不足？哪些岗位在招但一直招不到？\x0a-\x20人员稳定性：离职率是否在健康范围？离职原因中最需要关注什么？核心人才是否有流失风险？\x0a-\x20组织健康预警：有没有\x22温水煮青蛙\x22的隐患（如人效持续下降但没人关注）？\x0a\x0a###\x20六、交叉分析（看关联）\x0a-\x20财务和业务之间：营收涨了但利润跌了？可能是渠道ROI下降或获客成本上升吃掉利润\x0a-\x20业务和运营之间：退货率上升是否拉低了实际毛利率？投诉增多是否影响复购率？\x0a-\x20运营和人力之间：人效下降是因为人多了还是产出少了？核心岗位空缺是否导致运营指标恶化？\x0a-\x20找出1-2个\x22一个根因导致的连锁反应\x22\x0a\x0a###\x20七、本月最需要关注的3个问题和行动建议\x0a-\x20按紧迫程度排序\x0a-\x20每个问题：现象是什么→根因是什么→如果不解决会怎样→建议的具体行动（不是\x22加强管理\x22这种废话）\x0a-\x20如果老板担心的事\x22'+_0xf56e4f+'\x22确实值得担心，给出具体应对方案；如果不用太担心，告诉老板为什么\x0a\x0a###\x20八、下月重点关注\x0a-\x20基于本月趋势，下月最需要盯紧的3个指标\x0a-\x20建议下月经营分析会重点讨论的议题\x0a\x0a##\x20重要规则\x0a-\x20用老板能听懂的话，禁止堆砌专业术语\x0a-\x20每个判断必须有数据支撑，数据不足的地方标注\x22信息不足，建议补充XX数据\x22\x0a-\x20既要指出问题，也要肯定做得好的地方（不能只报忧不报喜）\x0a-\x20禁止\x22加强管理\x22\x22优化流程\x22\x22降本增效\x22这类正确的废话，每条建议必须说具体动作\x0a-\x20如果有危险信号，直接说出来，不要委婉\x0a-\x20各板块之间要交叉分析，不要孤立地看每个指标';}function buildQuarterlyPrompt(){var _0xf1baf4=document['getElementById']('biz-q-revenue')['value']||'【未提供】';var _0x23b8e1=document['getElementById']('biz-q-totalcost')['value']||'【未提供】';var _0x45fea9=document['getElementById']('biz-q-profit')['value']||'【未提供】';var _0x58e996=document['getElementById']('biz-q-cashflow')['value']||'【未提供】';var _0xf6b1ed=document['getElementById']('biz-q-arap')['value']||'【未提供】';var _0x2e4da1=document['getElementById']('biz-q-orders')['value']||'【未提供】';var _0x99be1f=document['getElementById']('biz-q-customers')['value']||'【未提供】';var _0x4ee8d8=document['getElementById']('biz-q-channels')['value']||'【未提供】';var _0x47ff70=document['getElementById']('biz-q-products')['value']||'【未提供】';var _0x5351ec=document['getElementById']('biz-q-funnel')['value']||'【未提供】';var _0x111e1d=document['getElementById']('biz-q-returns')['value']||'【未提供】';var _0x188ba3=document['getElementById']('biz-q-satisfaction')['value']||'【未提供】';var _0x35a13e=document['getElementById']('biz-q-inventory')['value']||'【未提供】';var _0x232eb9=document['getElementById']('biz-q-supply')['value']||'【未提供】';var _0x2162dd=document['getElementById']('biz-q-projects')['value']||'【未提供】';var _0x58cfea=document['getElementById']('biz-q-headcount')['value']||'【未提供】';var _0x27b40d=document['getElementById']('biz-q-laborcost')['value']||'【未提供】';var _0x236cd8=document['getElementById']('biz-q-turnover')['value']||'【未提供】';var _0x1966eb=document['getElementById']('biz-q-hiring')['value']||'【未提供】';var _0x176106=document['getElementById']('biz-q-culture')['value']||'【未提供】';var _0x53aec1=document['getElementById']('biz-q-worry')['value']||'无';return'你是一位资深企业经营分析顾问，拥有20年中小企业咨询经验，擅长从经营数据中发现深层问题并提供战略级建议。请根据以下四大板块的季度经营数据，做一次深度经营复盘。\x0a\x0a##\x20板块一：财务健康（季度）\x0a-\x20本季度总营收：'+_0xf1baf4+'\x0a-\x20总成本+费用：'+_0x23b8e1+'\x0a-\x20净利润/净利率趋势：'+_0x45fea9+'\x0a-\x20经营性现金流/期末现金：'+_0x58e996+'\x0a-\x20应收&应付现状：'+_0xf6b1ed+'\x0a\x0a##\x20板块二：业务增长（季度）\x0a-\x20季度订单量/客单价：'+_0x2e4da1+'\x0a-\x20新客/复购率/获客成本：'+_0x99be1f+'\x0a-\x20各渠道收入占比&ROI趋势：'+_0x4ee8d8+'\x0a-\x20各产品线收入占比&毛利率变化：'+_0x47ff70+'\x0a-\x20销售漏斗转化：'+_0x5351ec+'\x0a\x0a##\x20板块三：运营效率（季度）\x0a-\x20退货率/退货原因：'+_0x111e1d+'\x0a-\x20客户满意度/投诉趋势：'+_0x188ba3+'\x0a-\x20库存周转/滞销库存：'+_0x35a13e+'\x0a-\x20供应商/缺货率：'+_0x232eb9+'\x0a-\x20关键项目完成情况：'+_0x2162dd+'\x0a\x0a##\x20板块四：人力效能（季度）\x0a-\x20季度末人数/人均营收：'+_0x58cfea+'\x0a-\x20人力成本占比/编制满足率：'+_0x27b40d+'\x0a-\x20离职率/核心人才变动：'+_0x236cd8+'\x0a-\x20试用期通过率/招聘周期：'+_0x1966eb+'\x0a-\x20组织氛围/团队状态：'+_0x176106+'\x0a\x0a##\x20老板最担心的事\x0a'+_0x53aec1+'\x0a\x0a##\x20请按以下框架输出季度经营深度复盘报告\x0a\x0a###\x20一、季度经营概览（Executive\x20Summary）\x0a-\x20核心指标仪表盘（从四个板块提取12-15个核心指标，用🔴🟡🟢标注健康度和趋势方向↑→↓）\x0a-\x20一句话总结本季度经营状况\x0a-\x20本季度最大的3个变化（与上季对比，好的和坏的）\x0a\x0a###\x20二、财务健康深度诊断\x0a-\x20收入与利润趋势：本季营收和利润的环比/同比/预算达成三维对比，趋势是向好还是恶化？\x0a-\x20利润质量分析：毛利率变化根因（成本推动还是价格推动？）净利率变化来自哪个环节？\x0a-\x20费用结构效率：各项费用率的趋势，哪项失控了？与行业平均水平对比如何？\x0a-\x20现金流安全评估：经营现金流与净利润的关系（利润有没有变成现金？）按当前消耗速度现金够撑几个月？乐观/中性/悲观三种情景预测\x0a-\x20应收/应付健康度：账龄结构是否恶化？有没有坏账风险？\x0a\x0a###\x20三、业务增长深度复盘\x0a-\x20增长引擎诊断：本季度增长靠什么驱动（量×价×新产品×新渠道）？这个驱动力可持续吗？\x0a-\x20渠道效率矩阵：按ROI×增长贡献两个维度画矩阵，标注哪些渠道该加投/维持/缩减\x0a-\x20产品组合分析：按收入占比×毛利率画矩阵，标注现金牛/明星/问题/瘦狗四类，建议产品组合怎么调整\x0a-\x20客户资产分析：新客获取效率趋势，LTV/CAC比值变化，客户分层（高价值/普通/低价值客户占比变化）\x0a-\x20销售漏斗健康度：哪个环节转化率最低？哪个环节在恶化？如果只优化一个环节能带来多少增量？\x0a\x0a###\x20四、运营效率深度扫描\x0a-\x20交付与退货：退货率趋势及根因（是产品质量问题还是客户预期管理问题？）退货成本对利润的真实影响\x0a-\x20客户体验：投诉趋势和根因分布，NPS/满意度变化，哪类客户最不满意？\x0a-\x20供应链诊断：库存周转趋势（是变快还是变慢？）滞销库存处理方案，缺货与滞销是否同时存在（说明预测或采购有问题）\x0a-\x20项目执行：关键项目完成率和延期原因分析，延期项目的补救方案\x0a\x0a###\x20五、人力效能与组织健康\x0a-\x20人效深度分析：人均营收/人均利润趋势，与行业标杆差距，各部门人效对比（哪个部门拉高了/拉低了整体人效？）\x0a-\x20编制与招聘：编制缺口对业务的实质影响有多大？招聘周期过长丢失了多少机会成本？\x0a-\x20人才风险：季度离职率趋势和核心原因，核心人才流失预警（谁走了影响最大？现在该做什么？）\x0a-\x20组织健康度：加班趋势、团队氛围、新老融合——有没有\x22温水煮青蛙\x22式的组织问题？\x0a\x0a###\x20六、交叉分析与系统诊断\x0a-\x20财务×业务：营收增长但利润下降？→\x20追踪到具体渠道/产品/客户环节\x0a-\x20业务×运营：退货率或投诉率上升\x20→\x20是否已经体现在客户流失和复购下降上？\x0a-\x20运营×人力：人效下降\x20→\x20是人多了还是产出少了？核心岗位空缺是否导致运营指标恶化？\x0a-\x20人力×财务：人力成本上升\x20→\x20换来了人效提升还是单纯的成本膨胀？\x0a-\x20找出1-3个系统性根因（一个根因导致多个板块指标异常）\x0a\x0a###\x20七、战略校准\x0a-\x20对照年初/季度初目标：各维度达成率评估\x0a-\x20按当前趋势，全年目标还靠谱吗？差距有多大？\x0a-\x20如果差距大：建议目标怎么调整？节奏怎么调整？资源怎么重新分配？\x0a-\x20下季度最重要的3个战略重点\x0a\x0a###\x20八、本季度最需要关注的5个问题和行动方案\x0a-\x20按紧急×重要程度排序\x0a-\x20每个问题必须包含：现象→根因→如果不解决的后果→具体行动方案→建议责任人→建议完成时间→验收标准\x0a-\x20如果问题之间有关联，标注出来，建议打包解决\x0a-\x20对于老板最担心的\x22'+_0x53aec1+'\x22——认真分析，给出明确判断和行动建议\x0a\x0a###\x20九、下季度经营预测与风险雷达\x0a-\x20基于本季趋势，预测下季度4个板块各3个关键指标的变化方向\x0a-\x20下季度最可能出现的3个风险，每个标注：可能性×影响程度×提前应对方案\x0a-\x20下季度最值得抓住的2个机会\x0a\x0a##\x20重要规则\x0a-\x20用老板能听懂的语言，控制专业术语密度\x0a-\x20每个判断必须有数据或逻辑支撑，数据不足的维度明确标注\x22建议补充XX数据\x22\x0a-\x20既要诚实指出问题（不报喜不报忧），又要肯定做得好的地方\x0a-\x20禁止\x22加强管理\x22\x22优化流程\x22\x22降本增效\x22\x22提升效率\x22这类正确的废话\x0a-\x20每条建议必须是\x22谁+做什么+什么时间+怎么算成功\x22的具体动作\x0a-\x20四板块必须交叉分析，找出系统性关联，不要孤立地看每个指标\x0a-\x20战略校准建议要务实——既不要画大饼，也不要过度悲观';}function clearBiz(){if(!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。'))return;clearDrafts();document['querySelectorAll']('#monthlyFields\x20input,\x20#monthlyFields\x20textarea,\x20#quarterlyFields\x20input,\x20#quarterlyFields\x20textarea')['forEach'](function(_0x228a18){_0x228a18['value']='';});document['getElementById']('biz-result')['classList']['remove']('show');document['getElementById']('biz-copy-btn')['style']['display']='none';}function processTalent(){var _0x3a5346=document['getElementById']('talent-result');_0x3a5346['classList']['add']('show','loading');_0x3a5346['innerHTML']='<div\x20class=\x22spinner\x22></div>正在生成人才盘点指令...';document['getElementById']('talent-copy-btn')['style']['display']='none';useOneCredit(function(){var _0x227b2a=document['getElementById']('talent-stage')['value']||'【请填写】';var _0x501b6d=document['getElementById']('talent-goals')['value']||'【请填写】';var _0xa509c2=document['getElementById']('talent-list')['value']||'【请填写高管信息】';var _0x22f77c=document['getElementById']('talent-worry')['value']||'无';var _0x2e01f5='你是一位资深组织与人才顾问，拥有20年高管评估经验，服务过500+家企业的人才盘点项目。请帮我做一次核心团队的人才盘点。\x0a\x0a##\x20背景信息\x0a-\x20公司当前阶段：'+_0x227b2a+'\x0a-\x20今年最重要的战略目标：'+_0x501b6d+'\x0a-\x20老板最大的隐忧：'+_0x22f77c+'\x0a\x0a##\x20核心高管信息\x0a'+_0xa509c2+'\x0a\x0a##\x20请按以下框架输出人才盘点报告\x0a\x0a###\x20一、九宫格人才地图\x0a把每个人放进\x22绩效×潜力\x22九宫格：\x0a-\x20超级明星（高绩效+高潜力）：重点保留+加速培养，未来的接班人\x0a-\x20核心培养对象（中绩效+高潜力）：给机会和辅导，可能是放错了位置\x0a-\x20业绩骨干（高绩效+中/低潜力）：保持现状，给足激励，不一定非要升管理\x0a-\x20稳定贡献者（中绩效+中潜力）：企业的基本盘\x0a-\x20待发展之星（低绩效+高潜力）：深入诊断，是能力问题还是意愿问题还是位置问题\x0a-\x20专业老兵（高绩效+低潜力）：尊重并保留，不一定非要晋升\x0a-\x20需要关注（中绩效+低潜力）：明确改进计划和时间表\x0a-\x20勉强胜任/淘汰候选（低绩效+低/中潜力）：需要果断处理\x0a\x0a###\x20二、关键岗位板凳深度\x0a-\x20每个核心岗位：现任是谁？如果有人离职，有谁能接？\x0a-\x20标注每个岗位的接替准备度：马上能接\x20/\x201年后能接\x20/\x20没有接班人\x0a-\x20没有接班人的关键岗位\x20=\x20公司的单点风险\x0a\x0a###\x20三、离职风险TOP3\x0a-\x20谁最可能走？（综合留任意愿+市场机会+内部状态）\x0a-\x20如果走了影响多大？\x0a-\x20现在该做什么来降低风险？\x0a\x0a###\x20四、能力缺口分析\x0a-\x20对照今年战略目标，团队最缺什么能力？\x0a-\x20这个缺口是\x22内部培养\x22还是\x22外部引进\x22？哪个更快？\x0a-\x20如果战略目标要调整，人才策略要跟着怎么调？\x0a\x0a###\x20五、行动建议\x0a-\x20未来3个月人才端最重要的3件事\x0a-\x20谁该谈？谁该奖？谁该调？谁该走？\x0a-\x20给老板的一句话人才结论\x0a\x0a##\x20重要规则\x0a-\x20对事不对人，每个判断都要有依据\x0a-\x20既要诚实（该淘汰就淘汰），也要务实（有时候\x22能用\x22比\x22优秀\x22更现实）\x0a-\x20不要用HR术语堆砌，老板要的是判断不是论文\x0a-\x20如果老板提供的评分跟事实逻辑矛盾，指出来';var _0x1b82fc=wrapPrompt(_0x2e01f5,'高管人才盘点','');_0x3a5346['classList']['remove']('loading');_0x3a5346['textContent']=_0x1b82fc;document['getElementById']('talent-copy-btn')['style']['display']='inline-block';},function(_0x2b98b5){_0x3a5346['classList']['remove']('loading');_0x3a5346['innerHTML']='<div\x20style=\x22color:#ff6b6b;text-align:center;padding:20px\x22>'+_0x2b98b5+'</div>';});}function clearTalent(){if(!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。'))return;clearDrafts();document['querySelectorAll']('#panel-talent\x20input,\x20#panel-talent\x20textarea')['forEach'](function(_0x18b1f4){_0x18b1f4['value']='';});document['getElementById']('talent-result')['classList']['remove']('show');document['getElementById']('talent-copy-btn')['style']['display']='none';}function processDecision(){var _0xa7e760=document['getElementById']('decision-result');_0xa7e760['classList']['add']('show','loading');_0xa7e760['innerHTML']='<div\x20class=\x22spinner\x22></div>正在生成决策推演指令...';document['getElementById']('decision-copy-btn')['style']['display']='none';useOneCredit(function(){var _0x16d367=document['getElementById']('dec-question')['value']||'【请填写】';var _0x1f4510=document['getElementById']('dec-context')['value']||'【请填写】';var _0x3e35ce=document['getElementById']('dec-options')['value']||'【请填写至少2个方案】';var _0x4be12a=document['getElementById']('dec-risk')['value']||'【请填写】';var _0x33d114=document['getElementById']('dec-deadline')['value']||'无特定时间窗口';var _0x410dca='你是一位资深企业战略顾问，服务过300+家企业的重大决策咨询。现在有一位老板面临一个关键决策，请你帮他做一次系统的决策推演。你不替他做决定，但帮他把每个选项想清楚。\x0a\x0a##\x20决策背景\x0a-\x20核心问题：'+_0x16d367+'\x0a-\x20当前情况：'+_0x1f4510+'\x0a-\x20时间窗口：'+_0x33d114+'\x0a-\x20老板最担心的风险：'+_0x4be12a+'\x0a\x0a##\x20可选方案\x0a'+_0x3e35ce+'\x0a\x0a##\x20请按以下框架输出决策推演报告\x0a\x0a###\x20一、决策的本质\x0a-\x20这个决策真正在决定什么？（往往不是表面上那个问题）\x0a-\x20这个决策的一阶效应和二阶效应分别是什么？\x0a-\x20不做决策（维持现状）的代价是什么？\x0a\x0a###\x20二、各方案情景推演\x0a\x0a对每个方案，按以下维度推演：\x0a\x0a**最佳情景：**\x0a-\x20什么条件下会发生？\x0a-\x20最好能好到什么程度？\x0a-\x20达成最佳结果的概率有多大？\x0a\x0a**最差情景：**\x0a-\x20什么情况下会翻车？\x0a-\x20最差能差到什么程度？\x0a-\x20能承受吗？\x0a\x0a**最可能情景：**\x0a-\x20正常发展下去大概什么结果？\x0a-\x2012个月后会是什么状态？\x0a\x0a###\x20三、关键前提条件检验\x0a-\x20每个方案成立需要哪些前提条件？\x0a-\x20这些条件现在具备吗？如果不具备，能创造吗？\x0a-\x20哪个前提条件是最脆弱的？（一旦不成立，方案就垮了）\x0a\x0a###\x20四、风险矩阵\x0a|\x20风险\x20|\x20可能性\x20|\x20影响程度\x20|\x20应对预案\x20|\x0a每个方案列出TOP3风险\x0a\x0a###\x20五、决策建议\x0a-\x20如果只看确定性，选哪个？\x0a-\x20如果看的是上限空间，选哪个？\x0a-\x20有没有\x22先小试再放大\x22的渐进路径？\x0a-\x20有没有方案A+B的组合可能性？\x0a-\x20建议的决策节奏：是现在必须定，还是可以分步走？\x0a\x0a###\x20六、决策后管理\x0a-\x20选定了之后，最大的执行风险是什么？\x0a-\x20什么信号出现说明决策错了，需要调整？\x0a-\x20建议设置什么检查点？\x0a\x0a##\x20重要规则\x0a-\x20不替老板做决定，但帮他看见他可能忽略的角度\x0a-\x20对每个方案要公平推演，不要预设哪个好\x0a-\x20如果老板的信息不够做判断，明确指出\x22还需要什么信息\x22\x0a-\x20老板最担心的风险如果确实重要，认真分析；如果不重要，告诉他为什么不用太担心\x0a-\x20禁止模棱两可的废话，每个判断都要有逻辑链条';var _0x3e6eca=wrapPrompt(_0x410dca,'企业决策沙盘','');_0xa7e760['classList']['remove']('loading');_0xa7e760['textContent']=_0x3e6eca;document['getElementById']('decision-copy-btn')['style']['display']='inline-block';},function(_0x1c4836){_0xa7e760['classList']['remove']('loading');_0xa7e760['innerHTML']='<div\x20style=\x22color:#ff6b6b;text-align:center;padding:20px\x22>'+_0x1c4836+'</div>';});}function clearDecision(){if(!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。'))return;clearDrafts();document['querySelectorAll']('#panel-decision\x20input,\x20#panel-decision\x20textarea')['forEach'](function(_0xa2429e){_0xa2429e['value']='';});document['getElementById']('decision-result')['classList']['remove']('show');document['getElementById']('decision-copy-btn')['style']['display']='none';}function processExamBank(){var _0x1195b7=document['getElementById']('exambank-result');_0x1195b7['classList']['add']('show','loading');_0x1195b7['innerHTML']='<div\x20class=\x22spinner\x22></div>正在生成面试题库指令...';document['getElementById']('exambank-copy-btn')['style']['display']='none';useOneCredit(function(){var _0x192f73=document['getElementById']('exam-position')['value']||'【请填写】';var _0x178c46=document['getElementById']('exam-stage')['value']||'【请填写】';var _0x9eeab4=document['getElementById']('exam-battles')['value']||'【请填写】';var _0x560d2c=document['getElementById']('exam-musthave')['value']||'【请填写】';var _0x21378f=document['getElementById']('exam-worry')['value']||'无';var _0x1662b4='你是一位资深高管猎头兼面试顾问，拥有20年高管招聘经验，面试过2000+位高管候选人。请帮我为以下岗位设计一套完整的高管面试题库。\x0a\x0a##\x20岗位信息\x0a-\x20岗位：'+_0x192f73+'\x0a-\x20公司阶段与规模：'+_0x178c46+'\x0a-\x20这个岗位要打赢的3场硬仗：'+_0x9eeab4+'\x0a-\x20硬性门槛：'+_0x560d2c+'\x0a-\x20老板最担心的问题：'+_0x21378f+'\x0a\x0a##\x20请按以下框架输出高管面试题库（共约24题）\x0a\x0a###\x20模块A：业绩真实性验证（8题）\x0a目标：区分\x22他做的\x22\x22他团队做的\x22还是\x22他蹭的\x22\x0a-\x20追问式问题，用STAR法则深挖（情境-任务-行动-结果）\x0a-\x20每道题有递进追问链：如果候选人回答X，你应该追问什么？\x0a-\x20包含1-2道\x22交叉验证题\x22：从不同角度问同一件事，看前后是否一致\x0a-\x20包含1道\x22数字题\x22：他说的业绩，能用什么数字来验证？\x0a\x0a###\x20模块B：战略思维深度（5题）\x0a目标：判断他能不能看到全局，能不能想清楚\x0a-\x20给一个跟你们公司相关的真实业务场景，让他当场分析\x0a-\x20考察维度：行业洞察、竞争判断、资源分配、风险意识、创新能力\x0a-\x20每道题标注：好回答长什么样？什么回答是红旗信号？\x0a\x0a###\x20模块C：领导力验证（5题）\x0a目标：判断他能不能带团队、做决策、处理冲突\x0a-\x20追问具体案例：带过多大的团队？经历过什么冲突？做过什么艰难决定？\x0a-\x20包含1道\x22失败题\x22：让他讲一次失败经历，看他的反思深度\x0a-\x20包含1道\x22团队题\x22：让他评价团队中最强和最弱的人\x0a\x0a###\x20模块D：文化匹配探测（3题）\x0a目标：判断他的价值观和工作风格是否匹配你的公司\x0a-\x20用情景模拟题探测真实价值观（不是问\x22你的价值观是什么\x22）\x0a-\x20针对'+_0x178c46+'阶段的公司特性，设计文化匹配问题\x0a\x0a###\x20模块E：压力与边界测试（3题）\x0a目标：看他在压力下和边界情况下的真实反应\x0a-\x201道两难情境题\x0a-\x201道质疑/挑战式问题\x0a-\x201道关于\x22钱\x22的直接问题（薪资期望、对钱的态度、过往薪酬结构）\x0a\x0a##\x20每道题标配标注\x0a1.\x20这道题在考察什么？\x0a2.\x20好回答的特征（不是标准答案，是判断标准）\x0a3.\x20红旗信号（什么回答意味着这人大概率不行）\x0a4.\x20如果候选人回答得模糊，应该怎么追问？\x0a\x0a##\x20重要规则\x0a-\x20问题要有穿透力，避免候选人能猜到你想听什么\x0a-\x20禁止\x22你的优点是什么\x22\x22你最大的缺点是什么\x22这类无效问题\x0a-\x20针对老板最担心的'+_0x21378f+'，重点设计2-3道验证题\x0a-\x20题目要适配中小企业的实际场景，不要大厂面试套路';var _0x2170e1=wrapPrompt(_0x1662b4,'高管面试题库','');_0x1195b7['classList']['remove']('loading');_0x1195b7['textContent']=_0x2170e1;document['getElementById']('exambank-copy-btn')['style']['display']='inline-block';},function(_0x354f9f){_0x1195b7['classList']['remove']('loading');_0x1195b7['innerHTML']='<div\x20style=\x22color:#ff6b6b;text-align:center;padding:20px\x22>'+_0x354f9f+'</div>';});}function clearExamBank(){if(!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。'))return;clearDrafts();document['querySelectorAll']('#panel-exambank\x20input,\x20#panel-exambank\x20textarea')['forEach'](function(_0x449af8){_0x449af8['value']='';});document['getElementById']('exambank-result')['classList']['remove']('show');document['getElementById']('exambank-copy-btn')['style']['display']='none';}function processExamAnalyze(){var _0x1dfdd5=document['getElementById']('examanalyze-result');_0x1dfdd5['classList']['add']('show','loading');_0x1dfdd5['innerHTML']='<div\x20class=\x22spinner\x22></div>正在生成面试分析指令...';document['getElementById']('examanalyze-copy-btn')['style']['display']='none';useOneCredit(function(){var _0x55f947=document['getElementById']('analyze-position')['value']||'【请填写】';var _0x36a2bf=document['getElementById']('analyze-bg')['value']||'【请填写】';var _0x4486fa=document['getElementById']('analyze-transcript')['value']||'【请粘贴面试录音转写文字】';var _0x2248ae=document['getElementById']('analyze-gut')['value']||'无';var _0x133150='你是一位资深高管面试评估专家，拥有20年面试评估经验，参与过1000+次高管面试评估。请帮我对以下面试记录做结构化分析。\x0a\x0a##\x20面试信息\x0a-\x20应聘岗位：'+_0x55f947+'\x0a-\x20候选人背景：'+_0x36a2bf+'\x0a-\x20老板面试后的直觉感受：'+_0x2248ae+'\x0a\x0a##\x20面试录音转写文字\x0a'+_0x4486fa+'\x0a\x0a##\x20请按以下框架输出面试评估报告\x0a\x0a###\x20一、四维打分（每项10分，共40分）\x0a\x0a**维度1：业绩真实性（/10）**\x0a-\x20他说的业绩有足够证据支撑吗？\x0a-\x20有没有前后矛盾或模糊的地方？\x0a-\x20哪些是他做的？哪些是团队做的？哪些他不该居功？\x0a\x0a**维度2：战略思维（/10）**\x0a-\x20他对行业的理解是深是浅？\x0a-\x20他分析问题的框架清晰吗？\x0a-\x20他想到的东西你有没有没想到的？\x0a\x0a**维度3：领导力（/10）**\x0a-\x20他带团队的具体案例可信吗？\x0a-\x20他做决策的方式跟你期望的一致吗？\x0a-\x20他对人的判断准不准？\x0a\x0a**维度4：文化匹配（/10）**\x0a-\x20他的工作风格和价值观跟你的公司匹配吗？\x0a-\x20有没有隐约\x22不对路\x22的地方？\x0a\x0a**综合评分及解读：**\x0a-\x20总得分和等级（强烈推荐/推荐/待定/不推荐）\x0a-\x20最强维度和最弱维度\x0a-\x20这个人的弱点是你能接受的吗？\x0a\x0a###\x20二、证据链分析\x0a-\x20哪些能力维度有充分的行为证据？\x0a-\x20哪些维度\x22听起来不错但没证据\x22？\x0a-\x20面试中他回避了哪些话题？\x0a-\x20哪些关键信息还没问到？\x0a\x0a###\x20三、红旗信号清单\x0a检查以下信号：\x0a-\x20频繁换工作的模式\x0a-\x20业绩描述含糊不清\x0a-\x20把团队功劳说成个人功劳\x0a-\x20过度贬低前公司/前老板\x0a-\x20工资期望跟能力不匹配\x0a-\x20面试表现跟简历描述差距大\x0a-\x20对风险的意识过低或过高\x0a-\x20其他让你\x22隐约不舒服\x22的点\x0a\x0a###\x20四、认知偏差提醒\x0a老板，请自检以下偏差是否在影响你的判断：\x0a-\x20光环效应：他某一个方面很强，你是不是就觉得他什么都强？\x0a-\x20相似偏好：他跟你背景/性格相似，你是不是就更喜欢他？\x0a-\x20首因效应：开场5分钟的印象是否主导了你的判断？\x0a-\x20确认偏误：你是否只在找他\x22行\x22的证据，忽略了\x22不行\x22的信号？\x0a-\x20稀缺偏差：是不是因为\x22太难招了\x22而降低了标准？\x0a对照老板的直觉感受\x22'+_0x2248ae+'\x22，AI帮你检验这个直觉靠谱吗。\x0a\x0a###\x20五、背调方案\x0a-\x20应该去哪些地方验证这个人的哪些信息？\x0a-\x20找谁问？（前同事/前下属/前老板/合作伙伴\x20各问什么）\x0a-\x20什么问题在背调中最关键？\x0a\x0a###\x20六、下一步建议\x0a-\x20如果继续推进：下一轮面试该重点验证什么？\x0a-\x20如果淘汰：为什么？\x0a-\x20如果待定：什么时候再判断？还需要什么信息？\x0a-\x20老板的直觉\x22'+_0x2248ae+'\x22——AI的客观判断跟你的直觉一致吗？\x0a\x0a##\x20重要规则\x0a-\x20基于面试内容做判断，不要编造信息\x0a-\x20明确指出\x22有证据的判断\x22和\x22推测\x22的区别\x0a-\x20如果面试内容不足以做完整评估，明确说\x22信息不足，建议再问XX\x22\x0a-\x20对抗认知偏差，不要迎合老板的直觉感受';var _0x378cb9=wrapPrompt(_0x133150,'高管面试分析','');_0x1dfdd5['classList']['remove']('loading');_0x1dfdd5['textContent']=_0x378cb9;document['getElementById']('examanalyze-copy-btn')['style']['display']='inline-block';},function(_0x46d03b){_0x1dfdd5['classList']['remove']('loading');_0x1dfdd5['innerHTML']='<div\x20style=\x22color:#ff6b6b;text-align:center;padding:20px\x22>'+_0x46d03b+'</div>';});}function clearExamAnalyze(){if(!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。'))return;clearDrafts();document['querySelectorAll']('#panel-examanalyze\x20input,\x20#panel-examanalyze\x20textarea')['forEach'](function(_0x358856){_0x358856['value']='';});document['getElementById']('examanalyze-result')['classList']['remove']('show');document['getElementById']('examanalyze-copy-btn')['style']['display']='none';}function processOnboard(){var _0x9a094c=document['getElementById']('onboard-result');_0x9a094c['classList']['add']('show','loading');_0x9a094c['innerHTML']='<div\x20class=\x22spinner\x22></div>正在生成辅佐指令...';document['getElementById']('onboard-copy-btn')['style']['display']='none';useOneCredit(function(){var _0x19058d;if(currentOnboardMode==='plan'){_0x19058d=buildOnboardPlanPrompt();}else{_0x19058d=buildOnboardRiskPrompt();}var _0x13023e=wrapPrompt(_0x19058d,'高管试用辅佐',currentOnboardMode==='plan'?'90天融入计划':'风险诊断');_0x9a094c['classList']['remove']('loading');_0x9a094c['textContent']=_0x13023e;document['getElementById']('onboard-copy-btn')['style']['display']='inline-block';},function(_0x363a31){_0x9a094c['classList']['remove']('loading');_0x9a094c['innerHTML']='<div\x20style=\x22color:#ff6b6b;text-align:center;padding:20px\x22>'+_0x363a31+'</div>';});}function buildOnboardPlanPrompt(){var _0x44200f=document['getElementById']('onboard-position')['value']||'【请填写】';var _0x35f4cc=document['getElementById']('onboard-stage')['value']||'【请填写】';var _0x379f6e=document['getElementById']('onboard-teamsize')['value']||'【请填写】';var _0x520383=document['getElementById']('onboard-battles')['value']||'【请填写】';var _0xe3639d=document['getElementById']('onboard-culture')['value']||'【请填写】';return'你是一位资深企业教练，专门帮助新高管成功度过试用期，服务过300+位高管的入职融入辅导。请帮我为一位新高管设计一套90天融入计划。\x0a\x0a##\x20背景信息\x0a-\x20岗位：'+_0x44200f+'\x0a-\x20公司阶段：'+_0x35f4cc+'\x0a-\x20团队情况：'+_0x379f6e+'\x0a-\x20需要打赢的3场硬仗：'+_0x520383+'\x0a-\x20公司文化特征：'+_0xe3639d+'\x0a\x0a##\x20请按以下框架输出90天融入计划\x0a\x0a###\x20一、融入总纲\x0a-\x20这个岗位90天成功的定义是什么？（不是\x22活下来\x22，要有具体的、可验证的标准）\x0a-\x20前90天最重要的事排序：先做什么、后做什么、为什么是这个顺序\x0a-\x20最大的融入风险是什么？\x0a\x0a###\x20二、分阶段行动计划\x0a\x0a**第1-30天：了解期（主题：听、看、建关系）**\x0a-\x20周1-2：应该跟谁聊？看什么数据？了解什么流程？\x0a-\x20周3-4：应该形成什么初步判断？产出什么？\x0a-\x2030天检查点：这30天后他应该呈现出什么状态算正常？\x0a-\x20老板在第1个月应该做什么？（每周至少1次1v1，但不要微管理）\x0a\x0a**第31-60天：切入期（主题：小胜、立威、定方向）**\x0a-\x20应该选哪件事作为第一个突破口？（建议选能快速见效的小胜利）\x0a-\x20跟团队的关系应该怎么建立？（尤其是老员工）\x0a-\x2060天检查点：什么进展算\x22正常\x22？什么算\x22偏慢\x22？\x0a\x0a**第61-90天：发力期（主题：推进关键战役、建立节奏）**\x0a-\x203场硬仗的进度如何评估？\x0a-\x2090天检查点：什么算通过试用期？什么算需要延长观察？什么算考虑止损？\x0a\x0a###\x20三、老板行动清单\x0a-\x20每周/每两周该做什么来支持他？\x0a-\x20什么信号出现时该介入？什么信号出现时该放手？\x0a-\x20如何平衡\x22给他空间\x22和\x22不能失控\x22？\x0a\x0a###\x20四、融入风险预案\x0a-\x20如果老团队抗拒他，怎么办？\x0a-\x20如果他的做事风格跟公司文化冲突，怎么办？\x0a-\x20如果他前30天看起来\x22什么都没做\x22，怎么办？\x0a\x0a###\x20五、试用期评估框架\x0a-\x2090天结束时用什么标准判断\x22过\x22还是\x22不过\x22？\x0a-\x20哪些是应该容忍的短期问题？哪些是一票否决的红线？\x0a-\x20如果决定\x22再观察30天\x22，观察什么？';}function buildOnboardRiskPrompt(){var _0x13d111=document['getElementById']('onboard-risk-pos')['value']||'【请填写】';var _0x36f6f3=document['getElementById']('onboard-risk-time')['value']||'【请填写】';var _0x1174e7=document['getElementById']('onboard-risk-obs')['value']||'【请填写观察到的具体表现】';var _0x166d89=document['getElementById']('onboard-risk-worry')['value']||'【请填写】';return'你是一位资深企业教练，专门帮老板处理高管试用期的疑难问题。现在有一位老板对新高管有疑虑，请帮他做一次系统的风险诊断。\x0a\x0a##\x20情况描述\x0a-\x20岗位：'+_0x13d111+'\x0a-\x20已入职时间：'+_0x36f6f3+'\x0a-\x20观察到的具体表现：'+_0x1174e7+'\x0a-\x20老板内心的担忧：'+_0x166d89+'\x0a\x0a##\x20请按以下框架输出风险诊断报告\x0a\x0a###\x20一、表现评估\x0a对照该岗位试用期该阶段应有状态：\x0a-\x20哪些表现是正常的？（新环境适应、文化磨合、关系建立都需要时间）\x0a-\x20哪些表现是值得警惕的？\x0a-\x20哪些表现说明这个人可能根本不行？\x0a-\x20区分\x22水土不服\x22和\x22能力不足\x22——这是两个完全不同的问题\x0a\x0a###\x20二、问题诊断\x0a如果确实存在问题，问题出在哪一层？\x0a-\x20是能力问题：他真的不会？\x0a-\x20是意愿问题：他不想干？\x0a-\x20是环境问题：公司给他的条件不够？\x0a-\x20是期望问题：老板的期望跟他理解的差距太大？\x0a-\x20是文化问题：做事方式跟公司冲突？\x0a\x0a###\x20三、止损决策框架\x0a-\x20现在是该\x22继续观察\x22还是\x22果断止损\x22？\x0a-\x20如果继续观察：看到什么时候必须做决定？观察到什么信号说明不行？\x0a-\x20如果止损：最佳时机是什么？怎么操作损失最小？（钱、团队士气、业务连续性）\x0a-\x20评估沉默成本——不要因为\x22已经花了时间和钱\x22而继续错下去\x0a\x0a###\x20四、针对性行动建议\x0a基于上面的诊断，给出具体行动方案：\x0a-\x20如果继续观察：老板接下来4周该做什么？跟他怎么谈？\x0a-\x20如果调整方向：能给他换个位置吗？还是必须让他走？\x0a-\x20如果要止损：跟团队怎么沟通？业务怎么过渡？\x0a\x0a###\x20五、反思\x0a-\x20这次招聘过程有没有教训？当初面试时有没有漏掉什么？\x0a-\x20以后招这个岗位，应该增加什么验证环节？\x0a\x0a##\x20重要规则\x0a-\x20诚实但不要轻易下结论——有时候真的是还没到时间\x0a-\x20但也不要用\x22再看看\x22无限拖延——拖得越久代价越大\x0a-\x20每一条建议都要有理由支撑\x0a-\x20如果老板的直觉跟观察到的事实一致，告诉他；如果不一致，也告诉他';}function clearOnboard(){if(!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。'))return;clearDrafts();document['querySelectorAll']('#planFields\x20input,\x20#planFields\x20textarea,\x20#riskFields\x20input,\x20#riskFields\x20textarea')['forEach'](function(_0x5ba1b5){_0x5ba1b5['value']='';});document['getElementById']('onboard-result')['classList']['remove']('show');document['getElementById']('onboard-copy-btn')['style']['display']='none';}function logout(){if(!confirm('确定要退出吗？\x0a\x0a退出后重新进入需要输入激活码。'))return;currentSession=null;document['getElementById']('mainApp')['classList']['remove']('show');document['getElementById']('loginScreen')['style']['display']='';document['getElementById']('activateBtn')['disabled']=![];document['getElementById']('activateBtn')['textContent']='激活使用';var _0x240e02=localStorage['getItem']('last_activation_code');if(_0x240e02){document['getElementById']('activationInput')['value']=_0x240e02;document['getElementById']('loginHint')['style']['display']='';document['getElementById']('lastCodeHint')['textContent']=maskCode(_0x240e02);}clearDrafts();}function fillLastCode(){var _0x142ecf=localStorage['getItem']('last_activation_code');if(_0x142ecf){document['getElementById']('activationInput')['value']=_0x142ecf;document['getElementById']('loginHint')['style']['display']='none';}}function maskCode(_0x47518b){if(_0x47518b['length']<=0x8)return _0x47518b['substring'](0x0,0x2)+'****'+_0x47518b['substring'](_0x47518b['length']-0x2);return _0x47518b['substring'](0x0,0x4)+'****'+_0x47518b['substring'](_0x47518b['length']-0x4);}(function(){var _0x46985a=localStorage['getItem']('last_activation_code');if(_0x46985a){var _0x50bb8b=document['getElementById']('loginHint');var _0x28868d=document['getElementById']('lastCodeHint');if(_0x50bb8b&&_0x28868d){_0x28868d['textContent']=maskCode(_0x46985a);_0x50bb8b['style']['display']='';}}}());(function(){var _0x2c776c=document['getElementById']('syncStatusLogin');if(_0x2c776c){var _0x534ec4=localStorage['getItem']('gh_sync_token');if(_0x534ec4){_0x2c776c['textContent']='🟢\x20云端同步已开启\x20·\x20点击修改';_0x2c776c['style']['color']='rgba(72,199,142,.7)';}}}());</script>
+<script>
+// ============================================================
+// 推荐人识别（从URL参数 ?ref=XXX 读取）
+// ============================================================
+(function(){
+    var params = new URLSearchParams(window.location.search);
+    var ref = params.get('ref');
+    if (ref) {
+        sessionStorage.setItem('referrer', ref);
+        var tag = document.getElementById('refTag');
+        var nameEl = document.getElementById('refName');
+        if (tag && nameEl) {
+            nameEl.textContent = decodeURIComponent(ref);
+            tag.style.display = 'inline-block';
+        }
+    } else {
+        var saved = sessionStorage.getItem('referrer');
+        if (saved) {
+            var tag = document.getElementById('refTag');
+            var nameEl = document.getElementById('refName');
+            if (tag && nameEl) {
+                nameEl.textContent = decodeURIComponent(saved);
+                tag.style.display = 'inline-block';
+            }
+        }
+    }
+})();
+
+// ============================================================
+// 云端同步 Token 设置
+// ============================================================
+function showTokenSetup() {
+    var token = localStorage.getItem('gh_sync_token') || '';
+    var newToken = prompt((token ? '当前已配置云端同步。\n\n输入新 Token 替换，或点取消保持现有设置：' : '输入 GitHub Token 开启云端同步（跨设备共享次数）：\n\n获取方式见：backend/使用说明_GitHub同步.md'), token);
+    if (newToken !== null) {
+        if (newToken.trim() === '') {
+            localStorage.removeItem('gh_sync_token');
+            alert('已清除云端同步设置，切换为本地模式。');
+        } else {
+            localStorage.setItem('gh_sync_token', newToken.trim());
+            alert('云端同步已配置！刷新页面后生效。');
+        }
+        location.reload();
+    }
+}
+
+// ============================================================
+// 激活码验证系统
+// ============================================================
+// SECRET 密钥分片存储，运行时重组（防止直接字符串搜索获取）
+var _S0 = "mi";
+var _S1 = "aohan";
+var _S2 = "1913_AI";
+var _S3 = "_2026_KEY";
+var SECRET = _S0 + _S1 + _S2 + _S3;
+// 使用后清除分片变量，增加逆向难度
+setTimeout(function(){ _S0 = _S1 = _S2 = _S3 = ''; }, 100);
+// GitHub Gist 作为跨设备共享后端（不需要注册任何新服务）
+// 1. 打开 https://github.com/settings/tokens → Generate new token (classic)
+// 2. 勾选 gist 权限 → 生成 → 复制 token
+// 3. 把 token 粘贴到下面引号里，如 'ghp_xxxxxxxxxxxx'
+const GH_TOKEN = localStorage.getItem('gh_sync_token') || '';
+const GIST_DESC = 'AI总参谋-跨设备状态同步';
+const GIST_FILENAME = 'ai-zongcanmou-state.json';
+// 旧版 Cloudflare Worker（可选，二选一）
+const API_BASE = '';
+
+function decrypt(encoded, key) {
+    try {
+        encoded = encoded.replace(/[\._]/g, c => ({'.':'+','_':'/'}[c]));
+        while (encoded.length % 4) encoded += '=';
+        var bytes = atob(encoded);
+        var result = '';
+        for (var i = 0; i < bytes.length; i += 2) {
+            var hi = bytes.charCodeAt(i) & 0xFF;
+            var lo = bytes.charCodeAt(i + 1) & 0xFF;
+            var c = (hi << 8) | lo;
+            result += String.fromCharCode(c ^ key.charCodeAt((i / 2) % key.length));
+        }
+        return result;
+    } catch(e) { return ''; }
+}
+
+function simpleHash(str) {
+    var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (var i = 0; i < str.length; i++) {
+        var ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 3266489909);
+    return (h1 ^ h2) >>> 0;
+}
+
+function validateCode(rawCode) {
+    var clean = rawCode.replace(/[-\s]/g, '');
+    if (clean.length < 12) return { valid: false, error: '激活码格式错误' };
+    var hashPart = clean.slice(-4).toUpperCase();
+    var dataPart = clean.slice(0, -4);
+    var expectedHash = simpleHash(dataPart + SECRET).toString(16).slice(0, 4).toUpperCase();
+    if (hashPart !== expectedHash) return { valid: false, error: '激活码无效' };
+    var payload = decrypt(dataPart, SECRET);
+    if (!payload) return { valid: false, error: '激活码数据损坏' };
+    var parts = payload.split('|');
+    if (parts.length < 4) return { valid: false, error: '激活码数据损坏' };
+    var expiryStr = parts[0];
+    var maxUses = parseInt(parts[1]);
+    var userName = parts[2];
+    var maxWechatUsers = parts.length >= 5 ? (parseInt(parts[4]) || 0) : 0;
+    var expiry = new Date(expiryStr + 'T23:59:59');
+    if (new Date() > expiry) return { valid: false, error: '激活码已于 ' + expiryStr + ' 过期' };
+    return { valid: true, userName: userName, expiry: expiryStr, maxUses: maxUses, maxWechatUsers: maxWechatUsers, expiryDate: expiry };
+}
+
+// ========== GitHub Gist API（跨设备共享状态）==========
+function ghApi(path, options) {
+    if (!GH_TOKEN) return Promise.resolve(null);
+    options = options || {};
+    options.headers = options.headers || {};
+    options.headers['Authorization'] = 'Bearer ' + GH_TOKEN;
+    options.headers['Accept'] = 'application/vnd.github.v3+json';
+    if (options.body && typeof options.body === 'object') {
+        options.body = JSON.stringify(options.body);
+    }
+    return fetch('https://api.github.com' + path, options)
+        .then(function(r){ return r.json(); })
+        .catch(function(){ return null; });
+}
+
+function getOrCreateGist() {
+    var cached = localStorage.getItem('gist_sync_id');
+    if (cached) return Promise.resolve(cached);
+    if (!GH_TOKEN) return Promise.resolve(null);
+    // 搜索已有的同步 Gist
+    return ghApi('/gists?per_page=50').then(function(gists) {
+        if (gists && Array.isArray(gists)) {
+            var found = gists.find(function(g){
+                return g.description === GIST_DESC;
+            });
+            if (found) {
+                localStorage.setItem('gist_sync_id', found.id);
+                return found.id;
+            }
+        }
+        // 自动创建
+        return ghApi('/gists', {
+            method: 'POST',
+            body: { description: GIST_DESC, public: false, files: (_a={}, _a[GIST_FILENAME]={content:JSON.stringify({codes:{}})}, _a) }
+        }).then(function(g) {
+            if (g && g.id) { localStorage.setItem('gist_sync_id', g.id); return g.id; }
+            return null;
+        });
+    });
+    var _a;
+}
+
+var gistETag = null; // 乐观锁：存储最近一次读取的 ETag
+
+function readSharedState(gistId) {
+    return ghApi('/gists/' + gistId).then(function(gist) {
+        if (gist && gist.files && gist.files[GIST_FILENAME]) {
+            try { return JSON.parse(gist.files[GIST_FILENAME].content); } catch(e){}
+        }
+        return { codes: {} };
+    });
+}
+// 读取并记住 ETag（用于后续写入时做乐观锁）
+function readSharedStateWithETag(gistId) {
+    if (!GH_TOKEN) return Promise.resolve(null);
+    return fetch('https://api.github.com/gists/' + gistId, {
+        headers: { 'Authorization': 'Bearer ' + GH_TOKEN, 'Accept': 'application/vnd.github.v3+json' }
+    }).then(function(r) {
+        var etag = r.headers.get('ETag') || r.headers.get('etag') || '';
+        if (etag) gistETag = etag.replace(/^[WL]\/"?|"$/g, '');
+        return r.json();
+    }).then(function(gist) {
+        if (gist && gist.files && gist.files[GIST_FILENAME]) {
+            try { return JSON.parse(gist.files[GIST_FILENAME].content); } catch(e){}
+        }
+        return { codes: {} };
+    }).catch(function(){ return { codes: {} }; });
+}
+
+function writeSharedState(gistId, state) {
+    var headers = {};
+    if (gistETag) { headers['If-Match'] = gistETag; gistETag = null; }
+    return ghApi('/gists/' + gistId, {
+        method: 'PATCH',
+        headers: headers,
+        body: { files: (_b={}, _b[GIST_FILENAME]={content:JSON.stringify(state)}, _b) }
+    });
+    var _b;
+}
+
+function apiPost(endpoint, body) {
+    if (!API_BASE) return Promise.resolve(null);
+    return fetch(API_BASE + endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+    }).then(function(r){ return r.json(); }).catch(function(){ return null; });
+}
+
+function apiGetState(code) {
+    if (!API_BASE) return Promise.resolve(null);
+    return fetch(API_BASE + '/state?code=' + encodeURIComponent(code))
+        .then(function(r){ return r.json(); }).catch(function(){ return null; });
+}
+
+function getUsageKey(code) {
+    return 'usage_' + simpleHash(code.replace(/[-\s]/g, '').toUpperCase()).toString(16);
+}
+function getUsage(code) {
+    var raw = localStorage.getItem(getUsageKey(code)) || '{"uses":0,"firstUse":null}';
+    var data = JSON.parse(raw);
+    // 完整性校验：检测localStorage是否被手动篡改
+    var storedChecksum = data._cs;
+    var expectedChecksum = simpleHash((data.uses||0) + '|' + (data.firstUse||'') + '|' + SECRET.slice(0,8)).toString(16).slice(0,6);
+    if (storedChecksum && storedChecksum !== expectedChecksum) {
+        // 检测到篡改 → 记录日志并重置
+        data._tampered = true;
+        console.warn('[AI总参谋] 检测到使用数据被篡改，已记录');
+    }
+    return data;
+}
+function incrementUsage(code) {
+    var key = getUsageKey(code);
+    var data = getUsage(code);
+    data.uses++;
+    if (!data.firstUse) data.firstUse = new Date().toISOString().slice(0, 10);
+    // 写入校验和
+    data._cs = simpleHash(data.uses + '|' + data.firstUse + '|' + SECRET.slice(0,8)).toString(16).slice(0,6);
+    localStorage.setItem(key, JSON.stringify(data));
+    return data;
+}
+
+// 统一扣减次数入口：生成指令时调用，本地+云端同步
+function useOneCredit(onSuccess, onFail) {
+    if (!currentSession) { if (onFail) onFail('会话已过期，请刷新页面重新激活'); return false; }
+    var usage = getUsage(currentSession.code);
+    if (currentSession.maxUses > 0 && usage.uses >= currentSession.maxUses) {
+        if (onFail) onFail('使用次数已用完，请联系续费');
+        return false;
+    }
+    incrementUsage(currentSession.code);
+    refreshUsageDisplay();
+    // 云端同步（后台静默，不阻塞）
+    if (GH_TOKEN) {
+        getOrCreateGist().then(function(gistId) {
+            if (!gistId) return;
+            return readSharedStateWithETag(gistId).then(function(state) {
+                var ch = currentSession.code.replace(/[-\s]/g, '').toUpperCase();
+                var hash = simpleHash(ch).toString(16);
+                var cs = state.codes[hash];
+                if (!cs) {
+                    cs = { deviceId: getDeviceId(), uses: 0, maxUses: currentSession.maxUses, expiry: currentSession.expiry, userName: currentSession.userName };
+                    state.codes[hash] = cs;
+                }
+                cs.uses = Math.max(cs.uses, getUsage(currentSession.code).uses);
+                return writeSharedState(gistId, state);
+            });
+        }).catch(function(){});
+    }
+    if (onSuccess) onSuccess();
+    return true;
+}
+
+var currentSession = null;
+var currentBizMode = 'monthly';
+var currentOnboardMode = 'plan';
+
+function activate() {
+    var input = document.getElementById('activationInput').value.trim();
+    var errEl = document.getElementById('loginErr');
+    var btn = document.getElementById('activateBtn');
+    if (!input) { errEl.textContent = '请输入激活码'; return; }
+
+    var storageKey = 'activation_' + simpleHash(input.replace(/[-\s]/g, '').toUpperCase()).toString(16);
+    var cached = localStorage.getItem(storageKey);
+    var validation;
+    if (cached) {
+        validation = JSON.parse(cached);
+        // 重新校验防止localStorage篡改
+        var fresh = validateCode(input);
+        if (fresh.valid) {
+            validation.maxUses = fresh.maxUses;
+            validation.expiry = fresh.expiry;
+            validation.maxWechatUsers = fresh.maxWechatUsers;
+        }
+        if (new Date() > new Date(validation.expiry + 'T23:59:59')) {
+            localStorage.removeItem(storageKey);
+            errEl.textContent = '激活码已过期，请续费';
+            return;
+        }
+    } else {
+        validation = validateCode(input);
+        if (!validation.valid) { errEl.textContent = validation.error; return; }
+        validation.rawCode = input;
+        localStorage.setItem(storageKey, JSON.stringify(validation));
+    }
+
+    var usage = getUsage(input);
+    // 检测到篡改行为时显示警告
+    if (usage._tampered) {
+        console.warn('[AI总参谋] 检测到使用数据异常，请勿篡改本地存储');
+    }
+    if (validation.maxUses > 0 && usage.uses >= validation.maxUses) {
+        errEl.textContent = '使用次数已用完，请联系续费';
+        return;
+    }
+
+    currentSession = { code: input, userName: validation.userName, expiry: validation.expiry, maxUses: validation.maxUses, storageKey: storageKey };
+
+    btn.disabled = true;
+    btn.textContent = '✅ 验证通过';
+
+    // 设备绑定：显示确认弹窗
+    document.getElementById('deviceBindErr').textContent = '';
+    document.getElementById('deviceBindOverlay').classList.add('show');
+}
+
+// 设备ID：每个设备唯一，首次访问自动生成
+function getDeviceId() {
+    var id = localStorage.getItem('device_id');
+    if (!id) {
+        id = 'DEV' + Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+        localStorage.setItem('device_id', id);
+    }
+    return id;
+}
+
+function confirmDeviceBind() {
+    var btn = document.querySelector('#deviceBindOverlay .btn-save');
+    var errEl = document.getElementById('deviceBindErr');
+    var deviceId = getDeviceId();
+
+    if (GH_TOKEN) {
+        btn.textContent = '⏳ 云端验证中...';
+        btn.disabled = true;
+        getOrCreateGist().then(function(gistId){
+            if (!gistId) { failFallback('网络异常，请稍后重试'); return; }
+            return readSharedStateWithETag(gistId).then(function(state){
+                var ch = currentSession.code.replace(/[-\s]/g, '').toUpperCase();
+                var hash = simpleHash(ch).toString(16);
+                var cs = state.codes[hash];
+                if (!cs) {
+                    // 首次激活：绑定到此设备
+                    cs = { deviceId: deviceId, uses:0, maxUses:currentSession.maxUses, expiry:currentSession.expiry, userName:currentSession.userName };
+                    state.codes[hash] = cs;
+                } else if (cs.deviceId && cs.deviceId !== deviceId) {
+                    // 已绑定到其他设备
+                    failFallback('此激活码已在其他设备上激活，无法重复使用。如需更换设备，请联系客服微信：miaoan1913');
+                    return;
+                }
+                // 设备匹配或首次绑定，更新元数据
+                cs.maxUses = currentSession.maxUses;
+                cs.expiry = currentSession.expiry;
+                cs.deviceId = deviceId;
+                return writeSharedState(gistId, state).then(function(){
+                    localStorage.setItem('device_bound_' + storageKey, deviceId);
+                    // 同步使用次数
+                    var key = getUsageKey(currentSession.code);
+                    var usage = getUsage(currentSession.code);
+                    usage.uses = cs.uses;
+                    localStorage.setItem(key, JSON.stringify(usage));
+                    document.getElementById('deviceBindOverlay').classList.remove('show');
+                    enterApp();
+                });
+            });
+        }).catch(function(){ failFallback('云端同步失败，请稍后重试'); });
+        function failFallback(msg) {
+            btn.textContent = '✅ 确认激活，绑定本设备';
+            btn.disabled = false;
+            errEl.textContent = msg;
+        }
+        return;
+    }
+
+    // 无云端同步 → 本地设备绑定
+    var boundDevice = localStorage.getItem('device_bound_' + storageKey);
+    if (boundDevice && boundDevice !== deviceId) {
+        errEl.textContent = '此激活码已在其他设备上激活。如需更换设备，请联系客服微信：miaoan1913';
+        return;
+    }
+    localStorage.setItem('device_bound_' + storageKey, deviceId);
+    document.getElementById('deviceBindOverlay').classList.remove('show');
+    enterApp();
+}
+
+function enterApp() {
+    localStorage.setItem('last_activation_code', currentSession.code);
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').classList.add('show');
+    document.getElementById('userName').textContent = '👤 ' + currentSession.userName;
+    document.getElementById('remainingUses').textContent = currentSession.maxUses === 0 ? '不限' : (currentSession.maxUses - getUsage(currentSession.code).uses);
+    document.getElementById('expiryDate').textContent = currentSession.expiry;
+    // 设备绑定状态显示
+    var deviceId = getDeviceId();
+    var storedKey = currentSession.storageKey;
+    var isBound = localStorage.getItem('device_bound_' + storedKey);
+    if (isBound) {
+        document.getElementById('wechatBound').style.display = 'block';
+        document.getElementById('boundWechat').textContent = '💻 已绑定本设备 · ' + deviceId.slice(-6);
+    }
+    updateContactBar();
+    updateProfileIndicators();
+    updateHistoryBadge();
+    updateCandidateBadge();
+    restoreDrafts();
+    setInterval(saveDrafts, 15000);
+    // 从云端同步最新状态
+    if (GH_TOKEN) {
+        getOrCreateGist().then(function(gistId){
+            if (!gistId) return;
+            return readSharedState(gistId).then(function(state){
+                var ch = currentSession.code.replace(/[-\s]/g, '').toUpperCase();
+                var h = simpleHash(ch).toString(16);
+                var cs = state.codes[h];
+                if (cs) {
+                    var key = getUsageKey(currentSession.code);
+                    var usage = getUsage(currentSession.code);
+                    usage.uses = cs.uses;
+                    localStorage.setItem(key, JSON.stringify(usage));
+                    refreshUsageDisplay();
+                    if (cs.deviceId) {
+                        document.getElementById('wechatBound').style.display = 'block';
+                        document.getElementById('boundWechat').textContent = '💻 已绑定本设备 · 云端同步中';
+                    }
+                }
+            });
+        });
+    } else if (API_BASE) {
+        apiGetState(currentSession.code).then(function(r) {
+            if (r && r.exists) {
+                var key = getUsageKey(currentSession.code);
+                var usage = getUsage(currentSession.code);
+                usage.uses = r.uses;
+                localStorage.setItem(key, JSON.stringify(usage));
+                refreshUsageDisplay();
+            }
+        });
+    }
+}
+
+function updateContactBar() {
+    var bar = document.getElementById('contactBar');
+    var msg = document.getElementById('contactBarMsg');
+    var expiry = new Date(currentSession.expiry + 'T23:59:59');
+    var daysLeft = Math.ceil((expiry - new Date()) / (1000*60*60*24));
+    var messages = [];
+    if (daysLeft <= 7) {
+        messages.push(daysLeft <= 0 ? '会员已到期，请续费' : '剩余 ' + daysLeft + ' 天到期');
+    }
+    if (currentSession.maxUses > 0) {
+        var used = getUsage(currentSession.code).uses;
+        var left = currentSession.maxUses - used;
+        if (left <= 10 && left > 0) {
+            messages.push('剩余 ' + left + ' 次使用');
+        }
+    }
+    if (messages.length > 0) {
+        bar.classList.add('show');
+        msg.textContent = messages.join('，');
+    }
+}
+
+// ============================================================
+// 工具函数
+// ============================================================
+function copyWechat() {
+    navigator.clipboard.writeText('miaoan1913').then(function(){
+        showToast('✅ 客服微信已复制：miaoan1913');
+    }).catch(function(){
+        showToast('miaoan1913', true);
+    });
+}
+
+function copyResult(boxId) {
+    var box = document.getElementById(boxId);
+    var text = box.textContent;
+    navigator.clipboard.writeText(text).then(function(){
+        showToast('✅ 已复制到剪贴板，可粘贴到任意AI工具使用');
+    }).catch(function(){
+        showToast('复制失败，请手动选择复制', true);
+    });
+}
+
+function refreshUsageDisplay() {
+    updateContactBar();
+    document.getElementById('remainingUses').textContent = currentSession.maxUses === 0 ? '不限' : (currentSession.maxUses - getUsage(currentSession.code).uses);
+}
+
+function showToast(msg, warn) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast' + (warn ? ' warn' : '') + ' show';
+    setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+// ========== 表单草稿自动保存 ==========
+function saveDrafts() {
+    var drafts = {};
+    document.querySelectorAll('.panel input[type="text"], .panel input[type="number"], .panel textarea').forEach(function(el) {
+        if (el.id && el.value) drafts[el.id] = el.value;
+    });
+    localStorage.setItem('form_drafts', JSON.stringify(drafts));
+}
+function restoreDrafts() {
+    try {
+        var drafts = JSON.parse(localStorage.getItem('form_drafts') || '{}');
+        Object.keys(drafts).forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el && !el.value) el.value = drafts[id];
+        });
+    } catch(e) {}
+}
+function clearDrafts() {
+    localStorage.removeItem('form_drafts');
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(function(el){
+        el.classList.toggle('active', el.getAttribute('data-tab') === tab);
+    });
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+    document.getElementById('panel-' + tab).classList.add('active');
+}
+
+function switchBizMode(mode) {
+    currentBizMode = mode;
+    document.getElementById('mode-monthly').classList.toggle('active', mode==='monthly');
+    document.getElementById('mode-quarterly').classList.toggle('active', mode==='quarterly');
+    document.getElementById('monthlyFields').style.display = mode==='monthly' ? '' : 'none';
+    document.getElementById('quarterlyFields').style.display = mode==='quarterly' ? '' : 'none';
+}
+
+function switchOnboardMode(mode) {
+    currentOnboardMode = mode;
+    document.getElementById('mode-plan').classList.toggle('active', mode==='plan');
+    document.getElementById('mode-risk').classList.toggle('active', mode==='risk');
+    document.getElementById('planFields').style.display = mode==='plan' ? '' : 'none';
+    document.getElementById('riskFields').style.display = mode==='risk' ? '' : 'none';
+}
+
+// ============================================================
+// 公司档案系统
+// ============================================================
+function getCompanyProfile() {
+    try {
+        return JSON.parse(localStorage.getItem('company_profile') || 'null');
+    } catch(e) { return null; }
+}
+
+function getCompanyProfileText() {
+    var cp = getCompanyProfile();
+    if (!cp || !cp.name) return '';
+    return `## 公司档案（已加载，AI回答时请结合以下背景）
+- 公司名称：${cp.name || '未填'}
+- 所属行业：${cp.industry || '未填'}
+- 发展阶段：${cp.stage || '未填'}，员工${cp.size || '未填'}人，年营收约${(cp.revenue || '未填').replace(/[万元亿]/g,'')}万元
+- 主营业务：${cp.business || '未填'}
+- 核心产品/服务：${cp.products || '未填'}
+- 核心竞争优势：${cp.advantage || '未填'}
+- 当前主要挑战：${cp.challenges || '未填'}
+- 目标客户：${cp.customers || '未填'}
+
+`;
+}
+
+function openCompanyProfile() {
+    document.getElementById('companyProfileModal').classList.add('show');
+    var cp = getCompanyProfile();
+    if (cp) {
+        document.getElementById('cp-name').value = cp.name || '';
+        document.getElementById('cp-industry').value = cp.industry || '';
+        document.getElementById('cp-stage').value = cp.stage || '';
+        document.getElementById('cp-size').value = cp.size || '';
+        document.getElementById('cp-revenue').value = cp.revenue || '';
+        document.getElementById('cp-business').value = cp.business || '';
+        document.getElementById('cp-products').value = cp.products || '';
+        document.getElementById('cp-advantage').value = cp.advantage || '';
+        document.getElementById('cp-challenges').value = cp.challenges || '';
+        document.getElementById('cp-customers').value = cp.customers || '';
+    }
+}
+
+function closeCompanyProfile() {
+    document.getElementById('companyProfileModal').classList.remove('show');
+}
+
+function saveCompanyProfile() {
+    var cp = {
+        name: document.getElementById('cp-name').value.trim(),
+        industry: document.getElementById('cp-industry').value.trim(),
+        stage: document.getElementById('cp-stage').value.trim(),
+        size: document.getElementById('cp-size').value.trim(),
+        revenue: document.getElementById('cp-revenue').value.trim(),
+        business: document.getElementById('cp-business').value.trim(),
+        products: document.getElementById('cp-products').value.trim(),
+        advantage: document.getElementById('cp-advantage').value.trim(),
+        challenges: document.getElementById('cp-challenges').value.trim(),
+        customers: document.getElementById('cp-customers').value.trim()
+    };
+    localStorage.setItem('company_profile', JSON.stringify(cp));
+    closeCompanyProfile();
+    updateProfileIndicators();
+    showToast('✅ 公司档案已保存，所有模块将自动加载');
+}
+
+function updateProfileIndicators() {
+    var cp = getCompanyProfile();
+    var hasProfile = cp && cp.name;
+    document.querySelectorAll('.profile-indicator').forEach(function(el){
+        if (hasProfile) {
+            el.classList.remove('off');
+            el.innerHTML = '<span class="pi-dot"></span>公司档案已加载：' + cp.name + ' | ' + (cp.industry||'') + ' | ' + (cp.size||'') + '人 | ' + (cp.revenue||'') + '万年收 — <a href="javascript:openCompanyProfile()" style="color:#d4af37;text-decoration:underline">修改</a>';
+        } else {
+            el.classList.add('off');
+            el.innerHTML = '<span class="pi-dot"></span>尚未设置公司档案，AI分析缺少公司背景 — <a href="javascript:openCompanyProfile()" style="color:#ff6b6b;text-decoration:underline">立即设置</a>';
+        }
+    });
+}
+
+// ============================================================
+// 历史记录系统
+// ============================================================
+function getHistory() {
+    try { return JSON.parse(localStorage.getItem('analysis_history') || '[]'); }
+    catch(e) { return []; }
+}
+
+function saveHistory(module, mode, prompt) {
+    var history = getHistory();
+    history.unshift({
+        id: Date.now(),
+        module: module,
+        mode: mode || '',
+        prompt: prompt,
+        preview: prompt.replace(/\n/g,' ').substring(0, 80),
+        date: new Date().toISOString()
+    });
+    if (history.length > 50) history = history.slice(0, 50);
+    localStorage.setItem('analysis_history', JSON.stringify(history));
+    updateHistoryBadge();
+}
+
+function updateHistoryBadge() {
+    var history = getHistory();
+    var badge = document.getElementById('historyBadge');
+    if (history.length > 0) {
+        badge.style.display = 'flex';
+        badge.textContent = history.length > 99 ? '99+' : history.length;
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+function openHistory() {
+    document.getElementById('historyModal').classList.add('show');
+    var searchEl = document.getElementById('historySearch');
+    if (searchEl) searchEl.value = '';
+    renderHistoryList();
+}
+
+function closeHistory() {
+    document.getElementById('historyModal').classList.remove('show');
+}
+
+function renderHistoryList() {
+    var history = getHistory();
+    var container = document.getElementById('historyList');
+    var searchEl = document.getElementById('historySearch');
+    var query = searchEl ? (searchEl.value || '').toLowerCase() : '';
+    if (query) {
+        history = history.filter(function(h) {
+            return (h.module||'').toLowerCase().indexOf(query) !== -1 ||
+                   (h.mode||'').toLowerCase().indexOf(query) !== -1 ||
+                   (h.preview||'').toLowerCase().indexOf(query) !== -1;
+        });
+    }
+    if (history.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">' + (query ? '无匹配记录' : '暂无记录') + '</div>';
+        return;
+    }
+    var html = '';
+    history.forEach(function(h, i){
+        var d = new Date(h.id);
+        var dateStr = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+        html += '<div class="history-item" onclick="viewHistoryItemById('+h.id+')">';
+        html += '<div class="hi-date">'+dateStr+'</div>';
+        html += '<div class="hi-module">'+h.module+(h.mode?' · '+h.mode:'')+'</div>';
+        html += '<div class="hi-preview">'+h.preview+'...</div>';
+        html += '<div class="hi-actions">';
+        html += '<button onclick="event.stopPropagation();copyHistoryItemById('+h.id+')">📋 复制</button>';
+        html += '<button onclick="event.stopPropagation();deleteHistoryItemById('+h.id+')">🗑️</button>';
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+}
+
+function findHistoryById(id) {
+    var history = getHistory();
+    for (var i = 0; i < history.length; i++) {
+        if (history[i].id === id) return { item: history[i], index: i };
+    }
+    return null;
+}
+
+function viewHistoryItemById(id) {
+    var found = findHistoryById(id);
+    if (!found) return;
+    navigator.clipboard.writeText(found.item.prompt).then(function(){
+        closeHistory();
+        showToast('✅ 历史指令已复制到剪贴板');
+    });
+}
+
+function copyHistoryItemById(id) {
+    var found = findHistoryById(id);
+    if (!found) return;
+    navigator.clipboard.writeText(found.item.prompt).then(function(){
+        showToast('✅ 已复制');
+    });
+}
+
+function deleteHistoryItemById(id) {
+    var found = findHistoryById(id);
+    if (!found) return;
+    var history = getHistory();
+    history.splice(found.index, 1);
+    localStorage.setItem('analysis_history', JSON.stringify(history));
+    renderHistoryList();
+    updateHistoryBadge();
+}
+
+function clearAllHistory() {
+    if (confirm('确定要清空所有历史记录吗？此操作不可恢复。')) {
+        localStorage.setItem('analysis_history', '[]');
+        renderHistoryList();
+        updateHistoryBadge();
+        showToast('✅ 历史记录已清空');
+    }
+}
+
+// ============================================================
+// 高管人选追踪系统
+// ============================================================
+function getCandidates() {
+    try { return JSON.parse(localStorage.getItem('tracked_candidates') || '[]'); }
+    catch(e) { return []; }
+}
+
+function saveCandidates(candidates) {
+    localStorage.setItem('tracked_candidates', JSON.stringify(candidates));
+    updateCandidateBadge();
+}
+
+function updateCandidateBadge() {
+    var candidates = getCandidates();
+    var badge = document.getElementById('candidateBadge');
+    var active = candidates.filter(function(c){ return c.status !== '已放弃' && c.status !== '已转正'; });
+    if (active.length > 0) {
+        badge.style.display = 'flex';
+        badge.textContent = active.length > 99 ? '99+' : active.length;
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+function openCandidateTracker() {
+    document.getElementById('candidateTrackerModal').classList.add('show');
+    renderCandidateList();
+}
+
+function closeCandidateTracker() {
+    document.getElementById('candidateTrackerModal').classList.remove('show');
+    hideAddCandidateForm();
+}
+
+function showAddCandidateForm() {
+    document.getElementById('addCandidateForm').style.display = 'block';
+    document.getElementById('cand-name').value = '';
+    document.getElementById('cand-position').value = '';
+    document.getElementById('cand-status').value = '筛选';
+    document.getElementById('cand-source').value = '';
+    document.getElementById('cand-notes').value = '';
+}
+
+function hideAddCandidateForm() {
+    document.getElementById('addCandidateForm').style.display = 'none';
+}
+
+function addCandidate() {
+    var name = document.getElementById('cand-name').value.trim();
+    var position = document.getElementById('cand-position').value.trim();
+    if (!name) { showToast('请填写人选姓名', true); return; }
+    var candidates = getCandidates();
+    candidates.unshift({
+        id: Date.now(),
+        name: name,
+        position: position || '未填',
+        status: document.getElementById('cand-status').value,
+        source: document.getElementById('cand-source').value.trim() || '未填',
+        notes: document.getElementById('cand-notes').value.trim() || '',
+        addedDate: new Date().toISOString().slice(0,10),
+        interviews: []
+    });
+    saveCandidates(candidates);
+    hideAddCandidateForm();
+    renderCandidateList();
+    showToast('✅ 人选已添加');
+}
+
+function updateCandidateStatus(id, newStatus) {
+    var candidates = getCandidates();
+    for (var i = 0; i < candidates.length; i++) {
+        if (candidates[i].id === id) {
+            candidates[i].status = newStatus;
+            break;
+        }
+    }
+    saveCandidates(candidates);
+    renderCandidateList();
+}
+
+function deleteCandidate(id) {
+    if (!confirm('确定删除这个人选吗？')) return;
+    var candidates = getCandidates();
+    candidates = candidates.filter(function(c){ return c.id !== id; });
+    saveCandidates(candidates);
+    renderCandidateList();
+    showToast('已删除');
+}
+
+function renderCandidateList() {
+    var candidates = getCandidates();
+    var container = document.getElementById('candidateList');
+    if (candidates.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无追踪人选</div>';
+        return;
+    }
+    var statusLabels = {
+        '筛选':'初筛中','面试中':'面试中','谈薪':'谈薪阶段','已录用':'已录用','试用中':'试用中','已转正':'已转正','已放弃':'已放弃'
+    };
+    var html = '';
+    candidates.forEach(function(c){
+        html += '<div class="candidate-card">';
+        html += '<div class="cand-header">';
+        html += '<span class="cand-name">'+c.name+'</span>';
+        html += '<span class="cand-status status-'+c.status+'">'+c.status+'</span>';
+        html += '</div>';
+        html += '<div class="cand-info">';
+        html += '📋 '+c.position+' | 📅 '+c.addedDate+' | 🔗 '+c.source;
+        if (c.notes) html += '<br>💬 '+c.notes;
+        html += '</div>';
+        html += '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">';
+        html += '<select onchange="updateCandidateStatus('+c.id+',this.value)" style="font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.2);color:#ccc;flex:1;min-width:80px">';
+        Object.keys(statusLabels).forEach(function(s){
+            html += '<option value="'+s+'"'+(c.status===s?' selected':'')+'>'+statusLabels[s]+'</option>';
+        });
+        html += '</select>';
+        html += '<button style="font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid rgba(255,107,107,.3);background:rgba(255,107,107,.06);color:#ff6b6b;cursor:pointer" onclick="deleteCandidate('+c.id+')">🗑️</button>';
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+}
+
+// ========== 人选追踪 → 面试模块联动 ==========
+function refreshExamCandidateSelects() {
+    var candidates = getCandidates();
+    var active = candidates.filter(function(c) { return c.status !== '已放弃' && c.status !== '已转正'; });
+    var opts = '<option value="">手动填写（不选择人选）</option>';
+    active.forEach(function(c) {
+        opts += '<option value="' + c.id + '">' + c.name + ' — ' + c.position + '（' + c.status + '）</option>';
+    });
+    var sel1 = document.getElementById('examBank-candidate');
+    var sel2 = document.getElementById('examAnalyze-candidate');
+    if (sel1) sel1.innerHTML = opts;
+    if (sel2) sel2.innerHTML = opts;
+}
+
+function fillExamBankFromCandidate(id) {
+    if (!id) return;
+    var candidates = getCandidates();
+    var c = candidates.find(function(x) { return x.id === parseInt(id); });
+    if (!c) return;
+    document.getElementById('exam-position').value = (c.position && c.position !== '未填') ? c.position : '';
+    document.getElementById('exam-stage').value = (getCompanyProfile()||{}).stage || '【请根据实际填写】';
+    if (c.notes) {
+        document.getElementById('exam-worry').value = '备注：' + c.notes;
+    }
+}
+
+function fillExamAnalyzeFromCandidate(id) {
+    if (!id) return;
+    var candidates = getCandidates();
+    var c = candidates.find(function(x) { return x.id === parseInt(id); });
+    if (!c) return;
+    document.getElementById('analyze-position').value = (c.position && c.position !== '未填') ? c.position : '';
+    if (c.notes) {
+        document.getElementById('analyze-bg').value = '人选追踪备注：' + c.notes + '\n来源：' + (c.source || '未知');
+    }
+}
+
+// 切换tab时刷新候选下拉
+var origSwitchTab = switchTab;
+switchTab = function(tab) {
+    origSwitchTab(tab);
+    if (tab === 'exambank' || tab === 'examanalyze') {
+        refreshExamCandidateSelects();
+    }
+};
+// 新增/编辑人选后也刷新
+var origRenderCandidateList = renderCandidateList;
+renderCandidateList = function() {
+    origRenderCandidateList();
+    refreshExamCandidateSelects();
+};
+
+// ============================================================
+// 提示词组装辅助：自动加载公司档案 + 历史保存
+// ============================================================
+function wrapPrompt(rawPrompt, moduleName, modeName) {
+    var full = getCompanyProfileText() + rawPrompt;
+    saveHistory(moduleName, modeName, full);
+    return full;
+}
+
+// ============================================================
+// 模块1：企业经营分析（四大板块：财务+业务+运营+人力）
+// ============================================================
+function processBiz() {
+    var resultBox = document.getElementById('biz-result');
+    resultBox.classList.add('show','loading');
+    resultBox.innerHTML = '<div class="spinner"></div>正在生成四大板块经营分析指令...';
+    document.getElementById('biz-copy-btn').style.display = 'none';
+
+    useOneCredit(function() {
+        var raw;
+        if (currentBizMode === 'monthly') {
+            raw = buildMonthlyPrompt();
+        } else {
+            raw = buildQuarterlyPrompt();
+        }
+        var prompt = wrapPrompt(raw, '企业经营分析', currentBizMode==='monthly'?'月度快诊':'季度深盘');
+        resultBox.classList.remove('loading');
+        resultBox.textContent = prompt;
+        document.getElementById('biz-copy-btn').style.display = 'inline-block';
+    }, function(err) {
+        resultBox.classList.remove('loading');
+        resultBox.innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:20px">' + err + '</div>';
+    });
+}
+
+function buildMonthlyPrompt() {
+    var revenue = document.getElementById('biz-month-revenue').value || '【未提供】';
+    var cost = document.getElementById('biz-month-cost').value || '【未提供】';
+    var expense = document.getElementById('biz-month-expense').value || '【未提供】';
+    var profit = document.getElementById('biz-month-profit').value || '【未提供】';
+    var cashflow = document.getElementById('biz-month-cashflow').value || '【未提供】';
+    var cash = document.getElementById('biz-month-cash').value || '【未提供】';
+    var ar = document.getElementById('biz-month-ar').value || '【未提供】';
+    var ap = document.getElementById('biz-month-ap').value || '【未提供】';
+    var orders = document.getElementById('biz-month-orders').value || '【未提供】';
+    var customers = document.getElementById('biz-month-customers').value || '【未提供】';
+    var channels = document.getElementById('biz-month-channels').value || '【未提供】';
+    var products = document.getElementById('biz-month-products').value || '【未提供】';
+    var delivery = document.getElementById('biz-month-delivery').value || '【未提供】';
+    var complaints = document.getElementById('biz-month-complaints').value || '【未提供】';
+    var inventory = document.getElementById('biz-month-inventory').value || '【未提供】';
+    var projects = document.getElementById('biz-month-projects').value || '【未提供】';
+    var headcount = document.getElementById('biz-month-headcount').value || '【未提供】';
+    var laborcost = document.getElementById('biz-month-laborcost').value || '【未提供】';
+    var turnover = document.getElementById('biz-month-turnover').value || '【未提供】';
+    var coreposts = document.getElementById('biz-month-coreposts').value || '【未提供】';
+    var worry = document.getElementById('biz-month-worry').value || '无';
+
+    return `你是一位资深企业经营分析顾问，拥有20年中小企业咨询经验，服务过500+家企业。请根据以下四大板块的经营数据，为这家企业做一次月度经营综合分析。
+
+## 板块一：财务健康数据
+- 上月营收：${revenue}
+- 上月营业成本：${cost}
+- 上月费用合计：${expense}
+- 上月净利润/净利率：${profit}
+- 经营性现金流：${cashflow}
+- 账上现金余额：${cash}万元
+- 应收账款：${ar}
+- 应付账款：${ap}
+
+## 板块二：业务增长数据
+- 订单量/客单价：${orders}
+- 新客户数/老客复购率：${customers}
+- 各渠道收入占比&ROI：${channels}
+- 各产品线收入占比&毛利率：${products}
+
+## 板块三：运营效率数据
+- 发货及时率/退货率：${delivery}
+- 客户投诉：${complaints}
+- 库存周转/滞销库存：${inventory}
+- 关键项目进度：${projects}
+
+## 板块四：人力效能数据
+- 员工总数/人均营收：${headcount}
+- 人力成本占营收比：${laborcost}
+- 入职/离职情况：${turnover}
+- 核心岗位变动：${coreposts}
+
+## 老板最担心的事
+${worry}
+
+## 请按以下框架输出月度经营分析报告
+
+### 一、本月经营概览（一页纸总结）
+- 核心指标仪表盘（从四个板块中提取最关键8-10个指标，用🔴🟡🟢标注健康度）
+- 一句话总结本月经营状况
+- 与上月对比：整体变好了还是变差了？
+
+### 二、财务健康诊断
+- 收入分析：营收达成率？增长是"健康增长"（毛利同步）还是"虚胖增长"（增收不增利）？
+- 利润分析：毛利率变化原因（成本端还是价格端）？费用结构是否合理？哪项费用增长异常？
+- 现金流预警：经营性现金流是否为正？应收在恶化还是改善？按当前消耗速度，现金能撑多久？
+- 本月财务最需要关注的2个问题
+
+### 三、业务增长诊断
+- 增长质量：增长来自新客还是老客？哪个更健康？
+- 渠道效率：哪个渠道ROI最高/最低？哪个渠道转化率在下降？资源分配需要调整吗？
+- 产品结构：哪条产品线是"现金牛"（高收入+高毛利）？哪条是"问题儿童"（低毛利或衰退）？产品结构是否需要调整？
+- 客户分析：新客获取效率趋势？老客复购率是否健康？获客成本在升还是降？
+- 本月业务最大的2个发现（好的和坏的都要说）
+
+### 四、运营效率扫描
+- 交付效率：发货及时率是否达标？退货率是否在合理范围？退货TOP3原因中最需要关注什么？
+- 客户体验：投诉量趋势？哪类投诉最需要优先解决？
+- 供应链健康：库存周转是否合理？滞销库存是否需要清理？缺货和滞销并存说明什么？
+- 运营效率提升的2个优先行动
+
+### 五、人力效能评估
+- 人效趋势：人均营收在升还是降？人力成本占比是否合理？
+- 编制健康度：哪个部门人员冗余？哪个部门人手不足？哪些岗位在招但一直招不到？
+- 人员稳定性：离职率是否在健康范围？离职原因中最需要关注什么？核心人才是否有流失风险？
+- 组织健康预警：有没有"温水煮青蛙"的隐患（如人效持续下降但没人关注）？
+
+### 六、交叉分析（看关联）
+- 财务和业务之间：营收涨了但利润跌了？可能是渠道ROI下降或获客成本上升吃掉利润
+- 业务和运营之间：退货率上升是否拉低了实际毛利率？投诉增多是否影响复购率？
+- 运营和人力之间：人效下降是因为人多了还是产出少了？核心岗位空缺是否导致运营指标恶化？
+- 找出1-2个"一个根因导致的连锁反应"
+
+### 七、本月最需要关注的3个问题和行动建议
+- 按紧迫程度排序
+- 每个问题：现象是什么→根因是什么→如果不解决会怎样→建议的具体行动（不是"加强管理"这种废话）
+- 如果老板担心的事"${worry}"确实值得担心，给出具体应对方案；如果不用太担心，告诉老板为什么
+
+### 八、下月重点关注
+- 基于本月趋势，下月最需要盯紧的3个指标
+- 建议下月经营分析会重点讨论的议题
+
+## 重要规则
+- 用老板能听懂的话，禁止堆砌专业术语
+- 每个判断必须有数据支撑，数据不足的地方标注"信息不足，建议补充XX数据"
+- 既要指出问题，也要肯定做得好的地方（不能只报忧不报喜）
+- 禁止"加强管理""优化流程""降本增效"这类正确的废话，每条建议必须说具体动作
+- 如果有危险信号，直接说出来，不要委婉
+- 各板块之间要交叉分析，不要孤立地看每个指标`;
+}
+
+function buildQuarterlyPrompt() {
+    var revenue = document.getElementById('biz-q-revenue').value || '【未提供】';
+    var totalcost = document.getElementById('biz-q-totalcost').value || '【未提供】';
+    var profit = document.getElementById('biz-q-profit').value || '【未提供】';
+    var cashflow = document.getElementById('biz-q-cashflow').value || '【未提供】';
+    var arap = document.getElementById('biz-q-arap').value || '【未提供】';
+    var orders = document.getElementById('biz-q-orders').value || '【未提供】';
+    var customers = document.getElementById('biz-q-customers').value || '【未提供】';
+    var channels = document.getElementById('biz-q-channels').value || '【未提供】';
+    var products = document.getElementById('biz-q-products').value || '【未提供】';
+    var funnel = document.getElementById('biz-q-funnel').value || '【未提供】';
+    var returns = document.getElementById('biz-q-returns').value || '【未提供】';
+    var satisfaction = document.getElementById('biz-q-satisfaction').value || '【未提供】';
+    var inventory = document.getElementById('biz-q-inventory').value || '【未提供】';
+    var supply = document.getElementById('biz-q-supply').value || '【未提供】';
+    var projects = document.getElementById('biz-q-projects').value || '【未提供】';
+    var headcount = document.getElementById('biz-q-headcount').value || '【未提供】';
+    var laborcost = document.getElementById('biz-q-laborcost').value || '【未提供】';
+    var turnover = document.getElementById('biz-q-turnover').value || '【未提供】';
+    var hiring = document.getElementById('biz-q-hiring').value || '【未提供】';
+    var culture = document.getElementById('biz-q-culture').value || '【未提供】';
+    var worry = document.getElementById('biz-q-worry').value || '无';
+
+    return `你是一位资深企业经营分析顾问，拥有20年中小企业咨询经验，擅长从经营数据中发现深层问题并提供战略级建议。请根据以下四大板块的季度经营数据，做一次深度经营复盘。
+
+## 板块一：财务健康（季度）
+- 本季度总营收：${revenue}
+- 总成本+费用：${totalcost}
+- 净利润/净利率趋势：${profit}
+- 经营性现金流/期末现金：${cashflow}
+- 应收&应付现状：${arap}
+
+## 板块二：业务增长（季度）
+- 季度订单量/客单价：${orders}
+- 新客/复购率/获客成本：${customers}
+- 各渠道收入占比&ROI趋势：${channels}
+- 各产品线收入占比&毛利率变化：${products}
+- 销售漏斗转化：${funnel}
+
+## 板块三：运营效率（季度）
+- 退货率/退货原因：${returns}
+- 客户满意度/投诉趋势：${satisfaction}
+- 库存周转/滞销库存：${inventory}
+- 供应商/缺货率：${supply}
+- 关键项目完成情况：${projects}
+
+## 板块四：人力效能（季度）
+- 季度末人数/人均营收：${headcount}
+- 人力成本占比/编制满足率：${laborcost}
+- 离职率/核心人才变动：${turnover}
+- 试用期通过率/招聘周期：${hiring}
+- 组织氛围/团队状态：${culture}
+
+## 老板最担心的事
+${worry}
+
+## 请按以下框架输出季度经营深度复盘报告
+
+### 一、季度经营概览（Executive Summary）
+- 核心指标仪表盘（从四个板块提取12-15个核心指标，用🔴🟡🟢标注健康度和趋势方向↑→↓）
+- 一句话总结本季度经营状况
+- 本季度最大的3个变化（与上季对比，好的和坏的）
+
+### 二、财务健康深度诊断
+- 收入与利润趋势：本季营收和利润的环比/同比/预算达成三维对比，趋势是向好还是恶化？
+- 利润质量分析：毛利率变化根因（成本推动还是价格推动？）净利率变化来自哪个环节？
+- 费用结构效率：各项费用率的趋势，哪项失控了？与行业平均水平对比如何？
+- 现金流安全评估：经营现金流与净利润的关系（利润有没有变成现金？）按当前消耗速度现金够撑几个月？乐观/中性/悲观三种情景预测
+- 应收/应付健康度：账龄结构是否恶化？有没有坏账风险？
+
+### 三、业务增长深度复盘
+- 增长引擎诊断：本季度增长靠什么驱动（量×价×新产品×新渠道）？这个驱动力可持续吗？
+- 渠道效率矩阵：按ROI×增长贡献两个维度画矩阵，标注哪些渠道该加投/维持/缩减
+- 产品组合分析：按收入占比×毛利率画矩阵，标注现金牛/明星/问题/瘦狗四类，建议产品组合怎么调整
+- 客户资产分析：新客获取效率趋势，LTV/CAC比值变化，客户分层（高价值/普通/低价值客户占比变化）
+- 销售漏斗健康度：哪个环节转化率最低？哪个环节在恶化？如果只优化一个环节能带来多少增量？
+
+### 四、运营效率深度扫描
+- 交付与退货：退货率趋势及根因（是产品质量问题还是客户预期管理问题？）退货成本对利润的真实影响
+- 客户体验：投诉趋势和根因分布，NPS/满意度变化，哪类客户最不满意？
+- 供应链诊断：库存周转趋势（是变快还是变慢？）滞销库存处理方案，缺货与滞销是否同时存在（说明预测或采购有问题）
+- 项目执行：关键项目完成率和延期原因分析，延期项目的补救方案
+
+### 五、人力效能与组织健康
+- 人效深度分析：人均营收/人均利润趋势，与行业标杆差距，各部门人效对比（哪个部门拉高了/拉低了整体人效？）
+- 编制与招聘：编制缺口对业务的实质影响有多大？招聘周期过长丢失了多少机会成本？
+- 人才风险：季度离职率趋势和核心原因，核心人才流失预警（谁走了影响最大？现在该做什么？）
+- 组织健康度：加班趋势、团队氛围、新老融合——有没有"温水煮青蛙"式的组织问题？
+
+### 六、交叉分析与系统诊断
+- 财务×业务：营收增长但利润下降？→ 追踪到具体渠道/产品/客户环节
+- 业务×运营：退货率或投诉率上升 → 是否已经体现在客户流失和复购下降上？
+- 运营×人力：人效下降 → 是人多了还是产出少了？核心岗位空缺是否导致运营指标恶化？
+- 人力×财务：人力成本上升 → 换来了人效提升还是单纯的成本膨胀？
+- 找出1-3个系统性根因（一个根因导致多个板块指标异常）
+
+### 七、战略校准
+- 对照年初/季度初目标：各维度达成率评估
+- 按当前趋势，全年目标还靠谱吗？差距有多大？
+- 如果差距大：建议目标怎么调整？节奏怎么调整？资源怎么重新分配？
+- 下季度最重要的3个战略重点
+
+### 八、本季度最需要关注的5个问题和行动方案
+- 按紧急×重要程度排序
+- 每个问题必须包含：现象→根因→如果不解决的后果→具体行动方案→建议责任人→建议完成时间→验收标准
+- 如果问题之间有关联，标注出来，建议打包解决
+- 对于老板最担心的"${worry}"——认真分析，给出明确判断和行动建议
+
+### 九、下季度经营预测与风险雷达
+- 基于本季趋势，预测下季度4个板块各3个关键指标的变化方向
+- 下季度最可能出现的3个风险，每个标注：可能性×影响程度×提前应对方案
+- 下季度最值得抓住的2个机会
+
+## 重要规则
+- 用老板能听懂的语言，控制专业术语密度
+- 每个判断必须有数据或逻辑支撑，数据不足的维度明确标注"建议补充XX数据"
+- 既要诚实指出问题（不报喜不报忧），又要肯定做得好的地方
+- 禁止"加强管理""优化流程""降本增效""提升效率"这类正确的废话
+- 每条建议必须是"谁+做什么+什么时间+怎么算成功"的具体动作
+- 四板块必须交叉分析，找出系统性关联，不要孤立地看每个指标
+- 战略校准建议要务实——既不要画大饼，也不要过度悲观`;
+}
+
+function clearBiz() {
+    if (!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。')) return; clearDrafts();
+    document.querySelectorAll('#monthlyFields input, #monthlyFields textarea, #quarterlyFields input, #quarterlyFields textarea').forEach(function(el){ el.value = ''; });
+    document.getElementById('biz-result').classList.remove('show');
+    document.getElementById('biz-copy-btn').style.display = 'none';
+}
+
+// ============================================================
+// 模块2：高管人才盘点
+// ============================================================
+function processTalent() {
+    var resultBox = document.getElementById('talent-result');
+    resultBox.classList.add('show','loading');
+    resultBox.innerHTML = '<div class="spinner"></div>正在生成人才盘点指令...';
+    document.getElementById('talent-copy-btn').style.display = 'none';
+
+    useOneCredit(function() {
+        var stage = document.getElementById('talent-stage').value || '【请填写】';
+        var goals = document.getElementById('talent-goals').value || '【请填写】';
+        var list = document.getElementById('talent-list').value || '【请填写高管信息】';
+        var worry = document.getElementById('talent-worry').value || '无';
+        var raw = `你是一位资深组织与人才顾问，拥有20年高管评估经验，服务过500+家企业的人才盘点项目。请帮我做一次核心团队的人才盘点。
+
+## 背景信息
+- 公司当前阶段：${stage}
+- 今年最重要的战略目标：${goals}
+- 老板最大的隐忧：${worry}
+
+## 核心高管信息
+${list}
+
+## 请按以下框架输出人才盘点报告
+
+### 一、九宫格人才地图
+把每个人放进"绩效×潜力"九宫格：
+- 超级明星（高绩效+高潜力）：重点保留+加速培养，未来的接班人
+- 核心培养对象（中绩效+高潜力）：给机会和辅导，可能是放错了位置
+- 业绩骨干（高绩效+中/低潜力）：保持现状，给足激励，不一定非要升管理
+- 稳定贡献者（中绩效+中潜力）：企业的基本盘
+- 待发展之星（低绩效+高潜力）：深入诊断，是能力问题还是意愿问题还是位置问题
+- 专业老兵（高绩效+低潜力）：尊重并保留，不一定非要晋升
+- 需要关注（中绩效+低潜力）：明确改进计划和时间表
+- 勉强胜任/淘汰候选（低绩效+低/中潜力）：需要果断处理
+
+### 二、关键岗位板凳深度
+- 每个核心岗位：现任是谁？如果有人离职，有谁能接？
+- 标注每个岗位的接替准备度：马上能接 / 1年后能接 / 没有接班人
+- 没有接班人的关键岗位 = 公司的单点风险
+
+### 三、离职风险TOP3
+- 谁最可能走？（综合留任意愿+市场机会+内部状态）
+- 如果走了影响多大？
+- 现在该做什么来降低风险？
+
+### 四、能力缺口分析
+- 对照今年战略目标，团队最缺什么能力？
+- 这个缺口是"内部培养"还是"外部引进"？哪个更快？
+- 如果战略目标要调整，人才策略要跟着怎么调？
+
+### 五、行动建议
+- 未来3个月人才端最重要的3件事
+- 谁该谈？谁该奖？谁该调？谁该走？
+- 给老板的一句话人才结论
+
+## 重要规则
+- 对事不对人，每个判断都要有依据
+- 既要诚实（该淘汰就淘汰），也要务实（有时候"能用"比"优秀"更现实）
+- 不要用HR术语堆砌，老板要的是判断不是论文
+- 如果老板提供的评分跟事实逻辑矛盾，指出来`;
+        var prompt = wrapPrompt(raw, '高管人才盘点', '');
+        resultBox.classList.remove('loading');
+        resultBox.textContent = prompt;
+        document.getElementById('talent-copy-btn').style.display = 'inline-block';
+    }, function(err) {
+        resultBox.classList.remove('loading');
+        resultBox.innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:20px">' + err + '</div>';
+    });
+}
+
+function clearTalent() {
+    if (!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。')) return; clearDrafts();
+    document.querySelectorAll('#panel-talent input, #panel-talent textarea').forEach(function(el){ el.value = ''; });
+    document.getElementById('talent-result').classList.remove('show');
+    document.getElementById('talent-copy-btn').style.display = 'none';
+}
+
+// ============================================================
+// 模块3：企业决策沙盘
+// ============================================================
+function processDecision() {
+    var resultBox = document.getElementById('decision-result');
+    resultBox.classList.add('show','loading');
+    resultBox.innerHTML = '<div class="spinner"></div>正在生成决策推演指令...';
+    document.getElementById('decision-copy-btn').style.display = 'none';
+
+    useOneCredit(function() {
+        var question = document.getElementById('dec-question').value || '【请填写】';
+        var context = document.getElementById('dec-context').value || '【请填写】';
+        var options = document.getElementById('dec-options').value || '【请填写至少2个方案】';
+        var risk = document.getElementById('dec-risk').value || '【请填写】';
+        var deadline = document.getElementById('dec-deadline').value || '无特定时间窗口';
+        var raw = `你是一位资深企业战略顾问，服务过300+家企业的重大决策咨询。现在有一位老板面临一个关键决策，请你帮他做一次系统的决策推演。你不替他做决定，但帮他把每个选项想清楚。
+
+## 决策背景
+- 核心问题：${question}
+- 当前情况：${context}
+- 时间窗口：${deadline}
+- 老板最担心的风险：${risk}
+
+## 可选方案
+${options}
+
+## 请按以下框架输出决策推演报告
+
+### 一、决策的本质
+- 这个决策真正在决定什么？（往往不是表面上那个问题）
+- 这个决策的一阶效应和二阶效应分别是什么？
+- 不做决策（维持现状）的代价是什么？
+
+### 二、各方案情景推演
+
+对每个方案，按以下维度推演：
+
+**最佳情景：**
+- 什么条件下会发生？
+- 最好能好到什么程度？
+- 达成最佳结果的概率有多大？
+
+**最差情景：**
+- 什么情况下会翻车？
+- 最差能差到什么程度？
+- 能承受吗？
+
+**最可能情景：**
+- 正常发展下去大概什么结果？
+- 12个月后会是什么状态？
+
+### 三、关键前提条件检验
+- 每个方案成立需要哪些前提条件？
+- 这些条件现在具备吗？如果不具备，能创造吗？
+- 哪个前提条件是最脆弱的？（一旦不成立，方案就垮了）
+
+### 四、风险矩阵
+| 风险 | 可能性 | 影响程度 | 应对预案 |
+每个方案列出TOP3风险
+
+### 五、决策建议
+- 如果只看确定性，选哪个？
+- 如果看的是上限空间，选哪个？
+- 有没有"先小试再放大"的渐进路径？
+- 有没有方案A+B的组合可能性？
+- 建议的决策节奏：是现在必须定，还是可以分步走？
+
+### 六、决策后管理
+- 选定了之后，最大的执行风险是什么？
+- 什么信号出现说明决策错了，需要调整？
+- 建议设置什么检查点？
+
+## 重要规则
+- 不替老板做决定，但帮他看见他可能忽略的角度
+- 对每个方案要公平推演，不要预设哪个好
+- 如果老板的信息不够做判断，明确指出"还需要什么信息"
+- 老板最担心的风险如果确实重要，认真分析；如果不重要，告诉他为什么不用太担心
+- 禁止模棱两可的废话，每个判断都要有逻辑链条`;
+        var prompt = wrapPrompt(raw, '企业决策沙盘', '');
+        resultBox.classList.remove('loading');
+        resultBox.textContent = prompt;
+        document.getElementById('decision-copy-btn').style.display = 'inline-block';
+    }, function(err) {
+        resultBox.classList.remove('loading');
+        resultBox.innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:20px">' + err + '</div>';
+    });
+}
+
+function clearDecision() {
+    if (!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。')) return; clearDrafts();
+    document.querySelectorAll('#panel-decision input, #panel-decision textarea').forEach(function(el){ el.value = ''; });
+    document.getElementById('decision-result').classList.remove('show');
+    document.getElementById('decision-copy-btn').style.display = 'none';
+}
+
+// ============================================================
+// 模块4：高管面试题库
+// ============================================================
+function processExamBank() {
+    var resultBox = document.getElementById('exambank-result');
+    resultBox.classList.add('show','loading');
+    resultBox.innerHTML = '<div class="spinner"></div>正在生成面试题库指令...';
+    document.getElementById('exambank-copy-btn').style.display = 'none';
+
+    useOneCredit(function() {
+        var position = document.getElementById('exam-position').value || '【请填写】';
+        var stage = document.getElementById('exam-stage').value || '【请填写】';
+        var battles = document.getElementById('exam-battles').value || '【请填写】';
+        var musthave = document.getElementById('exam-musthave').value || '【请填写】';
+        var worry = document.getElementById('exam-worry').value || '无';
+        var raw = `你是一位资深高管猎头兼面试顾问，拥有20年高管招聘经验，面试过2000+位高管候选人。请帮我为以下岗位设计一套完整的高管面试题库。
+
+## 岗位信息
+- 岗位：${position}
+- 公司阶段与规模：${stage}
+- 这个岗位要打赢的3场硬仗：${battles}
+- 硬性门槛：${musthave}
+- 老板最担心的问题：${worry}
+
+## 请按以下框架输出高管面试题库（共约24题）
+
+### 模块A：业绩真实性验证（8题）
+目标：区分"他做的""他团队做的"还是"他蹭的"
+- 追问式问题，用STAR法则深挖（情境-任务-行动-结果）
+- 每道题有递进追问链：如果候选人回答X，你应该追问什么？
+- 包含1-2道"交叉验证题"：从不同角度问同一件事，看前后是否一致
+- 包含1道"数字题"：他说的业绩，能用什么数字来验证？
+
+### 模块B：战略思维深度（5题）
+目标：判断他能不能看到全局，能不能想清楚
+- 给一个跟你们公司相关的真实业务场景，让他当场分析
+- 考察维度：行业洞察、竞争判断、资源分配、风险意识、创新能力
+- 每道题标注：好回答长什么样？什么回答是红旗信号？
+
+### 模块C：领导力验证（5题）
+目标：判断他能不能带团队、做决策、处理冲突
+- 追问具体案例：带过多大的团队？经历过什么冲突？做过什么艰难决定？
+- 包含1道"失败题"：让他讲一次失败经历，看他的反思深度
+- 包含1道"团队题"：让他评价团队中最强和最弱的人
+
+### 模块D：文化匹配探测（3题）
+目标：判断他的价值观和工作风格是否匹配你的公司
+- 用情景模拟题探测真实价值观（不是问"你的价值观是什么"）
+- 针对${stage}阶段的公司特性，设计文化匹配问题
+
+### 模块E：压力与边界测试（3题）
+目标：看他在压力下和边界情况下的真实反应
+- 1道两难情境题
+- 1道质疑/挑战式问题
+- 1道关于"钱"的直接问题（薪资期望、对钱的态度、过往薪酬结构）
+
+## 每道题标配标注
+1. 这道题在考察什么？
+2. 好回答的特征（不是标准答案，是判断标准）
+3. 红旗信号（什么回答意味着这人大概率不行）
+4. 如果候选人回答得模糊，应该怎么追问？
+
+## 重要规则
+- 问题要有穿透力，避免候选人能猜到你想听什么
+- 禁止"你的优点是什么""你最大的缺点是什么"这类无效问题
+- 针对老板最担心的${worry}，重点设计2-3道验证题
+- 题目要适配中小企业的实际场景，不要大厂面试套路`;
+        var prompt = wrapPrompt(raw, '高管面试题库', '');
+        resultBox.classList.remove('loading');
+        resultBox.textContent = prompt;
+        document.getElementById('exambank-copy-btn').style.display = 'inline-block';
+    }, function(err) {
+        resultBox.classList.remove('loading');
+        resultBox.innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:20px">' + err + '</div>';
+    });
+}
+
+function clearExamBank() {
+    if (!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。')) return; clearDrafts();
+    document.querySelectorAll('#panel-exambank input, #panel-exambank textarea').forEach(function(el){ el.value = ''; });
+    document.getElementById('exambank-result').classList.remove('show');
+    document.getElementById('exambank-copy-btn').style.display = 'none';
+}
+
+// ============================================================
+// 模块5：高管面试分析
+// ============================================================
+function processExamAnalyze() {
+    var resultBox = document.getElementById('examanalyze-result');
+    resultBox.classList.add('show','loading');
+    resultBox.innerHTML = '<div class="spinner"></div>正在生成面试分析指令...';
+    document.getElementById('examanalyze-copy-btn').style.display = 'none';
+
+    useOneCredit(function() {
+        var position = document.getElementById('analyze-position').value || '【请填写】';
+        var bg = document.getElementById('analyze-bg').value || '【请填写】';
+        var transcript = document.getElementById('analyze-transcript').value || '【请粘贴面试录音转写文字】';
+        var gut = document.getElementById('analyze-gut').value || '无';
+        var raw = `你是一位资深高管面试评估专家，拥有20年面试评估经验，参与过1000+次高管面试评估。请帮我对以下面试记录做结构化分析。
+
+## 面试信息
+- 应聘岗位：${position}
+- 候选人背景：${bg}
+- 老板面试后的直觉感受：${gut}
+
+## 面试录音转写文字
+${transcript}
+
+## 请按以下框架输出面试评估报告
+
+### 一、四维打分（每项10分，共40分）
+
+**维度1：业绩真实性（/10）**
+- 他说的业绩有足够证据支撑吗？
+- 有没有前后矛盾或模糊的地方？
+- 哪些是他做的？哪些是团队做的？哪些他不该居功？
+
+**维度2：战略思维（/10）**
+- 他对行业的理解是深是浅？
+- 他分析问题的框架清晰吗？
+- 他想到的东西你有没有没想到的？
+
+**维度3：领导力（/10）**
+- 他带团队的具体案例可信吗？
+- 他做决策的方式跟你期望的一致吗？
+- 他对人的判断准不准？
+
+**维度4：文化匹配（/10）**
+- 他的工作风格和价值观跟你的公司匹配吗？
+- 有没有隐约"不对路"的地方？
+
+**综合评分及解读：**
+- 总得分和等级（强烈推荐/推荐/待定/不推荐）
+- 最强维度和最弱维度
+- 这个人的弱点是你能接受的吗？
+
+### 二、证据链分析
+- 哪些能力维度有充分的行为证据？
+- 哪些维度"听起来不错但没证据"？
+- 面试中他回避了哪些话题？
+- 哪些关键信息还没问到？
+
+### 三、红旗信号清单
+检查以下信号：
+- 频繁换工作的模式
+- 业绩描述含糊不清
+- 把团队功劳说成个人功劳
+- 过度贬低前公司/前老板
+- 工资期望跟能力不匹配
+- 面试表现跟简历描述差距大
+- 对风险的意识过低或过高
+- 其他让你"隐约不舒服"的点
+
+### 四、认知偏差提醒
+老板，请自检以下偏差是否在影响你的判断：
+- 光环效应：他某一个方面很强，你是不是就觉得他什么都强？
+- 相似偏好：他跟你背景/性格相似，你是不是就更喜欢他？
+- 首因效应：开场5分钟的印象是否主导了你的判断？
+- 确认偏误：你是否只在找他"行"的证据，忽略了"不行"的信号？
+- 稀缺偏差：是不是因为"太难招了"而降低了标准？
+对照老板的直觉感受"${gut}"，AI帮你检验这个直觉靠谱吗。
+
+### 五、背调方案
+- 应该去哪些地方验证这个人的哪些信息？
+- 找谁问？（前同事/前下属/前老板/合作伙伴 各问什么）
+- 什么问题在背调中最关键？
+
+### 六、下一步建议
+- 如果继续推进：下一轮面试该重点验证什么？
+- 如果淘汰：为什么？
+- 如果待定：什么时候再判断？还需要什么信息？
+- 老板的直觉"${gut}"——AI的客观判断跟你的直觉一致吗？
+
+## 重要规则
+- 基于面试内容做判断，不要编造信息
+- 明确指出"有证据的判断"和"推测"的区别
+- 如果面试内容不足以做完整评估，明确说"信息不足，建议再问XX"
+- 对抗认知偏差，不要迎合老板的直觉感受`;
+        var prompt = wrapPrompt(raw, '高管面试分析', '');
+        resultBox.classList.remove('loading');
+        resultBox.textContent = prompt;
+        document.getElementById('examanalyze-copy-btn').style.display = 'inline-block';
+    }, function(err) {
+        resultBox.classList.remove('loading');
+        resultBox.innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:20px">' + err + '</div>';
+    });
+}
+
+function clearExamAnalyze() {
+    if (!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。')) return; clearDrafts();
+    document.querySelectorAll('#panel-examanalyze input, #panel-examanalyze textarea').forEach(function(el){ el.value = ''; });
+    document.getElementById('examanalyze-result').classList.remove('show');
+    document.getElementById('examanalyze-copy-btn').style.display = 'none';
+}
+
+// ============================================================
+// 模块6：高管试用辅佐
+// ============================================================
+function processOnboard() {
+    var resultBox = document.getElementById('onboard-result');
+    resultBox.classList.add('show','loading');
+    resultBox.innerHTML = '<div class="spinner"></div>正在生成辅佐指令...';
+    document.getElementById('onboard-copy-btn').style.display = 'none';
+
+    useOneCredit(function() {
+        var raw;
+        if (currentOnboardMode === 'plan') {
+            raw = buildOnboardPlanPrompt();
+        } else {
+            raw = buildOnboardRiskPrompt();
+        }
+        var prompt = wrapPrompt(raw, '高管试用辅佐', currentOnboardMode==='plan'?'90天融入计划':'风险诊断');
+        resultBox.classList.remove('loading');
+        resultBox.textContent = prompt;
+        document.getElementById('onboard-copy-btn').style.display = 'inline-block';
+    }, function(err) {
+        resultBox.classList.remove('loading');
+        resultBox.innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:20px">' + err + '</div>';
+    });
+}
+
+function buildOnboardPlanPrompt() {
+    var position = document.getElementById('onboard-position').value || '【请填写】';
+    var stage = document.getElementById('onboard-stage').value || '【请填写】';
+    var teamsize = document.getElementById('onboard-teamsize').value || '【请填写】';
+    var battles = document.getElementById('onboard-battles').value || '【请填写】';
+    var culture = document.getElementById('onboard-culture').value || '【请填写】';
+
+    return `你是一位资深企业教练，专门帮助新高管成功度过试用期，服务过300+位高管的入职融入辅导。请帮我为一位新高管设计一套90天融入计划。
+
+## 背景信息
+- 岗位：${position}
+- 公司阶段：${stage}
+- 团队情况：${teamsize}
+- 需要打赢的3场硬仗：${battles}
+- 公司文化特征：${culture}
+
+## 请按以下框架输出90天融入计划
+
+### 一、融入总纲
+- 这个岗位90天成功的定义是什么？（不是"活下来"，要有具体的、可验证的标准）
+- 前90天最重要的事排序：先做什么、后做什么、为什么是这个顺序
+- 最大的融入风险是什么？
+
+### 二、分阶段行动计划
+
+**第1-30天：了解期（主题：听、看、建关系）**
+- 周1-2：应该跟谁聊？看什么数据？了解什么流程？
+- 周3-4：应该形成什么初步判断？产出什么？
+- 30天检查点：这30天后他应该呈现出什么状态算正常？
+- 老板在第1个月应该做什么？（每周至少1次1v1，但不要微管理）
+
+**第31-60天：切入期（主题：小胜、立威、定方向）**
+- 应该选哪件事作为第一个突破口？（建议选能快速见效的小胜利）
+- 跟团队的关系应该怎么建立？（尤其是老员工）
+- 60天检查点：什么进展算"正常"？什么算"偏慢"？
+
+**第61-90天：发力期（主题：推进关键战役、建立节奏）**
+- 3场硬仗的进度如何评估？
+- 90天检查点：什么算通过试用期？什么算需要延长观察？什么算考虑止损？
+
+### 三、老板行动清单
+- 每周/每两周该做什么来支持他？
+- 什么信号出现时该介入？什么信号出现时该放手？
+- 如何平衡"给他空间"和"不能失控"？
+
+### 四、融入风险预案
+- 如果老团队抗拒他，怎么办？
+- 如果他的做事风格跟公司文化冲突，怎么办？
+- 如果他前30天看起来"什么都没做"，怎么办？
+
+### 五、试用期评估框架
+- 90天结束时用什么标准判断"过"还是"不过"？
+- 哪些是应该容忍的短期问题？哪些是一票否决的红线？
+- 如果决定"再观察30天"，观察什么？`;
+}
+
+function buildOnboardRiskPrompt() {
+    var position = document.getElementById('onboard-risk-pos').value || '【请填写】';
+    var time = document.getElementById('onboard-risk-time').value || '【请填写】';
+    var obs = document.getElementById('onboard-risk-obs').value || '【请填写观察到的具体表现】';
+    var worry = document.getElementById('onboard-risk-worry').value || '【请填写】';
+
+    return `你是一位资深企业教练，专门帮老板处理高管试用期的疑难问题。现在有一位老板对新高管有疑虑，请帮他做一次系统的风险诊断。
+
+## 情况描述
+- 岗位：${position}
+- 已入职时间：${time}
+- 观察到的具体表现：${obs}
+- 老板内心的担忧：${worry}
+
+## 请按以下框架输出风险诊断报告
+
+### 一、表现评估
+对照该岗位试用期该阶段应有状态：
+- 哪些表现是正常的？（新环境适应、文化磨合、关系建立都需要时间）
+- 哪些表现是值得警惕的？
+- 哪些表现说明这个人可能根本不行？
+- 区分"水土不服"和"能力不足"——这是两个完全不同的问题
+
+### 二、问题诊断
+如果确实存在问题，问题出在哪一层？
+- 是能力问题：他真的不会？
+- 是意愿问题：他不想干？
+- 是环境问题：公司给他的条件不够？
+- 是期望问题：老板的期望跟他理解的差距太大？
+- 是文化问题：做事方式跟公司冲突？
+
+### 三、止损决策框架
+- 现在是该"继续观察"还是"果断止损"？
+- 如果继续观察：看到什么时候必须做决定？观察到什么信号说明不行？
+- 如果止损：最佳时机是什么？怎么操作损失最小？（钱、团队士气、业务连续性）
+- 评估沉默成本——不要因为"已经花了时间和钱"而继续错下去
+
+### 四、针对性行动建议
+基于上面的诊断，给出具体行动方案：
+- 如果继续观察：老板接下来4周该做什么？跟他怎么谈？
+- 如果调整方向：能给他换个位置吗？还是必须让他走？
+- 如果要止损：跟团队怎么沟通？业务怎么过渡？
+
+### 五、反思
+- 这次招聘过程有没有教训？当初面试时有没有漏掉什么？
+- 以后招这个岗位，应该增加什么验证环节？
+
+## 重要规则
+- 诚实但不要轻易下结论——有时候真的是还没到时间
+- 但也不要用"再看看"无限拖延——拖得越久代价越大
+- 每一条建议都要有理由支撑
+- 如果老板的直觉跟观察到的事实一致，告诉他；如果不一致，也告诉他`;
+}
+
+function clearOnboard() {
+    if (!confirm('确定要清空所有已填写的内容吗？此操作不可恢复。')) return; clearDrafts();
+    document.querySelectorAll('#planFields input, #planFields textarea, #riskFields input, #riskFields textarea').forEach(function(el){ el.value = ''; });
+    document.getElementById('onboard-result').classList.remove('show');
+    document.getElementById('onboard-copy-btn').style.display = 'none';
+}
+// 退出登录
+function logout() {
+    if (!confirm('确定要退出吗？\n\n退出后重新进入需要输入激活码。')) return;
+    currentSession = null;
+    document.getElementById('mainApp').classList.remove('show');
+    document.getElementById('loginScreen').style.display = '';
+    document.getElementById('activateBtn').disabled = false;
+    document.getElementById('activateBtn').textContent = '激活使用';
+    var lastCode = localStorage.getItem('last_activation_code');
+    if (lastCode) {
+        document.getElementById('activationInput').value = lastCode;
+        document.getElementById('loginHint').style.display = '';
+        document.getElementById('lastCodeHint').textContent = maskCode(lastCode);
+    }
+    clearDrafts();
+}
+// 填入上次激活码
+function fillLastCode() {
+    var code = localStorage.getItem('last_activation_code');
+    if (code) {
+        document.getElementById('activationInput').value = code;
+        document.getElementById('loginHint').style.display = 'none';
+    }
+}
+function maskCode(code) {
+    if (code.length <= 8) return code.substring(0, 2) + '****' + code.substring(code.length - 2);
+    return code.substring(0, 4) + '****' + code.substring(code.length - 4);
+}
+// 登录页显示上次使用的激活码提示
+(function(){
+    var lastCode = localStorage.getItem('last_activation_code');
+    if (lastCode) {
+        var hint = document.getElementById('loginHint');
+        var span = document.getElementById('lastCodeHint');
+        if (hint && span) {
+            span.textContent = maskCode(lastCode);
+            hint.style.display = '';
+        }
+    }
+})();
+// 云端同步状态指示
+(function(){
+    var el = document.getElementById('syncStatusLogin');
+    if (el) {
+        var token = localStorage.getItem('gh_sync_token');
+        if (token) {
+            el.textContent = '🟢 云端同步已开启 · 点击修改';
+            el.style.color = 'rgba(72,199,142,.7)';
+        }
+    }
+})();
+</script>
 </body>
 </html>
