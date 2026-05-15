@@ -1,5 +1,254 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>激活码生成器 · 安迪 AI调度师</title><link rel="icon" href="logo.png" type="image/png"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;background:#080c0a;color:#d8d8d8;min-height:100vh;display:flex;align-items:center;justify-content:center}.card{background:rgba(16,24,20,.95);border:1px solid rgba(212,175,55,.12);border-radius:18px;padding:34px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6);backdrop-filter:blur(10px)}.logo-img{width:48px;height:48px;border-radius:12px;margin-bottom:8px;object-fit:cover}.brand{font-size:12px;color:rgba(212,175,55,.6);letter-spacing:2px;margin-bottom:4px;font-weight:500}h1{font-size:22px;margin-bottom:4px;color:#e8ddc0}.sub{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:24px;line-height:1.6}label{display:block;font-size:13px;color:rgba(255,255,255,.55);margin:14px 0 4px;font-weight:600}input,select{width:100%;padding:10px 14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(0,0,0,.25);color:#d8d8d8;font-size:14px;font-family:inherit}input:focus,select:focus{outline:none;border-color:#d4af37;box-shadow:0 0 0 3px rgba(212,175,55,.06)}select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}select option{background:#161f18;color:#d8d8d8}.plan-row{display:flex;gap:12px}.plan-row>div{flex:1}.btn{width:100%;padding:13px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:18px;transition:.2s;letter-spacing:.5px}.btn-gen{background:linear-gradient(135deg,#d4af37,#b8960f);color:#0a0a0a;box-shadow:0 4px 16px rgba(212,175,55,.2)}.btn-gen:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(212,175,55,.3)}.btn-copy{background:rgba(212,175,55,.08);color:#d4af37;margin-top:8px;border:1px solid rgba(212,175,55,.15)}.btn-copy:hover{background:rgba(212,175,55,.14)}.output-section{margin-top:20px;display:none}.output-section.show{display:block}.code-box{background:rgba(0,0,0,.25);border:1px solid rgba(212,175,55,.15);border-radius:12px;padding:22px;text-align:center;margin-top:10px}.code{font-size:26px;font-weight:700;color:#d4af37;letter-spacing:3px;font-family:'Courier New',monospace;word-break:break-all}.code-info{font-size:12px;color:rgba(255,255,255,.35);margin-top:8px}.history{margin-top:24px;border-top:1px solid rgba(255,255,255,.06);padding-top:16px}.history h3{font-size:14px;color:rgba(255,255,255,.4);margin-bottom:10px}.history-item{font-size:12px;color:rgba(255,255,255,.35);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px}.history-item span{color:rgba(255,255,255,.55)}.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:rgba(212,175,55,.95);color:#0a0a0a;padding:10px 24px;border-radius:20px;font-size:14px;z-index:99;opacity:0;transition:.3s;pointer-events:none;box-shadow:0 8px 32px rgba(212,175,55,.25)}.toast.show{opacity:1}.note{background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.08);border-radius:10px;padding:13px;margin-top:16px;font-size:12px;color:rgba(212,175,55,.55);line-height:1.8}</style></head><body><div class="card"><img class="logo-img" src="logo.png" alt="安迪 AI调度师" onerror="this.style.display='none'"><div class="brand">安迪 AI调度师</div><h1>🔐 激活码生成器</h1><p class="sub">⚠️ 此工具仅你自己使用，不要发给任何人<br>产品：AI总参谋</p><label>客户称呼</label><input type="text" id="name" placeholder="如：张总 / XX公司老板"><div class="plan-row"><div><label>套餐类型</label><select id="plan"><option value="month" selected>月卡 — ¥999/30次</option><option value="halfyear">半年卡 — ¥4999/200次</option><option value="year">年卡 — ¥9999/500次</option><option value="custom">自定义天数</option></select></div><div><label>使用次数上限</label><select id="uses"><option value="30" selected>30次（月卡）</option><option value="200">200次（半年卡）</option><option value="500">500次（年卡）</option><option value="10">10次（体验）</option><option value="50">50次</option><option value="0">不限次数</option></select></div></div><div id="customDaysBox" style="display:none"><label>自定义天数</label><input type="number" id="customDays" value="30" min="1" max="365"></div><label>最大使用人数（微信号限制）</label><select id="maxUsers"><option value="3" selected>3人（默认）</option><option value="1">1人（仅本人）</option><option value="2">2人</option><option value="5">5人</option><option value="10">10人</option><option value="0">不限人数</option></select><button class="btn btn-gen" onclick="generateCode()">🎫 生成激活码</button><div class="output-section" id="output"><div class="code-box"><div style="font-size:12px;color:rgba(255,255,255,.3);margin-bottom:6px">激活码</div><div class="code" id="codeDisplay"></div><div class="code-info" id="codeInfo"></div></div><button class="btn btn-copy" onclick="copyCode()">📋 一键复制激活码</button><button class="btn btn-copy" onclick="copySendMsg()">💬 复制发给客户的话术</button></div><div class="note"><strong>📌 使用说明：</strong><br> 1. 客户付款后，填客户名+选套餐 → 点生成<br> 2. 把激活码发给客户<br> 3. 客户在AI总参谋工作台输入激活码即可使用<br> 4. 激活码从<strong>首次激活当天</strong>开始计时<br> 5. 用完次数或到期后，工作台会提示续费<br> 6. 本工具可离线使用，生成记录保存在浏览器里 </div><div class="history" id="history"><h3>📋 生成记录（仅存储在本机）</h3><div id="historyList" style="color:rgba(255,255,255,.3);font-size:12px">暂无记录</div></div></div><div class="toast" id="toast"></div><script>const a0_0x2ca062=a0_0x152d;function a0_0x152d(_0x12cb04,_0x4bdaef){_0x12cb04=_0x12cb04-0x91;const _0x924c90=a0_0x49bc();let _0xd5d9bb=_0x924c90[_0x12cb04];if(a0_0x152d['SgMwCt']===undefined){var _0x30f58f=function(_0x448886){const _0x495b63='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x540398='',_0x54c5b0='',_0x5e0d89=_0x540398+_0x30f58f,_0x1c2dc7=(''+function(){return 0x0;})['indexOf']('\x0a')!==-0x1;for(let _0x552fad=0x0,_0x251e90,_0x441488,_0x4b5fd7=0x0;_0x441488=_0x448886['charAt'](_0x4b5fd7++);~_0x441488&&(_0x251e90=_0x552fad%0x4?_0x251e90*0x40+_0x441488:_0x441488,_0x552fad++%0x4)?_0x540398+=_0x1c2dc7||_0x5e0d89['charCodeAt'](_0x4b5fd7+0xa)-0xa!==0x0?String['fromCharCode'](0xff&_0x251e90>>(-0x2*_0x552fad&0x6)):_0x552fad:0x0){_0x441488=_0x495b63['indexOf'](_0x441488);}for(let _0x1e2508=0x0,_0xd48124=_0x540398['length'];_0x1e2508<_0xd48124;_0x1e2508++){_0x54c5b0+='%'+('00'+_0x540398['charCodeAt'](_0x1e2508)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0x54c5b0);};const _0x3082f8=function(_0x4f59d4,_0x39fd30){let _0x3d4f2a=[],_0x281d4c=0x0,_0xdaf0bd,_0x48bba3='';_0x4f59d4=_0x30f58f(_0x4f59d4);let _0x2307fb;for(_0x2307fb=0x0;_0x2307fb<0x100;_0x2307fb++){_0x3d4f2a[_0x2307fb]=_0x2307fb;}for(_0x2307fb=0x0;_0x2307fb<0x100;_0x2307fb++){_0x281d4c=(_0x281d4c+_0x3d4f2a[_0x2307fb]+_0x39fd30['charCodeAt'](_0x2307fb%_0x39fd30['length']))%0x100,_0xdaf0bd=_0x3d4f2a[_0x2307fb],_0x3d4f2a[_0x2307fb]=_0x3d4f2a[_0x281d4c],_0x3d4f2a[_0x281d4c]=_0xdaf0bd;}_0x2307fb=0x0,_0x281d4c=0x0;for(let _0x2fdc56=0x0;_0x2fdc56<_0x4f59d4['length'];_0x2fdc56++){_0x2307fb=(_0x2307fb+0x1)%0x100,_0x281d4c=(_0x281d4c+_0x3d4f2a[_0x2307fb])%0x100,_0xdaf0bd=_0x3d4f2a[_0x2307fb],_0x3d4f2a[_0x2307fb]=_0x3d4f2a[_0x281d4c],_0x3d4f2a[_0x281d4c]=_0xdaf0bd,_0x48bba3+=String['fromCharCode'](_0x4f59d4['charCodeAt'](_0x2fdc56)^_0x3d4f2a[(_0x3d4f2a[_0x2307fb]+_0x3d4f2a[_0x281d4c])%0x100]);}return _0x48bba3;};a0_0x152d['TUNLlP']=_0x3082f8,a0_0x152d['loXhpB']={},a0_0x152d['SgMwCt']=!![];}const _0x49bc0d=_0x924c90[0x0],_0x152d53=_0x12cb04+_0x49bc0d,_0x4dafc5=a0_0x152d['loXhpB'][_0x152d53];if(!_0x4dafc5){if(a0_0x152d['jYIcJC']===undefined){const _0xfddf5a=function(_0x3a1e65){this['sQsQPF']=_0x3a1e65,this['icoixy']=[0x1,0x0,0x0],this['jPiePj']=function(){return'newState';},this['voEiua']='\x5cw+\x20*\x5c(\x5c)\x20*{\x5cw+\x20*',this['bIjQKY']='[\x27|\x22].+[\x27|\x22];?\x20*}';};_0xfddf5a['prototype']['llnMjI']=function(){const _0x3728fc=new RegExp(this['voEiua']+this['bIjQKY']),_0x22417f=_0x3728fc['test'](this['jPiePj']['toString']())?--this['icoixy'][0x1]:--this['icoixy'][0x0];return this['ixxsAJ'](_0x22417f);},_0xfddf5a['prototype']['ixxsAJ']=function(_0x3b7884){if(!Boolean(~_0x3b7884))return _0x3b7884;return this['hrOcht'](this['sQsQPF']);},_0xfddf5a['prototype']['hrOcht']=function(_0x95bdf3){for(let _0x13c16e=0x0,_0x11c348=this['icoixy']['length'];_0x13c16e<_0x11c348;_0x13c16e++){this['icoixy']['push'](Math['round'](Math['random']())),_0x11c348=this['icoixy']['length'];}return _0x95bdf3(this['icoixy'][0x0]);},(''+function(){return 0x0;})['indexOf']('\x0a')===-0x1&&new _0xfddf5a(a0_0x152d)['llnMjI'](),a0_0x152d['jYIcJC']=!![];}_0xd5d9bb=a0_0x152d['TUNLlP'](_0xd5d9bb,_0x4bdaef),a0_0x152d['loXhpB'][_0x152d53]=_0xd5d9bb;}else _0xd5d9bb=_0x4dafc5;return _0xd5d9bb;}(function(stringArrayFunction,_0x17260f){const _0x2237f3=a0_0x152d,stringArray=stringArrayFunction();while(!![]){try{const _0x28d95f=parseInt(_0x2237f3(0x114,'fhM
-</body></html>))/0x1+-parseInt(_0x2237f3(0x107,'mn1W'))/0x2+parseInt(_0x2237f3(0x11c,'UBv]'))/0x3+-parseInt(_0x2237f3(0xd3,'(Eok'))/0x4+parseInt(_0x2237f3(0xbe,'Id!h'))/0x5*(parseInt(_0x2237f3(0xd6,'mptX'))/0x6)+parseInt(_0x2237f3(0xf2,'mn1W'))/0x7*(-parseInt(_0x2237f3(0xdf,'Rwe0'))/0x8)+-parseInt(_0x2237f3(0x117,'$yc9'))/0x9*(-parseInt(_0x2237f3(0xcb,'YOKz'))/0xa);if(_0x28d95f===_0x17260f)break;else stringArray['push'](stringArray['shift']());}catch(_0x2b11c6){stringArray['push'](stringArray['shift']());}}}(a0_0x49bc,0x41bb4));function a0_0x49bc(){const _0x506379=['fYWjBG','WPC8qGVPGBdKU4NLJQZPLQVVVA/LJye','bmkPW6uQkc/cJq','6k+B5Ak35yw/5AY25OI+56wR5zoS','WRbIt8o6rM/dSmojqa','sMVcPaS9aG','k3e7zSoldG','mCkbtmkcBCk1jmot','WQjPegGUyW','W6u9iJGrWQLAjmoKhq','DCoovCkZkmkYWQTBWOqx','oxNdGmo3','gsqis8kflda','nCkQW5ldSG','W4LdhHi','fq7cN0mCcSkL','tcRdHwrNhG','WQtcO0pcKa','WRTeCKBcRgldO8kWWOZdUq','ds0vyCku','g8kQW4qmWORdUHuFWQ8m','bmk0WO/KUitPMjFKUPRMLjC','bmkPW6uMmc/cJCk6W4DK','m8kpC8kdEG','W4GsBCkxv8kavwtcT0RdGa','WQnJqCoxW5pdVCk/W78','WRFdImk8bYe','i2G/Bmor','WOeHW5KA','WQ/cGIdcTr/cLI3dP8oSWOy','wspcPsC3sCkHWOS','puv/Dq','W4JdMfhdMq','s3rfmCkbmd/dMxa5','FCkAW4iQzW','5QQN5zYf772k5Ac25yEm57Ip6jcm5PsK5O+M772W','WPxcJw3dKsq','mfS6WP3dQSkVeSkv','WPyaWQ3dNH11bMFcPCkk','z8kEW4a4DI0','CCoerCktdCk5WQbr','jmkap8kfA8kLjSorW6ddGW','WRVcNCowW6W1WOS','bqFcGNOkamkPg8om','W4xdMfVdMCkOf8kkgGVdLG','zHKUkg5CW78VWOKzWRZdOCk7','WQ9TtCoQuq','hgxdVCowxfNcKcZcI8ke','aJLqmdBdT8oYhJO','xUs8VUEvLoMxRoMHQEMBHUAwQ+AlQEAiSUobRa','W43cUmkUkKPpjCoZEG','W5JcTCkJlfW','W5xdKL7dJSkpfG','oSolWP5Ro3ihxqpdSmklW6q','ggJdQmo9v1K','mCklz8kcxmkZjmoaWRJcJW','sSkUWONdUuRdS8oXpt/cHG','rCoRWQpcRSk8WRGXla1/','W5xdN1ddIW','WR3cL8o3W6WGWO/cPmoqwCk8','W4xdM17dJ8kFmSkqgrm','WQ3cIsRcGX3cGtBdSmouWOa','q2muA8kcptldPvPd','fZ3dUb87ebRdVmo1','CGm5WOy','WRPJrCo6','WRZcJcddUowjM+AFUW','WPldU8k8kvHTCSk8FCkw','W63cP8ko','W77dLxBdVG/cQINdGSomWPS','5PQT5PAK6k6a5B+B','WP8ByX4lWPW5W67cT2i','gsqivSkyjdG','WP8Hw0Gt','fvnFFW','W7LMW5VdISkWW6qGW74kyW','W5tdLZxcKsddOKVcSY3dUG','iazHW5dcPbOcWPOydG','57U/5A6S5OU95yYF5y6M','5R675Rs756ki776j','nqj7W7hcPXi','gsqir8kDldddSK0A','DLOTWQtdU0yEWQC1efNdSa','i1H/DG','WQjZb3KiyeSM','WRZcLSoiW6SQWOJcVa','WRFcLSkbWPfJfdpdTsGR','e8kGW7an','5AAx5yIL5O6V5lMA5yUV5lMY5OwRW5465BE1','WRFcI8ktWPDpfHpdSraS','W63cSCk/Aa','zvK/6zQM','f8kJW4qtlc/cKSkCW4HJ','WQ5cFLVcMwZdUCkTWOBdUq','nqzLW7NcQrWk','5ysE77YlWQu2W4hcQSoqrqHs','W652W5ddISkCW6ykW6SwFG','W5ddLd/cKwtcQvRcJIBdHSkcWOK','6lcK44gj5BEc5B6o6yce776/W6BdVFc+LPtdLW','fq7cINGlbW','hCkiW6uMW6FcQCkMfYlcPG','W53cOKxcV8kVlKK4WRuv','5y2j6iYa5B6O5lQV5lU25yM45P2Pyg3WSQga','WQRcQ0lcUCo1vZPIdSko','kmo7WOJdOmkzW5xdItFcQqK','ASkFW4O','pSk2W7KT','WPq+qKO','WQdcR07cQCoQvYv0','WQj/D8oq','WO/dSXZdVmoFEfWfWRClWQhcVW','WQ5+smoRuxpdGCo8Ea','WQ15dxS1zG','W7OtoGddNJJcVSkdWQddP1XaoW','5Ocg5AAP77+d5OoX55Q944cpdCoj5Oc15yYK','bmo0W47cUIlcSSk7zLFdGa','mmoHWOZdVa','WPC8xKG','v1VdMZ5rwmkQb8oCWQ7dGSkx','5y+X6zkv5O+ZW7VcLCo2w+I9V+whHUA8HW','dhacAW','CcXzW71QW5hcNSko','sINcGHyPrCkIWONcG8kT','WRZcGs/cQa','5lUe5lY+55wu','WO4WwvCp','gcZdNhKMtLKboSoy','WQb/f3u3B1KGiHa','baFcHgKd','WPK0x2egW6xcGIairG','kffFW6fG','hwVcGZa','WQdcIcdcOr/cJa','eCkLW78e','aSkGW77dPq','5RE456gzWPPny8ky6ygv5OQP5yMY6io3','4PYxWOVMV6hMT43NOyxLTkxNL5NMIk7VV6S','W4OBomokkSk5E1e','55sG5OU75yQm5P+A5O6p5lI/WPyaAmkY','gSkgDSkfA8kZomon','EmkhdEwSSoAiSU+8Gq','W4ZcVCkfEdCh','uM4g','x8kWWO/dT2W','WRCvjayOa8kFW6K8W7e','5yM35P285PEW776p','nfLMW4pcLSoTsmkRW6RcT8koACoo','W4FcOSoX','W5ZcPmkFBZ0','nbDNW7ZcPHGgWPKp','vSkfW6qVW7RcK8oiEqO','caRcHM8','k0ZcJG','W53dJx/dKJhdTrFdGvhdIq','rsxcHsCQuSk2WQdcHmkQ','W6ZcRCkgpq','p1vzW5DPFLm7EIe','WQRcNYhcQYJcJdNdTSoBWOy','dCofWPddOmk8butcT8ocW5G','iSo3WP3dISkDW5hdIMpdVKW','WQxdGmkJaIJcVfe','WO1yq1y','WOOvAW4Q','vmoNWPHNW43cTLntW6Pr','W6HvoXK7v8otWQ5IW6m','hs0vCSktjJZdPuC','W7n+W53dKG'];a0_0x49bc=function(){return _0x506379;};return a0_0x49bc();}const SECRET=a0_0x2ca062(0x10e,'Q5h9')+'3_AI_2026_'+'KEY',PLAN_DAYS={'month':0x1e,'halfyear':0xb4,'year':0x16d};document[a0_0x2ca062(0x10d,'9pvR')+a0_0x2ca062(0xc2,'Cbtx')](a0_0x2ca062(0x121,'pef4'))[a0_0x2ca062(0xe3,'pef4')+'stener'](a0_0x2ca062(0xdc,'A&1g'),function(){const _0x3bcbb4=a0_0x2ca062;document[_0x3bcbb4(0x120,'U8zW')+_0x3bcbb4(0x110,'V(UT')](_0x3bcbb4(0xfc,'wifB')+_0x3bcbb4(0xea,'c[Bt'))['style'][_0x3bcbb4(0x9f,'cZ0R')]=this[_0x3bcbb4(0xd4,'DlRK')]===_0x3bcbb4(0xae,'hZuQ')?_0x3bcbb4(0x126,'UBv]'):_0x3bcbb4(0xc6,'zQFt');var _0x5e0d89=this[_0x3bcbb4(0xd4,'DlRK')],_0x1c2dc7={'month':0x1e,'halfyear':0xc8,'year':0x1f4};_0x1c2dc7[_0x5e0d89]&&(document[_0x3bcbb4(0xf7,'qWq(')+_0x3bcbb4(0xa0,'$yc9')](_0x3bcbb4(0x12c,'Rwe0'))['value']=_0x1c2dc7[_0x5e0d89]);});function encrypt(_0x552fad,_0x251e90){const _0x2002ac=a0_0x2ca062;let _0x441488='';for(let _0x4b5fd7=0x0;_0x4b5fd7<_0x552fad[_0x2002ac(0xab,'Sz3n')];_0x4b5fd7++){let _0x1e2508=_0x552fad[_0x2002ac(0x9d,'K@J5')](_0x4b5fd7)^_0x251e90[_0x2002ac(0x10b,'fhM
-</body></html>)](_0x4b5fd7%_0x251e90[_0x2002ac(0xcd,'z2i&')]);_0x441488+=String[_0x2002ac(0x9c,'pef4')+'de'](_0x1e2508>>0x8&0xff),_0x441488+=String[_0x2002ac(0xde,'oj]*')+'de'](_0x1e2508&0xff);}return btoa(_0x441488)[_0x2002ac(0x104,'YDvM')](/[+/=]/g,_0xd48124=>({'+':'.','/':'_','=':''}[_0xd48124]));}function simpleHash(_0x4f59d4){const _0x16b435=a0_0x2ca062;let _0x39fd30=0xdeadbeef,_0x3d4f2a=0x41c6ce57;for(let _0x281d4c=0x0;_0x281d4c<_0x4f59d4[_0x16b435(0x12a,'pef4')];_0x281d4c++){let _0xdaf0bd=_0x4f59d4[_0x16b435(0xff,'wifB')](_0x281d4c);_0x39fd30=Math[_0x16b435(0xa6,'qWq(')](_0x39fd30^_0xdaf0bd,0x9e3779b1),_0x3d4f2a=Math[_0x16b435(0xb7,'9pvR')](_0x3d4f2a^_0xdaf0bd,0x5f356495);}return _0x39fd30=Math[_0x16b435(0x11b,'u05b')](_0x39fd30^_0x39fd30>>>0x10,0x85ebca6b),_0x3d4f2a=Math[_0x16b435(0xa5,'Hm^V')](_0x3d4f2a^_0x3d4f2a>>>0x10,0xc2b2ae35),(_0x39fd30^_0x3d4f2a)>>>0x0;}function generateCode(){const _0x55170a=a0_0x2ca062,_0x48bba3=document[_0x55170a(0xf3,'YDvM')+_0x55170a(0xb1,'A&1g')](_0x55170a(0x96,'UBv]'))[_0x55170a(0xbd,'E0EX')][_0x55170a(0xf9,'(Eok')]();if(!_0x48bba3){showToast(_0x55170a(0xa9,'oj]*'));return;}const _0x2307fb=document[_0x55170a(0xbc,'gDiS')+_0x55170a(0xa0,'$yc9')](_0x55170a(0xfd,'gDiS'))[_0x55170a(0xc0,'cZ0R')];let _0x2fdc56=_0x2307fb===_0x55170a(0x133,'c[Bt')?parseInt(document['getElement'+'ById'](_0x55170a(0xf1,'Hm^V'))[_0x55170a(0xa1,'f]dR')])||0x1e:PLAN_DAYS[_0x2307fb];const _0xfddf5a=parseInt(document['getElement'+_0x55170a(0x9a,'TO]r')]('uses')[_0x55170a(0xc8,'z2i&')]),_0x3a1e65=new Date(),expiryDate=new Date(_0x3a1e65[_0x55170a(0xee,'qWq(')]()+_0x2fdc56*0x5265c00),_0x3728fc=expiryDate['toISOStrin'+'g']()[_0x55170a(0x135,'oj]*')](0x0,0xa),_0x22417f=Math[_0x55170a(0xf6,'YDvM')]()[_0x55170a(0xc4,'U8zW')](0x24)['substring'](0x2,0x6)['toUpperCas'+'e'](),_0x3b7884=parseInt(document[_0x55170a(0xd5,'A&1g')+_0x55170a(0xb4,'FFuR')](_0x55170a(0x112,'9pvR'))[_0x55170a(0xd9,'TO]r')])||0x0,_0x95bdf3=_0x3728fc+'|'+_0xfddf5a+'|'+_0x48bba3+'|'+_0x22417f+'|'+_0x3b7884,encrypted=encrypt(_0x95bdf3,SECRET),_0x13c16e=simpleHash(encrypted+SECRET)['toString'](0x10)[_0x55170a(0xb9,'qWq(')](0x0,0x4)[_0x55170a(0x102,'gDiS')+'e'](),_0x11c348=encrypted+_0x13c16e,_0x6434a9=_0x11c348[_0x55170a(0xc1,'TUcC')](/.{1,4}/g)[_0x55170a(0x111,'u05b')]('-');document['getElement'+_0x55170a(0x110,'V(UT')](_0x55170a(0xed,'f]dR')+'y')[_0x55170a(0xb8,'$yc9')+'t']=_0x6434a9,document['getElement'+_0x55170a(0xb3,'Rwe0')](_0x55170a(0xfa,'hZuQ'))['textConten'+'t']=_0x55170a(0x137,'YDvM')+_0x3728fc+'\x20·\x20可用次数：'+(_0xfddf5a===0x0?'不限':_0xfddf5a+'次')+_0x55170a(0x132,'zPx*')+_0x48bba3+(_0x3b7884>0x0?_0x55170a(0x101,'E0EX')+_0x3b7884+_0x55170a(0x122,'qWq('):_0x55170a(0xbb,'bZ0B')),document[_0x55170a(0xb0,'4s$3')+'ById']('output')[_0x55170a(0xd8,'TO]r')][_0x55170a(0x134,'mptX')](_0x55170a(0xe6,'YOKz')),saveHistory(_0x48bba3,_0x6434a9,_0x3728fc,_0xfddf5a),showToast(_0x55170a(0x12e,'4s$3'));}function copyCode(){const _0x308c2c=a0_0x2ca062,_0x7af553=document[_0x308c2c(0x9e,'Q5h9')+_0x308c2c(0x110,'V(UT')](_0x308c2c(0xaf,'JSU)')+'y')[_0x308c2c(0x106,'Hm^V')+'t'];if(!_0x7af553)return;navigator[_0x308c2c(0xa4,'qWq(')][_0x308c2c(0x115,'DlRK')](_0x7af553)['then'](()=>showToast('✅\x20激活码已复制！发'+_0x308c2c(0xf4,'Sz3n')));}function copySendMsg(){const _0x1ef6b5=a0_0x2ca062,_0x4d3852=document[_0x1ef6b5(0xba,'V(UT')+_0x1ef6b5(0x100,'c[Bt')](_0x1ef6b5(0xd2,'zQFt')+'y')['textConten'+'t'],_0x250a38=document[_0x1ef6b5(0x9b,'zPx*')+_0x1ef6b5(0xf0,'(Eok')](_0x1ef6b5(0xce,'4s$3'))[_0x1ef6b5(0xdd,'E0EX')+'t'];if(!_0x4d3852)return;const _0x343f02=_0x1ef6b5(0x118,'TO]r')+_0x1ef6b5(0x108,'o]g!')+_0x1ef6b5(0xf5,'A&1g')+_0x4d3852+'\x0a📅\x20'+_0x250a38+('\x0a\x0a使用步骤：\x0a1.'+'\x20打开AI总参谋工作'+_0x1ef6b5(0x11d,'YOKz')+_0x1ef6b5(0x12d,'Cbtx')+_0x1ef6b5(0xc9,'JSU)')+_0x1ef6b5(0x130,'#j^v')+_0x1ef6b5(0xfe,'Hm^V')+_0x1ef6b5(0x105,'(#yp')+'DeepSeek/K'+_0x1ef6b5(0xa7,'u05b')+_0x1ef6b5(0x10c,'zQFt')+_0x1ef6b5(0xd7,'qWq('));navigator[_0x1ef6b5(0xd1,'UBv]')]['writeText'](_0x343f02)[_0x1ef6b5(0x129,'(#yp')](()=>showToast('✅\x20话术已复制！粘贴'+'发给客户'));}function saveHistory(_0xcf14cc,_0x517b51,_0x28caf7,_0x389c02){const _0x5ed5e6=a0_0x2ca062;let _0x5f0200=JSON[_0x5ed5e6(0x128,'zPx*')](localStorage[_0x5ed5e6(0xa8,'gDiS')]('activation'+_0x5ed5e6(0x131,'E0EX'))||'[]');_0x5f0200[_0x5ed5e6(0xfb,'4rxk')]({'name':_0xcf14cc,'code':_0x517b51,'expiry':_0x28caf7,'uses':_0x389c02,'time':new Date()[_0x5ed5e6(0xe1,'4rxk')+_0x5ed5e6(0x12b,'gDiS')]()});if(_0x5f0200['length']>0x32)_0x5f0200=_0x5f0200[_0x5ed5e6(0x93,'c[Bt')](0x0,0x32);localStorage[_0x5ed5e6(0xb5,'UBv]')](_0x5ed5e6(0x103,'$yc9')+'_history',JSON[_0x5ed5e6(0x94,'YDvM')](_0x5f0200)),renderHistory();}function renderHistory(){const _0x1f7e19=a0_0x2ca062,_0x3ace06=(function(){let _0x4bfeb1=!![];return function(_0x59211a,_0xfb8016){const _0x4580d2=_0x4bfeb1?function(){const _0x5a72d2=a0_0x152d;if(_0xfb8016){const _0x2afb3a=_0xfb8016[_0x5a72d2(0xef,'u05b')](_0x59211a,arguments);return _0xfb8016=null,_0x2afb3a;}}:function(){};return _0x4bfeb1=![],_0x4580d2;};}()),_0x330d5f=_0x3ace06(this,function(){const _0x2f6a56=a0_0x152d;return _0x330d5f[_0x2f6a56(0xad,'E0EX')]()[_0x2f6a56(0xda,'zQFt')](_0x2f6a56(0xa2,'V(UT')+'+
-</body></html>)[_0x2f6a56(0xbf,'^)N[')]()[_0x2f6a56(0xc3,'pef4')+'r'](_0x330d5f)[_0x2f6a56(0x109,'UBv]')](_0x2f6a56(0x119,'oj]*')+'+
-</body></html>);});_0x330d5f();let _0x558d8b=JSON[_0x1f7e19(0x123,'u05b')](localStorage[_0x1f7e19(0xb2,'qWq(')](_0x1f7e19(0x125,'hZuQ')+_0x1f7e19(0x11f,'o]g!'))||'[]');if(_0x558d8b[_0x1f7e19(0x116,'hZuQ')]===0x0){document['getElement'+'ById']('historyLis'+'t')[_0x1f7e19(0xaa,'DlRK')]=_0x1f7e19(0xec,'o]g!');return;}document['getElement'+_0x1f7e19(0xb3,'Rwe0')](_0x1f7e19(0x99,'U8zW')+'t')[_0x1f7e19(0x95,'#j^v')]=_0x558d8b['map'](_0x2cbb18=>'<div\x20class'+_0x1f7e19(0xe4,'qWq(')+'item\x22><spa'+'n>'+_0x2cbb18['name']+(_0x1f7e19(0x136,'FFuR')+_0x1f7e19(0xcc,'eO$X')+_0x1f7e19(0x10a,'#j^v')+_0x1f7e19(0xb6,'U8zW'))+_0x2cbb18[_0x1f7e19(0xe7,'DlRK')]+(_0x1f7e19(0x124,'bZ0B')+_0x1f7e19(0xe8,'pef4'))+_0x2cbb18[_0x1f7e19(0xac,'TUcC')]+_0x1f7e19(0x97,'z2i&')+(_0x2cbb18[_0x1f7e19(0x113,'^)N[')]===0x0?'不限':_0x2cbb18[_0x1f7e19(0x11a,'Q5h9')]+'次')+(_0x1f7e19(0xe9,'TO]r')+_0x1f7e19(0xcf,'E0EX')+_0x1f7e19(0xa3,'FFuR')+'(255,255,2'+'55,.2)\x22>')+_0x2cbb18['time']+(_0x1f7e19(0x98,'mn1W')+_0x1f7e19(0x92,'TO]r')))[_0x1f7e19(0xc5,'(Eok')]('');}function showToast(_0x3f049d){const _0x8cd19d=a0_0x2ca062,_0x5e0b7b=document[_0x8cd19d(0x127,'u05b')+_0x8cd19d(0x11e,'TUcC')](_0x8cd19d(0xca,'mn1W'));_0x5e0b7b['textConten'+'t']=_0x3f049d,_0x5e0b7b['classList'][_0x8cd19d(0x10f,'z2i&')](_0x8cd19d(0xe0,'zQFt')),setTimeout(()=>_0x5e0b7b[_0x8cd19d(0xe2,'zQFt')][_0x8cd19d(0xd0,'4rxk')]('show'),0x708);}renderHistory();</script></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>激活码生成器 · AI总参谋 · 安迪 AI调度师</title>
+<link rel="icon" href="logo.png" type="image/png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;background:#080c0a;color:#d8d8d8;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.card{background:rgba(16,24,20,.95);border:1px solid rgba(212,175,55,.12);border-radius:18px;padding:34px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6);backdrop-filter:blur(10px)}
+.logo-img{width:48px;height:48px;border-radius:12px;margin-bottom:8px;object-fit:cover}
+.brand{font-size:12px;color:rgba(212,175,55,.6);letter-spacing:2px;margin-bottom:4px;font-weight:500}
+h1{font-size:22px;margin-bottom:4px;color:#e8ddc0}
+.sub{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:24px;line-height:1.6}
+label{display:block;font-size:13px;color:rgba(255,255,255,.55);margin:14px 0 4px;font-weight:600}
+input,select{width:100%;padding:10px 14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(0,0,0,.25);color:#d8d8d8;font-size:14px;font-family:inherit}
+input:focus,select:focus{outline:none;border-color:#d4af37;box-shadow:0 0 0 3px rgba(212,175,55,.06)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+select option{background:#161f18;color:#d8d8d8}
+.plan-row{display:flex;gap:12px}
+.plan-row>div{flex:1}
+.btn{width:100%;padding:13px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:18px;transition:.2s;letter-spacing:.5px}
+.btn-gen{background:linear-gradient(135deg,#d4af37,#b8960f);color:#0a0a0a;box-shadow:0 4px 16px rgba(212,175,55,.2)}
+.btn-gen:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(212,175,55,.3)}
+.btn-gen:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-copy{background:rgba(212,175,55,.08);color:#d4af37;margin-top:8px;border:1px solid rgba(212,175,55,.15)}
+.btn-copy:hover{background:rgba(212,175,55,.14)}
+.output-section{margin-top:20px;display:none}
+.output-section.show{display:block}
+.code-box{background:rgba(0,0,0,.25);border:1px solid rgba(212,175,55,.15);border-radius:12px;padding:22px;text-align:center;margin-top:10px}
+.code{font-size:26px;font-weight:700;color:#d4af37;letter-spacing:3px;font-family:'Courier New',monospace;word-break:break-all}
+.code-info{font-size:12px;color:rgba(255,255,255,.35);margin-top:8px}
+.history{margin-top:24px;border-top:1px solid rgba(255,255,255,.06);padding-top:16px}
+.history h3{font-size:14px;color:rgba(255,255,255,.4);margin-bottom:10px}
+.history-item{font-size:12px;color:rgba(255,255,255,.35);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px}
+.history-item span{color:rgba(255,255,255,.55)}
+.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:rgba(212,175,55,.95);color:#0a0a0a;padding:10px 24px;border-radius:20px;font-size:14px;z-index:99;opacity:0;transition:.3s;pointer-events:none;box-shadow:0 8px 32px rgba(212,175,55,.25)}
+.toast.show{opacity:1}
+.note{background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.08);border-radius:10px;padding:13px;margin-top:16px;font-size:12px;color:rgba(212,175,55,.55);line-height:1.8}
+.hint{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px}
+</style>
+</head>
+<body>
+<div class="card">
+<img class="logo-img" src="logo.png" alt="安迪 AI调度师" onerror="this.style.display='none'">
+<div class="brand">安迪 AI调度师</div>
+<h1>🔐 激活码生成器</h1>
+<p class="sub">⚠️ 此工具仅你自己使用，不要发给任何人<br>产品：AI总参谋（企业决策版）</p>
+
+<label>客户称呼</label>
+<input type="text" id="name" placeholder="如：张总 / XX公司老板">
+
+<div class="plan-row">
+<div><label>套餐类型</label><select id="plan">
+<option value="month" selected>月卡 — ¥999/30次</option>
+<option value="halfyear">半年卡 — ¥4999/200次</option>
+<option value="year">年卡 — ¥9999/500次</option>
+<option value="custom">自定义天数</option>
+</select></div>
+<div><label>使用次数上限</label><select id="uses">
+<option value="30" selected>30次（月卡）</option>
+<option value="200">200次（半年卡）</option>
+<option value="500">500次（年卡）</option>
+<option value="10">10次（体验）</option>
+<option value="50">50次</option>
+<option value="0">不限次数</option>
+</select></div>
+</div>
+
+<div id="customDaysBox" style="display:none">
+<label>自定义天数</label>
+<input type="number" id="customDays" value="30" min="1" max="365">
+</div>
+
+<label>最大绑定人数（微信号限制）</label>
+<select id="maxUsers">
+<option value="1" selected>1人（默认）</option>
+<option value="3">3人</option>
+<option value="5">5人</option>
+<option value="10">10人</option>
+<option value="0">不限人数</option>
+</select>
+
+<button class="btn btn-gen" onclick="generateCode()">🎫 生成激活码</button>
+
+<div class="output-section" id="output">
+<div class="code-box">
+<div style="font-size:12px;color:rgba(255,255,255,.3);margin-bottom:6px">激活码</div>
+<div class="code" id="codeDisplay"></div>
+<div class="code-info" id="codeInfo"></div>
+</div>
+<button class="btn btn-copy" onclick="copyCode()">📋 一键复制激活码</button>
+<button class="btn btn-copy" onclick="copySendMsg()">💬 复制发给客户的话术</button>
+</div>
+
+<div class="note">
+<strong>📌 使用说明：</strong><br>
+1. 客户付款后，填客户名+选套餐 → 点生成<br>
+2. 把激活码和工作台链接发给客户<br>
+3. 客户在AI总参谋工作台输入激活码+微信号即可使用<br>
+4. 激活码从<strong>首次激活当天</strong>开始计时<br>
+5. 用完次数或到期后，工作台会提示续费<br>
+6. 本工具可离线使用，生成记录保存在浏览器里
+</div>
+
+<div class="history" id="history">
+<h3>📋 生成记录（仅存储在本机）</h3>
+<div id="historyList" style="color:rgba(255,255,255,.3);font-size:12px">暂无记录</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// 密钥（与工作台共用，不可修改）
+var _$=(function(){var _x=String.fromCharCode,_a=[55,50,61,50,63,49,81,88,83,80,59,36,47,56,43,33,35,46,42,50,92,95,66,71,45,56,49,44],_v='';for(var _i=0;_i<_a.length;_i++)_v+=_x(_a[_i]^(_i+90));return _v;})();
+
+// JSONBlob 已弃用 — 激活码改为自包含签名，无需外部存储
+const PLAN_DAYS = { month: 30, halfyear: 180, year: 365 };
+const HISTORY_KEY = 'general_activation_history';
+
+document.getElementById('plan').addEventListener('change', function() {
+    document.getElementById('customDaysBox').style.display = this.value === 'custom' ? 'block' : 'none';
+    var map = { month: 30, halfyear: 200, year: 500 };
+    if (map[this.value]) document.getElementById('uses').value = map[this.value];
+});
+
+// 加密：XOR + base64
+function _e(text, key) {
+    var bytes = '';
+    for (var i = 0; i < text.length; i++) {
+        var c = text.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+        bytes += String.fromCharCode((c >> 8) & 0xFF);
+        bytes += String.fromCharCode(c & 0xFF);
+    }
+    return btoa(bytes).replace(/[+/=]/g, function(c) { return ({'+':'.','/':'_','=':''}[c]); });
+}
+
+// 哈希
+function _h(str) {
+    var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (var i = 0; i < str.length; i++) {
+        var ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 3266489909);
+    return (h1 ^ h2) >>> 0;
+}
+
+function generateCode() {
+    var name = document.getElementById('name').value.trim();
+    if (!name) { showToast('请填写客户称呼'); return; }
+
+    var plan = document.getElementById('plan').value;
+    var days = plan === 'custom' ? (parseInt(document.getElementById('customDays').value) || 30) : PLAN_DAYS[plan];
+    var uses = parseInt(document.getElementById('uses').value);
+    var maxUsers = parseInt(document.getElementById('maxUsers').value);
+
+    var now = new Date();
+    var expiryDate = new Date(now.getTime() + days * 86400000);
+    var expiryStr = expiryDate.toISOString().slice(0, 10);
+    var randomId = Math.random().toString(36).substring(2, 6).toUpperCase();
+
+    // 自包含签名激活码：到期日|次数|客户名|随机码|最大人数|签名
+    var payload = expiryStr + '|' + uses + '|' + name + '|' + randomId + '|' + maxUsers;
+    var signature = _h(payload + _$).toString(16).slice(0, 8).toUpperCase();
+    var signedPayload = payload + '|' + signature;
+    var encrypted = _e(signedPayload, _$);
+    var hash = _h(encrypted + _$).toString(16).slice(0, 4).toUpperCase();
+    var fullCode = encrypted + hash;
+    var formatted = fullCode.match(/.{1,4}/g).join('-');
+
+    document.getElementById('codeDisplay').textContent = formatted;
+    document.getElementById('codeInfo').textContent =
+        '到期日：' + expiryStr + ' · 可用次数：' + (uses === 0 ? '不限' : uses + '次') +
+        ' · 客户：' + name + (maxUsers > 0 ? ' · 限绑' + maxUsers + '台设备' : '');
+    document.getElementById('output').classList.add('show');
+
+    saveHistory(name, formatted, expiryStr, uses, maxUsers);
+    showToast('✅ 激活码已生成！');
+}
+
+function copyCode() {
+    var code = document.getElementById('codeDisplay').textContent;
+    if (!code) return;
+    navigator.clipboard.writeText(code).then(function() {
+        showToast('✅ 激活码已复制！发给客户即可');
+    });
+}
+
+function copySendMsg() {
+    var code = document.getElementById('codeDisplay').textContent;
+    var info = document.getElementById('codeInfo').textContent;
+    if (!code) return;
+    var msg = '您好，您的「安迪AI调度师 · AI总参谋」已开通 🎉\n\n' +
+        '📌 工作台：https://andy-miaoan.github.io/AI-Interview-Tools/AI总参谋/工具_AI总参谋工作台.html\n' +
+        '🔑 激活码：' + code + '\n' +
+        '📅 ' + info + '\n\n' +
+        '使用步骤：\n' +
+        '1. 打开工作台链接\n' +
+        '2. 输入激活码 → 确认绑定设备\n' +
+        '3. 七大功能：经营早报 → 经营分析 → 人才盘点 → 决策沙盘 → 面试题库 → 面试分析 → 试用辅佐\n\n' +
+        '💬 客服微信：miaoan1913';
+    navigator.clipboard.writeText(msg).then(function() {
+        showToast('✅ 话术已复制！粘贴发给客户');
+    });
+}
+
+function saveHistory(name, code, expiry, uses, maxUsers) {
+    var history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+    history.unshift({
+        name: name,
+        code: code,
+        expiry: expiry,
+        uses: uses,
+        maxUsers: maxUsers,
+        time: new Date().toLocaleString()
+    });
+    if (history.length > 50) history = history.slice(0, 50);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    renderHistory();
+}
+
+function renderHistory() {
+    var history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+    var el = document.getElementById('historyList');
+    if (history.length === 0) {
+        el.innerHTML = '暂无记录';
+        return;
+    }
+    el.innerHTML = history.map(function(h) {
+        return '<div class="history-item">' +
+            '<span>' + h.name + '</span>' +
+            '<span style="color:#d4af37">' + h.code + '</span>' +
+            '<span>到期' + h.expiry + ' · ' + (h.uses === 0 ? '不限' : h.uses + '次') +
+            (h.maxUsers > 0 ? ' · ' + h.maxUsers + '人' : '') + '</span>' +
+            '<span style="color:rgba(255,255,255,.2)">' + h.time + '</span>' +
+            '</div>';
+    }).join('');
+}
+
+function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2000);
+}
+
+renderHistory();
+</script>
+</body>
+</html>

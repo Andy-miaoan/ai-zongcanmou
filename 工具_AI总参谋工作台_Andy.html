@@ -1108,7 +1108,7 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
 <script>
 // ════ 激活码验证系统（v2 — 支持新旧两种格式） ════
 var _$C=(function(){var _x=String.fromCharCode,_a=[55,50,61,50,63,49,81,88,83,80,59,36,47,56,43,33,35,46,42,50,92,95,66,71,45,56,49,44],_v='';for(var _i=0;_i<_a.length;_i++)_v+=_x(_a[_i]^(_i+90));return _v;})();
-var BINDING_API_BASE_C = 'https://jsonblob.com/api/jsonBlob';
+// 自包含签名激活码 — 无需外部存储
 function _dC(encoded, key) {
     try {
         encoded = encoded.replace(/[\._]/g, function(c) { return ({'.':'+','_':'/'}[c]); });
@@ -1146,9 +1146,21 @@ function validateChiefCode(rawCode) {
     if (!payload) return { valid: false, error: '激活码数据损坏' };
     var parts = payload.split('|');
     if (parts.length < 5) return { valid: false, error: '激活码格式不完整' };
-    var expiry = parts[0], maxUses = parseInt(parts[1]) || 0, customerName = parts[2], blobId = parts[4], maxBindings = parseInt(parts[5]) || 1;
+    var expiry = parts[0], maxUses = parseInt(parts[1]) || 0, customerName = parts[2], maxBindings = 1;
+    // 兼容新旧格式: v1=7段(含blobId), v2=6段(含签名)
+    if (parts.length >= 7) {
+        // v1 旧格式: expiry|uses|name|random|blobId|maxBindings
+        maxBindings = parseInt(parts[5]) || 1;
+    } else {
+        // v2 新格式: expiry|uses|name|random|maxBindings|signature
+        maxBindings = parseInt(parts[4]) || 1;
+        var signature = parts[5];
+        var unsignedPayload = parts.slice(0, 5).join('|');
+        var expectedSig = _hC(unsignedPayload + _$C).toString(16).slice(0, 8).toUpperCase();
+        if (signature !== expectedSig) return { valid: false, error: '激活码签名无效（请确认是从客服获取的正版激活码）' };
+    }
     if (new Date() > new Date(expiry + 'T23:59:59')) return { valid: false, error: '激活码已过期（到期日：' + expiry + '），请续费' };
-    return { valid: true, expiry: expiry, maxUses: maxUses, customerName: customerName, blobId: blobId, maxBindings: maxBindings, code: rawCode };
+    return { valid: true, expiry: expiry, maxUses: maxUses, customerName: customerName, maxBindings: maxBindings, code: rawCode };
 }
 function getChiefUsage(input) {
     var clean = input.replace(/[-\s]/g, '').toUpperCase();
@@ -1169,7 +1181,7 @@ function getChiefUsage(input) {
 // 覆盖原 activate() 函数（AI总参谋使用设备绑定流程，无微信号输入）
 var _origActivate = (typeof activate === 'function') ? activate : null;
 var _pendingActivation = null; // 暂存待绑定的激活信息
-activate = async function() {
+activate = function() {
     var inputEl = document.getElementById('activationInput');
     var errEl = document.getElementById('loginErr');
     var btn = document.getElementById('activateBtn');
@@ -1192,37 +1204,6 @@ activate = async function() {
     if (validation.maxUses > 0 && usage.uses >= validation.maxUses) {
         errEl.textContent = '使用次数已用完（' + validation.maxUses + '/' + validation.maxUses + '），请联系续费';
         return;
-    }
-
-    // 远程校验 JSONBlob（离线码跳过）
-    btn.disabled = true; btn.textContent = '⏳ 验证中...';
-    var blobId = validation.blobId;
-    var isOfflineCode = blobId && blobId.indexOf('local_') === 0;
-    if (blobId && blobId.length > 5 && !isOfflineCode) {
-        var bindingOK = false;
-        for (var retry = 0; retry < 3 && !bindingOK; retry++) {
-            try {
-                var getResp = await fetch(BINDING_API_BASE_C + '/' + blobId);
-                if (!getResp.ok) break;
-                var blob = await getResp.json();
-                var bindings = blob.bindings || [];
-                if (bindings.length >= (validation.maxBindings || 1)) {
-                    btn.disabled = false; btn.textContent = '🚀 激活使用';
-                    errEl.textContent = '该激活码绑定设备已达上限（' + (validation.maxBindings || 1) + '台）';
-                    return;
-                }
-                bindingOK = true;
-            } catch (e) {
-                console.warn('JSONBlob不可用，跳过远程校验:', e.message);
-                bindingOK = true; // 离线兜底
-                break;
-            }
-        }
-        if (!bindingOK) {
-            btn.disabled = false; btn.textContent = '🚀 激活使用';
-            errEl.textContent = '远程验证失败，请检查网络后重试';
-            return;
-        }
     }
 
     // 暂存验证结果，弹出设备绑定确认
@@ -1250,36 +1231,19 @@ function finalizeActivation(pending) {
     var clean = pending.clean;
     var storageKey = pending.storageKey;
     var input = pending.code;
-    var blobId = validation.blobId;
 
     var sessionData = {
         code: input,
         expiry: validation.expiry,
         maxUses: validation.maxUses,
         customerName: validation.customerName,
-        blobId: validation.blobId,
+        maxBindings: validation.maxBindings,
         deviceId: 'device_' + Math.random().toString(36).substring(2, 10),
         activatedAt: new Date().toISOString()
     };
     localStorage.setItem(storageKey, JSON.stringify(sessionData));
     localStorage.setItem('general_active_session', JSON.stringify(sessionData));
     localStorage.setItem('general_session_' + _hC(clean).toString(16), new Date().toISOString());
-
-    // 云端绑定设备（离线码跳过）
-    var isOfflineCode = blobId && blobId.indexOf('local_') === 0;
-    if (blobId && blobId.length > 5 && !isOfflineCode) {
-        fetch(BINDING_API_BASE_C + '/' + blobId).then(function(r) {
-            if (!r.ok) return;
-            var etag = r.headers.get('ETag') || r.headers.get('etag') || '';
-            return r.json().then(function(b) {
-                var bindings = b.bindings || [];
-                bindings.push({ deviceId: sessionData.deviceId, activatedAt: sessionData.activatedAt });
-                var h = { 'Content-Type': 'application/json' };
-                if (etag) h['If-Match'] = etag;
-                return fetch(BINDING_API_BASE_C + '/' + blobId, { method: 'PUT', headers: h, body: JSON.stringify({ bindings: bindings, maxBindings: b.maxBindings, totalUses: (b.totalUses || 0) + 1, product: b.product, createdAt: b.createdAt }) });
-            });
-        }).catch(function() {});
-    }
 
     // 关闭所有弹窗，显示主工作台
     var deviceOverlay = document.getElementById('deviceBindOverlay');
@@ -1292,8 +1256,7 @@ function finalizeActivation(pending) {
     if (errEl) errEl.textContent = '';
 
     if (typeof updateUserBar === 'function') updateUserBar();
-    var _offlineMsg = (blobId && blobId.indexOf('local_') === 0) ? '（离线模式）' : '';
-    if (typeof showToast === 'function') showToast('✅ 激活成功！欢迎使用AI总参谋' + _offlineMsg);
+    if (typeof showToast === 'function') showToast('✅ 激活成功！欢迎使用AI总参谋');
     _pendingActivation = null;
 }
 
