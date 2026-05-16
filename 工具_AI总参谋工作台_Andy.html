@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>AI总参谋 · 安迪 AI调度师</title>
+<title>AI总参谋工作台 · 安迪 AI调度师</title>
 <link rel="icon" href="logo.png" type="image/png">
 <style>
 :root {
@@ -47,6 +47,8 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backg
 .login-card .btn-activate:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(212,175,55,.28)}
 .login-card .btn-activate:hover::after{left:100%}
 .login-card .btn-activate:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.login-card .btn-free{background:transparent;color:rgba(212,175,55,.7);border:1px solid rgba(212,175,55,.25);width:100%;padding:14px;border-radius:var(--radius-md);font-size:16px;font-weight:600;cursor:pointer;margin-top:10px;transition:var(--transition)}
+.login-card .btn-free:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,.05)}
 .login-err{color:#ff6b6b;font-size:12px;margin-top:10px;min-height:18px;font-weight:500}
 .login-info{font-size:11px;color:var(--text-muted);margin-top:20px;line-height:1.8}
 .ref-tag{display:inline-block;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.25);border-radius:20px;padding:6px 16px;font-size:12px;color:var(--gold);margin-bottom:16px;font-weight:500;backdrop-filter:blur(8px)}
@@ -360,6 +362,7 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
         <div class="login-hint" id="loginHint" style="display:none;font-size:11px;color:rgba(212,175,55,.5);margin-bottom:6px;cursor:pointer" onclick="fillLastCode()" title="点击填入上次使用的激活码">💾 上次使用：<span id="lastCodeHint"></span></div>
         <div class="login-err" id="loginErr"></div>
         <button class="btn btn-activate" id="activateBtn" onclick="activate()">激活使用</button>
+        <button class="btn btn-free" onclick="enterFreeMode()">🎯 免费试用经营早报</button>
         <div class="login-info">还没有激活码？<br>💬 加微信：miaoan1913 获取<br><br>💰 月卡 ¥999(30次) · 半年卡 ¥4999(200次) · 年卡 ¥9999(500次)<br><br><span id="syncStatusLogin" style="cursor:pointer;color:rgba(212,175,55,.6);font-size:11px;text-decoration:underline" onclick="showTokenSetup()">⚙️ 设置云端同步（跨设备共享次数）</span><br><br><span style="cursor:pointer;color:rgba(212,175,55,.5);font-size:10px;text-decoration:underline" onclick="document.getElementById('aiGuide').style.display=document.getElementById('aiGuide').style.display==='none'?'':'none'">💡 不知道怎么用AI工具？点击查看推荐</span></div>
         <div id="aiGuide" style="display:none;text-align:left;font-size:11px;color:rgba(255,255,255,.55);margin-top:8px;line-height:2;padding:10px 14px;background:rgba(255,255,255,.02);border-radius:8px">
             <strong style="color:rgba(212,175,55,.7)">推荐AI工具（均免费注册）：</strong><br>
@@ -470,7 +473,7 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
             <div class="header-logo"><img src="logo.png" alt="Logo" onerror="this.parentElement.style.display='none'"></div>
             <div>
                 <div class="header-brand">安迪 AI调度师</div>
-                <h1>AI总参谋</h1>
+                <h1>AI总参谋工作台</h1>
             </div>
         </div>
         <div class="header-btns">
@@ -1957,6 +1960,630 @@ function saveReportToVault(){
 function openReportDetail(id){var reports=getReports();var r=reports.find(function(x){return x.id===id;});if(!r)return;closeReportVault();openReportAddForm(id);var oldDel=document.getElementById('ram-delete-btn');if(oldDel)oldDel.remove();var btnRow=document.querySelector('#reportAddModal .btn-row');if(btnRow){var delBtn=document.createElement('button');delBtn.id='ram-delete-btn';delBtn.className='btn btn-secondary';delBtn.style.cssText='color:#ff6b6b;border-color:rgba(255,107,107,.3)';delBtn.textContent='🗑️ 删除此报告';delBtn.onclick=function(){deleteReportFromVault(r.id);};btnRow.appendChild(delBtn);}}
 function deleteReportFromVault(id){if(!confirm('确认删除此报告？'))return;var reports=getReports();reports=reports.filter(function(x){return x.id!==id;});saveReports(reports);closeReportAddModal();renderReportVaultList();openReportVault();if(typeof showToast==='function')showToast('已删除');}
 function saveResultToVault(category,title,content){if(!content||content.indexOf('【请复制')===0)return;var reports=getReports();reports.unshift({id:Date.now().toString(36)+Math.random().toString(36).substring(2,6),title:title,category:category,source:'workbench',content:content.substring(0,30000),createdAt:new Date().toLocaleString('zh-CN'),isoTime:new Date().toISOString()});if(reports.length>100)reports=reports.slice(0,100);saveReports(reports);if(typeof showToast==='function')showToast('✅ 已自动存入报告存储');}
+
+// ── 免费模式入口 ──
+if (typeof enterFreeMode === 'undefined') {
+  window.enterFreeMode = function() {
+    var loginScreen = document.getElementById('loginScreen');
+    if (loginScreen) loginScreen.style.display = 'none';
+    var mainApp = document.getElementById('mainApp');
+    if (mainApp) mainApp.style.display = 'block';
+    var nameEl = document.getElementById('userName');
+    if (nameEl) nameEl.textContent = '🎯 免费用户';
+    var remainEl = document.getElementById('remainingUses');
+    if (remainEl) remainEl.textContent = '仅经营早报';
+    var expiryEl = document.getElementById('expiryDate');
+    if (expiryEl) expiryEl.textContent = '—';
+    if (typeof updateProfileIndicators === 'function') updateProfileIndicators();
+    if (typeof updateHistoryBadge === 'function') updateHistoryBadge();
+    if (typeof updateCandidateBadge === 'function') updateCandidateBadge();
+    if (typeof showToast === 'function') showToast('🎯 经营早报永久免费，如需完整功能请激活');
+  };
+}
+
+// ════ 辅助函数 ════
+function _v(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+function _showResult(resultId, copyBtnId, text) {
+  var r = document.getElementById(resultId);
+  var c = document.getElementById(copyBtnId);
+  if (r) { r.textContent = text; r.classList.add('show'); r.classList.remove('loading'); }
+  if (c) c.style.display = '';
+}
+
+// ════ showToast 兜底 ════
+if (typeof showToast === 'undefined') {
+  window.showToast = function(msg, isErr) {
+    var existing = document.getElementById('toast-tmp');
+    if (existing) existing.remove();
+    var t = document.createElement('div');
+    t.id = 'toast-tmp';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;padding:10px 24px;border-radius:20px;font-size:13px;font-weight:600;backdrop-filter:blur(12px);transition:all .3s;pointer-events:none;' + (isErr ? 'background:rgba(255,107,107,.15);color:#ff6b6b;border:1px solid rgba(255,107,107,.3)' : 'background:rgba(212,175,55,.12);color:var(--gold-light);border:1px solid rgba(212,175,55,.25)');
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(function() { t.style.opacity = '0'; setTimeout(function() { if (t.parentNode) t.remove(); }, 400); }, 2500);
+  };
+}
+
+// ════ 付费功能拦截层 ════
+var _freeModeSession = null;
+function _checkAccess() {
+  if (_freeModeSession) return true;
+  var s = JSON.parse(localStorage.getItem('general_active_session') || 'null');
+  if (s && s.expiry && new Date() <= new Date(s.expiry + 'T23:59:59')) return true;
+  return false;
+}
+if (typeof useOneCredit === 'undefined') {
+  window.useOneCredit = function(fn, errCb) {
+    if (!_checkAccess()) {
+      if (typeof showToast === 'function') showToast('🔒 经营早报永久免费，完整功能需激活。加微信 miaoan1913 获取激活码', true);
+      return false;
+    }
+    try { fn(); return true; } catch(e) { if (typeof errCb === 'function') errCb(e); return false; }
+  };
+}
+
+// ════ 模式切换 ════
+var currentBizMode = 'monthly';
+var currentOnboardMode = 'plan';
+if (typeof switchBizMode === 'undefined') {
+  window.switchBizMode = function(mode) {
+    currentBizMode = mode;
+    var monthEl = document.getElementById('biz-mode-monthly');
+    var quarterEl = document.getElementById('biz-mode-quarterly');
+    if (monthEl) monthEl.classList.toggle('active', mode === 'monthly');
+    if (quarterEl) quarterEl.classList.toggle('active', mode === 'quarterly');
+    var layer2 = document.getElementById('biz-layer2');
+    var layer3 = document.getElementById('biz-layer3');
+    var layer4 = document.getElementById('biz-layer4');
+    if (mode === 'quarterly') {
+      if (layer2) layer2.classList.remove('show');
+      if (layer3) layer3.classList.remove('show');
+      if (layer4) layer4.classList.remove('show');
+    }
+  };
+}
+if (typeof switchOnboardMode === 'undefined') {
+  window.switchOnboardMode = function(mode) {
+    currentOnboardMode = mode;
+    var planEl = document.getElementById('onboard-mode-plan');
+    var riskEl = document.getElementById('onboard-mode-risk');
+    if (planEl) planEl.classList.toggle('active', mode === 'plan');
+    if (riskEl) riskEl.classList.toggle('active', mode === 'risk');
+  };
+}
+
+// ════ 清空函数 ════
+if (typeof clearBiz === 'undefined') {
+  window.clearBiz = function() {
+    ['biz-month-revenue','biz-month-cost','biz-month-worry','biz-month-expense','biz-month-profit','biz-month-cashflow','biz-month-cash','biz-month-ar','biz-month-ap','biz-month-orders','biz-month-customers','biz-month-channels','biz-month-products','biz-month-delivery','biz-month-complaints','biz-month-inventory','biz-month-projects','biz-month-headcount','biz-month-laborcost','biz-month-turnover','biz-month-coreposts'].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+    var r = document.getElementById('biz-result'); if (r) { r.classList.remove('show'); r.textContent = ''; }
+    var c = document.getElementById('biz-copy-btn'); if (c) c.style.display = 'none';
+  };
+}
+if (typeof clearTalent === 'undefined') {
+  window.clearTalent = function() {
+    ['talent-stage','talent-goals','talent-list','talent-worry'].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+    var r = document.getElementById('talent-result'); if (r) { r.classList.remove('show'); r.textContent = ''; }
+    var c = document.getElementById('talent-copy-btn'); if (c) c.style.display = 'none';
+  };
+}
+if (typeof clearDecision === 'undefined') {
+  window.clearDecision = function() {
+    ['dec-question','dec-context','dec-options','dec-risk','dec-worry'].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+    var r = document.getElementById('decision-result'); if (r) { r.classList.remove('show'); r.textContent = ''; }
+    var c = document.getElementById('decision-copy-btn'); if (c) c.style.display = 'none';
+  };
+}
+if (typeof clearExamBank === 'undefined') {
+  window.clearExamBank = function() {
+    ['exambank-position','exambank-stage','exambank-trait1','exambank-trait2','exambank-trait3','exambank-worry'].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+    var r = document.getElementById('exambank-result'); if (r) { r.classList.remove('show'); r.textContent = ''; }
+    var c = document.getElementById('exambank-copy-btn'); if (c) c.style.display = 'none';
+  };
+}
+if (typeof clearExamAnalyze === 'undefined') {
+  window.clearExamAnalyze = function() {
+    ['examanalyze-cand','examanalyze-position','examanalyze-answers'].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+    var r = document.getElementById('examanalyze-result'); if (r) { r.classList.remove('show'); r.textContent = ''; }
+    var c = document.getElementById('examanalyze-copy-btn'); if (c) c.style.display = 'none';
+  };
+}
+if (typeof clearOnboard === 'undefined') {
+  window.clearOnboard = function() {
+    ['onboard-position','onboard-stage','onboard-teamsize','onboard-battles','onboard-culture','onboard-risk-pos','onboard-risk-time','onboard-risk-obs','onboard-risk-worry'].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+    var r = document.getElementById('onboard-result'); if (r) { r.classList.remove('show'); r.textContent = ''; }
+    var c = document.getElementById('onboard-copy-btn'); if (c) c.style.display = 'none';
+  };
+}
+
+// ════ 提示词构建函数 ════
+function buildMonthlyPrompt() {
+  var rev = _v('biz-month-revenue') || '【未提供】';
+  var cost = _v('biz-month-cost') || '【未提供】';
+  var worry = _v('biz-month-worry') || '【未提供】';
+  var expense = _v('biz-month-expense') || '【未提供】';
+  var profit = _v('biz-month-profit') || '【未提供】';
+  var cashflow = _v('biz-month-cashflow') || '【未提供】';
+  var cash = _v('biz-month-cash') || '【未提供】';
+  var ar = _v('biz-month-ar') || '【未提供】';
+  var ap = _v('biz-month-ap') || '【未提供】';
+  var orders = _v('biz-month-orders') || '【未提供】';
+  var customers = _v('biz-month-customers') || '【未提供】';
+  var channels = _v('biz-month-channels') || '【未提供】';
+  var products = _v('biz-month-products') || '【未提供】';
+  var delivery = _v('biz-month-delivery') || '【未提供】';
+  var complaints = _v('biz-month-complaints') || '【未提供】';
+  var inventory = _v('biz-month-inventory') || '【未提供】';
+  var projects = _v('biz-month-projects') || '【未提供】';
+  var headcount = _v('biz-month-headcount') || '【未提供】';
+  var laborcost = _v('biz-month-laborcost') || '【未提供】';
+  var turnover = _v('biz-month-turnover') || '【未提供】';
+  var coreposts = _v('biz-month-coreposts') || '【未提供】';
+  return '你是一位资深企业经营顾问。请基于以下本月经营数据，为企业做一份月度经营分析报告。\n\n' +
+    '【核心数据】\n- 本月营收：' + rev + ' 万元\n- 营业成本：' + cost + ' 万元\n- 最头疼的问题：' + worry + '\n' +
+    '【财务深度】\n- 费用合计：' + expense + ' 万元\n- 净利润/净利率：' + profit + '\n- 经营性现金流：' + cashflow + ' 万元\n- 账上现金：' + cash + ' 万元\n- 应收账款：' + ar + ' 万元\n- 应付账款：' + ap + ' 万元\n' +
+    '【业务增长】\n- 订单量/客单价：' + orders + '\n- 新客/复购率：' + customers + '\n- 渠道表现：' + channels + '\n- 产品线表现：' + products + '\n' +
+    '【运营效率】\n- 发货及时率/退货率：' + delivery + '\n- 客户投诉：' + complaints + '\n- 库存周转/滞销：' + inventory + '\n- 重点项目：' + projects + '\n' +
+    '【人力效能】\n- 员工/人均营收：' + headcount + '\n- 人力成本占比：' + laborcost + '\n- 入离职：' + turnover + '\n- 核心岗位变动：' + coreposts + '\n\n' +
+    '请输出：1.月度经营健康诊断 2.关键问题根因分析 3.优先级行动建议 4.风险预警';
+}
+function buildQuarterlyPrompt() {
+  var rev = _v('biz-month-revenue') || '【未提供】';
+  var cost = _v('biz-month-cost') || '【未提供】';
+  var worry = _v('biz-month-worry') || '【未提供】';
+  var expense = _v('biz-month-expense') || '【未提供】';
+  var profit = _v('biz-month-profit') || '【未提供】';
+  var cashflow = _v('biz-month-cashflow') || '【未提供】';
+  var cash = _v('biz-month-cash') || '【未提供】';
+  var ar = _v('biz-month-ar') || '【未提供】';
+  var ap = _v('biz-month-ap') || '【未提供】';
+  var orders = _v('biz-month-orders') || '【未提供】';
+  var customers = _v('biz-month-customers') || '【未提供】';
+  var channels = _v('biz-month-channels') || '【未提供】';
+  var products = _v('biz-month-products') || '【未提供】';
+  var delivery = _v('biz-month-delivery') || '【未提供】';
+  var complaints = _v('biz-month-complaints') || '【未提供】';
+  var inventory = _v('biz-month-inventory') || '【未提供】';
+  var projects = _v('biz-month-projects') || '【未提供】';
+  var headcount = _v('biz-month-headcount') || '【未提供】';
+  var laborcost = _v('biz-month-laborcost') || '【未提供】';
+  var turnover = _v('biz-month-turnover') || '【未提供】';
+  var coreposts = _v('biz-month-coreposts') || '【未提供】';
+  return '你是一位资深企业经营顾问。请基于以下季度经营数据，为企业做一份季度经营分析报告。\n\n' +
+    '【核心数据】\n- 本季营收：' + rev + ' 万元\n- 营业成本：' + cost + ' 万元\n- 最头疼的问题：' + worry + '\n' +
+    '【财务深度】\n- 费用合计：' + expense + ' 万元\n- 净利润/净利率：' + profit + '\n- 经营性现金流：' + cashflow + ' 万元\n- 账上现金：' + cash + ' 万元\n- 应收账款：' + ar + ' 万元\n- 应付账款：' + ap + ' 万元\n' +
+    '【业务增长】\n- 订单量/客单价：' + orders + '\n- 新客/复购率：' + customers + '\n- 渠道表现：' + channels + '\n- 产品线表现：' + products + '\n' +
+    '【运营效率】\n- 发货及时率/退货率：' + delivery + '\n- 客户投诉：' + complaints + '\n- 库存周转/滞销：' + inventory + '\n- 重点项目：' + projects + '\n' +
+    '【人力效能】\n- 员工/人均营收：' + headcount + '\n- 人力成本占比：' + laborcost + '\n- 入离职：' + turnover + '\n- 核心岗位变动：' + coreposts + '\n\n' +
+    '请以季度视角输出：1.季度趋势分析 2.同比/环比关键发现 3.战略调整建议 4.下季度预测与风险';
+}
+function buildOnboardPlanPrompt() {
+  var pos = _v('onboard-position') || '【未提供】';
+  var stage = _v('onboard-stage') || '【未提供】';
+  var teamsize = _v('onboard-teamsize') || '【未提供】';
+  var battles = _v('onboard-battles') || '【未提供】';
+  var culture = _v('onboard-culture') || '【未提供】';
+  return '你是一位资深人力资源与组织发展顾问，擅长高管入职融入规划。请为以下新晋高管制定90天融入与启动计划。\n\n' +
+    '【岗位】' + pos + '\n【公司阶段】' + stage + '\n【团队规模与结构】' + teamsize + '\n【前3个月关键战役】\n' + battles + '\n【公司文化关键词】' + culture + '\n\n' +
+    '请输出：1.90天分阶段融入计划（前30天/30-60天/60-90天）2.各阶段关键里程碑与交付物 3.可能遇到的"地雷"与应对 4.老板应如何辅助（检查清单）';
+}
+function buildOnboardRiskPrompt() {
+  var pos = _v('onboard-risk-pos') || '【未提供】';
+  var time = _v('onboard-risk-time') || '【未提供】';
+  var obs = _v('onboard-risk-obs') || '【未提供】';
+  var worry = _v('onboard-risk-worry') || '【未提供】';
+  return '你是一位资深人力资源与组织发展顾问，擅长高管试用期评估与风险诊断。请对以下试用期高管进行风险评估。\n\n' +
+    '【岗位】' + pos + '\n【已入职时长】' + time + '\n【观察记录】\n' + obs + '\n【老板的担忧】' + worry + '\n\n' +
+    '请输出：1.能力-文化-业绩三维诊断 2.红旗信号识别（如有）3.止损决策框架（继续/调整/终止的判断标准）4.老板接下来的行动清单 5.如果需要终止，如何体面处理';
+}
+
+// ════ 付费功能核心 ════
+if (typeof processBiz === 'undefined') {
+  window.processBiz = function() {
+    var result = document.getElementById('biz-result');
+    var copyBtn = document.getElementById('biz-copy-btn');
+    if (result) { result.classList.add('show', 'loading'); result.textContent = '正在生成经营分析报告…'; }
+    if (copyBtn) copyBtn.style.display = 'none';
+    useOneCredit(function() {
+      var prompt = currentBizMode === 'quarterly' ? buildQuarterlyPrompt() : buildMonthlyPrompt();
+      var profile = (typeof getCompanyProfileText === 'function' ? getCompanyProfileText() : '');
+      var full = (profile ? profile + '\n\n' : '') + prompt;
+      _showResult('biz-result', 'biz-copy-btn', full);
+      showToast('✅ 经营分析报告已生成');
+    }, function() {
+      if (result) { result.classList.remove('loading'); result.textContent = '生成失败，请重试'; }
+    });
+  };
+}
+if (typeof processTalent === 'undefined') {
+  window.processTalent = function() {
+    var result = document.getElementById('talent-result');
+    var copyBtn = document.getElementById('talent-copy-btn');
+    if (result) { result.classList.add('show', 'loading'); result.textContent = '正在生成人才盘点报告…'; }
+    if (copyBtn) copyBtn.style.display = 'none';
+    useOneCredit(function() {
+      var stage = _v('talent-stage') || '【未提供】';
+      var goals = _v('talent-goals') || '【未提供】';
+      var list = _v('talent-list') || '【未提供】';
+      var worry = _v('talent-worry') || '【未提供】';
+      var prompt = '你是一位资深人力资源顾问。请基于以下信息做人才盘点分析。\n\n【企业阶段】' + stage + '\n【年度战略目标】' + goals + '\n【核心团队成员】\n' + list + '\n【最担心的人才问题】' + worry + '\n\n请输出：1.九宫格人才分布（潜力vs业绩）2.关键岗位继任风险TOP3 3.离职风险预警（谁可能走、为什么、影响多大）4.能力缺口与补强方案 5.团队结构优化建议';
+      var profile = (typeof getCompanyProfileText === 'function' ? getCompanyProfileText() : '');
+      var full = (profile ? profile + '\n\n' : '') + prompt;
+      _showResult('talent-result', 'talent-copy-btn', full);
+      showToast('✅ 人才盘点报告已生成');
+    }, function() {
+      if (result) { result.classList.remove('loading'); result.textContent = '生成失败，请重试'; }
+    });
+  };
+}
+if (typeof processDecision === 'undefined') {
+  window.processDecision = function() {
+    var result = document.getElementById('decision-result');
+    var copyBtn = document.getElementById('decision-copy-btn');
+    if (result) { result.classList.add('show', 'loading'); result.textContent = '正在生成决策沙盘推演…'; }
+    if (copyBtn) copyBtn.style.display = 'none';
+    useOneCredit(function() {
+      var question = _v('dec-question') || '【未提供】';
+      var context = _v('dec-context') || '【未提供】';
+      var options = _v('dec-options') || '【未提供】';
+      var risk = _v('dec-risk') || '【未提供】';
+      var worry = _v('dec-worry') || '【未提供】';
+      var prompt = '你是一位资深战略顾问。请对以下决策进行多方案情景推演。\n\n【决策问题】' + question + '\n【当前情况】\n' + context + '\n【可选方案】\n' + options + '\n【风险因素】' + risk + '\n【核心顾虑】' + worry + '\n\n请输出：1.每个方案的利弊矩阵 2.最佳/最差情景推演 3.风险-收益评估 4.前提条件检验（哪些条件不成立方案就会失败）5.AI建议方向（不替你做决定，但帮你把关键变量想清楚）';
+      var profile = (typeof getCompanyProfileText === 'function' ? getCompanyProfileText() : '');
+      var full = (profile ? profile + '\n\n' : '') + prompt;
+      _showResult('decision-result', 'decision-copy-btn', full);
+      showToast('✅ 决策沙盘推演已生成');
+    }, function() {
+      if (result) { result.classList.remove('loading'); result.textContent = '生成失败，请重试'; }
+    });
+  };
+}
+if (typeof processExamBank === 'undefined') {
+  window.processExamBank = function() {
+    var result = document.getElementById('exambank-result');
+    var copyBtn = document.getElementById('exambank-copy-btn');
+    if (result) { result.classList.add('show', 'loading'); result.textContent = '正在生成面试题库…'; }
+    if (copyBtn) copyBtn.style.display = 'none';
+    useOneCredit(function() {
+      var position = _v('exambank-position') || '【未提供】';
+      var stage = _v('exambank-stage') || '【未提供】';
+      var trait1 = _v('exambank-trait1') || '【未提供】';
+      var trait2 = _v('exambank-trait2') || '【未提供】';
+      var trait3 = _v('exambank-trait3') || '【未提供】';
+      var worry = _v('exambank-worry') || '【未提供】';
+      var prompt = '你是一位资深面试官和人才评估专家。请为以下高管岗位设计结构化面试题库。\n\n【岗位】' + position + '\n【企业阶段】' + stage + '\n【最看重的特质1】' + trait1 + '\n【最看重的特质2】' + trait2 + '\n【最看重的特质3】' + trait3 + '\n【想通过面试确认的】' + worry + '\n\n请输出：覆盖5大维度（战略思维/领导力/专业能力/文化契合/抗压韧性）各3-5题，每题包含：考察点+好回答标准+递进追问（2-3层）';
+      var profile = (typeof getCompanyProfileText === 'function' ? getCompanyProfileText() : '');
+      var full = (profile ? profile + '\n\n' : '') + prompt;
+      _showResult('exambank-result', 'exambank-copy-btn', full);
+      showToast('✅ 面试题库已生成');
+    }, function() {
+      if (result) { result.classList.remove('loading'); result.textContent = '生成失败，请重试'; }
+    });
+  };
+}
+if (typeof processExamAnalyze === 'undefined') {
+  window.processExamAnalyze = function() {
+    var result = document.getElementById('examanalyze-result');
+    var copyBtn = document.getElementById('examanalyze-copy-btn');
+    if (result) { result.classList.add('show', 'loading'); result.textContent = '正在生成面试分析…'; }
+    if (copyBtn) copyBtn.style.display = 'none';
+    useOneCredit(function() {
+      var cand = _v('examanalyze-cand') || '【未提供】';
+      var position = _v('examanalyze-position') || '【未提供】';
+      var answers = _v('examanalyze-answers') || '【未提供】';
+      var prompt = '你是一位资深面试官和人才评估专家。请对以下面试进行多维度分析。\n\n【候选人】' + cand + '\n【面试岗位】' + position + '\n【面试回答记录】\n' + answers + '\n\n请输出：1.四维评分（业绩导向/战略思维/领导力/文化契合，各0-10分+依据）2.证据链分析（候选人说的vs事实逻辑）3.红旗信号（如有：夸大/回避/前后矛盾）4.建议背调方案（最需要验证的3点）5.录用建议与试用期关注点';
+      var profile = (typeof getCompanyProfileText === 'function' ? getCompanyProfileText() : '');
+      var full = (profile ? profile + '\n\n' : '') + prompt;
+      _showResult('examanalyze-result', 'examanalyze-copy-btn', full);
+      showToast('✅ 面试分析报告已生成');
+    }, function() {
+      if (result) { result.classList.remove('loading'); result.textContent = '生成失败，请重试'; }
+    });
+  };
+}
+if (typeof processOnboard === 'undefined') {
+  window.processOnboard = function() {
+    var result = document.getElementById('onboard-result');
+    var copyBtn = document.getElementById('onboard-copy-btn');
+    if (result) { result.classList.add('show', 'loading'); result.textContent = '正在生成试用辅佐方案…'; }
+    if (copyBtn) copyBtn.style.display = 'none';
+    useOneCredit(function() {
+      var prompt = currentOnboardMode === 'risk' ? buildOnboardRiskPrompt() : buildOnboardPlanPrompt();
+      var profile = (typeof getCompanyProfileText === 'function' ? getCompanyProfileText() : '');
+      var full = (profile ? profile + '\n\n' : '') + prompt;
+      _showResult('onboard-result', 'onboard-copy-btn', full);
+      showToast('✅ 试用辅佐方案已生成');
+    }, function() {
+      if (result) { result.classList.remove('loading'); result.textContent = '生成失败，请重试'; }
+    });
+  };
+}
+
+// ════ 导航 ════
+if (typeof switchTab === 'undefined') {
+  window.switchTab = function(tab) {
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    var targetTab = document.querySelector('.tab[data-tab="' + tab + '"]');
+    if (targetTab) targetTab.classList.add('active');
+    document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+    var targetPanel = document.getElementById('panel-' + tab);
+    if (targetPanel) { targetPanel.classList.add('active'); targetPanel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    if (typeof updateProfileIndicators === 'function') updateProfileIndicators();
+  };
+}
+if (typeof copyAndOpenAI === 'undefined') {
+  window.copyAndOpenAI = function(platform, resultId) {
+    var box = document.getElementById(resultId);
+    var text = box ? box.textContent : '';
+    if (!text || text.length < 20) {
+      if (typeof showToast === 'function') showToast('请先生成内容', true);
+      return;
+    }
+    navigator.clipboard.writeText(text).then(function() {
+      if (typeof showToast === 'function') showToast('✅ 已复制，即将打开 ' + platform + '…');
+      var urls = { 'DeepSeek': 'https://chat.deepseek.com', 'Kimi': 'https://kimi.moonshot.cn', '豆包': 'https://www.doubao.com/chat', '通义千问': 'https://tongyi.aliyun.com' };
+      setTimeout(function() { window.open(urls[platform] || 'https://chat.deepseek.com', '_blank'); }, 800);
+    }).catch(function() {
+      if (typeof showToast === 'function') showToast('复制失败，请手动复制', true);
+    });
+  };
+}
+
+// ════ 公司档案 ════
+if (typeof openCompanyProfile === 'undefined') {
+  window.openCompanyProfile = function() {
+    var el = document.getElementById('companyProfileModal');
+    if (el) el.style.display = 'flex';
+    var profile = null;
+    try { profile = JSON.parse(localStorage.getItem('company_profile') || 'null'); } catch(e) {}
+    if (!profile) profile = {};
+    document.getElementById('cp-name').value = profile.name || '';
+    document.getElementById('cp-industry').value = profile.industry || '';
+    document.getElementById('cp-stage').value = profile.stage || '';
+    document.getElementById('cp-size').value = profile.size || '';
+    document.getElementById('cp-revenue').value = profile.revenue || '';
+    document.getElementById('cp-business').value = profile.business || '';
+    document.getElementById('cp-products').value = profile.products || '';
+    document.getElementById('cp-advantage').value = profile.advantage || '';
+    document.getElementById('cp-challenges').value = profile.challenges || '';
+    document.getElementById('cp-customers').value = profile.customers || '';
+  };
+}
+if (typeof closeCompanyProfile === 'undefined') {
+  window.closeCompanyProfile = function() {
+    var el = document.getElementById('companyProfileModal');
+    if (el) el.style.display = 'none';
+  };
+}
+if (typeof saveCompanyProfile === 'undefined') {
+  window.saveCompanyProfile = function() {
+    var profile = {
+      name: document.getElementById('cp-name').value.trim(),
+      industry: document.getElementById('cp-industry').value.trim(),
+      stage: document.getElementById('cp-stage').value.trim(),
+      size: document.getElementById('cp-size').value.trim(),
+      revenue: document.getElementById('cp-revenue').value.trim(),
+      business: document.getElementById('cp-business').value.trim(),
+      products: document.getElementById('cp-products').value.trim(),
+      advantage: document.getElementById('cp-advantage').value.trim(),
+      challenges: document.getElementById('cp-challenges').value.trim(),
+      customers: document.getElementById('cp-customers').value.trim()
+    };
+    localStorage.setItem('company_profile', JSON.stringify(profile));
+    closeCompanyProfile();
+    if (typeof updateProfileIndicators === 'function') updateProfileIndicators();
+    if (typeof showToast === 'function') showToast('✅ 公司档案已保存');
+  };
+}
+if (typeof getCompanyProfileText === 'undefined') {
+  window.getCompanyProfileText = function() {
+    try {
+      var p = JSON.parse(localStorage.getItem('company_profile') || 'null');
+      if (!p || !p.name) return '';
+      return '【公司档案】\n- 公司名称：' + (p.name || '未填') +
+        '\n- 所属行业：' + (p.industry || '未填') +
+        '\n- 发展阶段：' + (p.stage || '未填') +
+        '\n- 员工人数：' + (p.size || '未填') +
+        '\n- 年营收规模：' + (p.revenue || '未填') + ' 万元' +
+        '\n- 主营业务：' + (p.business || '未填') +
+        '\n- 核心产品/服务：' + (p.products || '未填') +
+        '\n- 核心竞争优势：' + (p.advantage || '未填') +
+        '\n- 主要挑战：' + (p.challenges || '未填') +
+        '\n- 目标客户：' + (p.customers || '未填') + '\n\n';
+    } catch(e) { return ''; }
+  };
+}
+if (typeof updateProfileIndicators === 'undefined') {
+  window.updateProfileIndicators = function() {
+    var hasProfile = false;
+    try { var p = JSON.parse(localStorage.getItem('company_profile') || 'null'); hasProfile = !!(p && p.name); } catch(e) {}
+    var indicators = document.querySelectorAll('.profile-indicator');
+    for (var i = 0; i < indicators.length; i++) {
+      var el = indicators[i];
+      if (hasProfile) {
+        el.classList.remove('off');
+        try { var pp = JSON.parse(localStorage.getItem('company_profile') || '{}'); el.innerHTML = '<span class="pi-dot"></span>已设置公司档案：' + (pp.name || '') + ' | ' + (pp.industry || '') + ' | ' + (pp.size || '') + '人 | ' + (pp.stage || '') + ' — <a href="javascript:openCompanyProfile()" style="color:var(--gold);text-decoration:underline">修改</a>'; } catch(e) {}
+      } else {
+        el.classList.add('off');
+        el.innerHTML = '<span class="pi-dot"></span>尚未设置公司档案 — <a href="javascript:openCompanyProfile()" style="color:#ff6b6b;text-decoration:underline">立即设置</a>';
+      }
+    }
+  };
+}
+
+// ════ 使用历史 ════
+if (typeof openHistory === 'undefined') {
+  window.openHistory = function() {
+    var el = document.getElementById('historyModal');
+    if (el) el.style.display = 'flex';
+    if (typeof renderHistoryList === 'function') renderHistoryList();
+  };
+}
+if (typeof closeHistory === 'undefined') {
+  window.closeHistory = function() {
+    var el = document.getElementById('historyModal');
+    if (el) el.style.display = 'none';
+  };
+}
+if (typeof clearAllHistory === 'undefined') {
+  window.clearAllHistory = function() {
+    if (!confirm('确认删除全部使用历史？此操作不可恢复。')) return;
+    localStorage.removeItem('chief_history');
+    if (typeof renderHistoryList === 'function') renderHistoryList();
+    if (typeof showToast === 'function') showToast('已清空全部历史');
+  };
+}
+if (typeof renderHistoryList === 'undefined') {
+  window.renderHistoryList = function() {
+    var container = document.getElementById('historyList');
+    if (!container) return;
+    var history = [];
+    try { history = JSON.parse(localStorage.getItem('chief_history') || '[]'); } catch(e) {}
+    var searchEl = document.getElementById('historySearch');
+    var query = searchEl ? (searchEl.value || '').toLowerCase() : '';
+    if (query) {
+      history = history.filter(function(h) { return (h.title || '').toLowerCase().indexOf(query) >= 0 || (h.subtitle || '').toLowerCase().indexOf(query) >= 0 || (h.content || '').toLowerCase().indexOf(query) >= 0; });
+    }
+    if (history.length === 0) {
+      container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">' + (query ? '无匹配记录' : '暂无记录') + '</div>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < history.length; i++) {
+      var h = history[i];
+      var preview = (h.content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').substring(0, 120);
+      html += '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px 14px;margin-bottom:8px;cursor:pointer" onclick="navigator.clipboard.writeText(this.querySelector(\'.hc-content\').textContent).then(function(){if(typeof showToast===\'function\')showToast(\'\\u2705 \\u5df2\\u590d\\u5236\')})"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-weight:600;font-size:13px;color:var(--gold)">' + (h.title || '') + '</span><span style="font-size:10px;color:rgba(255,255,255,.35)">' + (h.createdAt || '') + '</span></div><div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px">' + (h.subtitle || '') + '</div><div class="hc-content" style="font-size:11px;color:rgba(255,255,255,.4);line-height:1.4;max-height:40px;overflow:hidden;white-space:pre-wrap">' + preview + '</div></div>';
+    }
+    container.innerHTML = html;
+  };
+}
+
+// ════ 候选人追踪 ════
+if (typeof openCandidateTracker === 'undefined') {
+  window.openCandidateTracker = function() {
+    var el = document.getElementById('candidateTrackerModal');
+    if (el) el.style.display = 'flex';
+    if (typeof renderCandidateList === 'function') renderCandidateList();
+  };
+}
+if (typeof closeCandidateTracker === 'undefined') {
+  window.closeCandidateTracker = function() {
+    var el = document.getElementById('candidateTrackerModal');
+    if (el) el.style.display = 'none';
+  };
+}
+if (typeof showAddCandidateForm === 'undefined') {
+  window.showAddCandidateForm = function() {
+    var el = document.getElementById('addCandidateForm');
+    if (el) el.style.display = '';
+  };
+}
+if (typeof hideAddCandidateForm === 'undefined') {
+  window.hideAddCandidateForm = function() {
+    var el = document.getElementById('addCandidateForm');
+    if (el) el.style.display = 'none';
+  };
+}
+if (typeof addCandidate === 'undefined') {
+  window.addCandidate = function() {
+    var name = (_v('cand-name') || '').trim();
+    var position = (_v('cand-position') || '').trim();
+    var status = document.getElementById('cand-status') ? document.getElementById('cand-status').value : '筛选';
+    var source = (_v('cand-source') || '').trim();
+    var notes = (_v('cand-notes') || '').trim();
+    if (!name || !position) { if (typeof showToast === 'function') showToast('请填写姓名和面试岗位', true); return; }
+    var candidates = [];
+    try { candidates = JSON.parse(localStorage.getItem('chief_candidates') || '[]'); } catch(e) {}
+    candidates.unshift({ id: Date.now().toString(36) + Math.random().toString(36).substring(2, 6), name: name, position: position, status: status, source: source, notes: notes, createdAt: new Date().toLocaleString('zh-CN'), isoTime: new Date().toISOString() });
+    localStorage.setItem('chief_candidates', JSON.stringify(candidates));
+    hideAddCandidateForm();
+    if (typeof renderCandidateList === 'function') renderCandidateList();
+    if (typeof refreshExamCandidateSelects === 'function') refreshExamCandidateSelects();
+    document.getElementById('cand-name').value = '';
+    document.getElementById('cand-position').value = '';
+    if (document.getElementById('cand-source')) document.getElementById('cand-source').value = '';
+    if (document.getElementById('cand-notes')) document.getElementById('cand-notes').value = '';
+    if (typeof showToast === 'function') showToast('✅ 候选人已添加');
+  };
+}
+if (typeof renderCandidateList === 'undefined') {
+  window.renderCandidateList = function() {
+    var container = document.getElementById('candidateList');
+    if (!container) return;
+    var candidates = [];
+    try { candidates = JSON.parse(localStorage.getItem('chief_candidates') || '[]'); } catch(e) {}
+    if (candidates.length === 0) {
+      container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无追踪人选</div>';
+      return;
+    }
+    var statusColors = {'筛选':'rgba(255,255,255,.4)','面试中':'#4fc3f7','谈薪':'#ffb74d','已录用':'#81c784','试用中':'#64b5f6','已转正':'var(--gold)','已放弃':'#ef5350'};
+    var html = '';
+    for (var i = 0; i < candidates.length; i++) {
+      var c = candidates[i];
+      var sc = statusColors[c.status] || 'rgba(255,255,255,.4)';
+      html += '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px 14px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-weight:600;font-size:13px">' + (c.name || '') + '</span><span style="font-size:11px;color:' + sc + '">' + (c.status || '') + '</span></div><div style="font-size:11px;color:rgba(255,255,255,.4)">' + (c.position || '') + (c.source ? ' | 来源：' + c.source : '') + '</div>' + (c.notes ? '<div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:3px">' + c.notes.substring(0, 80) + '</div>' : '') + '<div style="font-size:10px;color:rgba(255,255,255,.25);margin-top:2px">' + (c.createdAt || '') + '</div></div>';
+    }
+    container.innerHTML = html;
+  };
+}
+if (typeof refreshExamCandidateSelects === 'undefined') {
+  window.refreshExamCandidateSelects = function() {
+    var candidates = [];
+    try { candidates = JSON.parse(localStorage.getItem('chief_candidates') || '[]'); } catch(e) {}
+    var selects = ['examBank-candidate', 'examAnalyze-candidate'];
+    for (var s = 0; s < selects.length; s++) {
+      var sel = document.getElementById(selects[s]);
+      if (!sel) continue;
+      var currentVal = sel.value || '';
+      sel.innerHTML = '<option value="">-- 选择候选人（可选）--</option>';
+      for (var i = 0; i < candidates.length; i++) {
+        var c = candidates[i];
+        sel.innerHTML += '<option value="' + c.id + '">' + c.name + ' — ' + c.position + '</option>';
+      }
+      if (currentVal) {
+        var found = false;
+        for (var j = 0; j < candidates.length; j++) { if (candidates[j].id === currentVal) { found = true; break; } }
+        if (found) sel.value = currentVal;
+      }
+    }
+  };
+}
+
+// ════ 其他小功能 ════
+if (typeof copyWechat === 'undefined') {
+  window.copyWechat = function() {
+    navigator.clipboard.writeText('miaoan1913').then(function() {
+      if (typeof showToast === 'function') showToast('✅ 已复制微信号：miaoan1913');
+    }).catch(function() {
+      if (typeof showToast === 'function') showToast('⚠️ 复制失败，请手动复制', true);
+    });
+  };
+}
+if (typeof fillLastCode === 'undefined') {
+  window.fillLastCode = function() {
+    try {
+      var lastSession = localStorage.getItem('general_active_session');
+      if (lastSession) {
+        var s = JSON.parse(lastSession);
+        document.getElementById('activationInput').value = s.code || '';
+        if (typeof showToast === 'function') showToast('已填入上次激活码');
+      } else {
+        var lastCode = localStorage.getItem('last_activation_code');
+        if (lastCode) { document.getElementById('activationInput').value = lastCode; if (typeof showToast === 'function') showToast('已填入上次激活码'); }
+        else { if (typeof showToast === 'function') showToast('暂无上次使用的激活码', true); }
+      }
+    } catch(e) { if (typeof showToast === 'function') showToast('暂无上次使用的激活码', true); }
+  };
+}
+if (typeof showTokenSetup === 'undefined') {
+  window.showTokenSetup = function() {
+    var token = prompt('请输入 GitHub Personal Access Token（需 gist 权限）：\n用于云端同步使用次数，跨设备共享。\n留空取消。');
+    if (token !== null && token.trim()) {
+      localStorage.setItem('gh_sync_token', token.trim());
+      if (typeof showToast === 'function') showToast('✅ Token 已保存，云端同步已启用');
+    }
+  };
+}
 </script>
 </body>
 </html>
