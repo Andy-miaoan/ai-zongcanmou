@@ -1,0 +1,3048 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>总参部 · 安迪 AI调度师</title>
+<link rel="icon" href="logo.png" type="image/png">
+<style>
+:root {
+  --bg-deep: #060e0a;
+  --bg-card: rgba(14, 24, 18, 0.85);
+  --bg-input: rgba(0, 0, 0, 0.3);
+  --gold: #d4af37;
+  --gold-light: #e8d5a3;
+  --gold-dark: #a68a2e;
+  --gold-glow: rgba(212, 175, 55, 0.12);
+  --text-primary: #e6e0d0;
+  --text-secondary: rgba(255, 255, 255, 0.5);
+  --text-muted: rgba(255, 255, 255, 0.3);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-gold: rgba(212, 175, 55, 0.18);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-card: 0 1px 2px rgba(0,0,0,.4), 0 8px 32px rgba(0,0,0,.5);
+  --shadow-lg: 0 4px 40px rgba(0,0,0,.65);
+  --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  --sidebar-w: 200px;
+  --sidebar-collapsed-w: 56px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Noto Sans SC',sans-serif;background:var(--bg-deep);color:var(--text-primary);-webkit-font-smoothing:antialiased;line-height:1.6}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(212,175,55,.025) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 100%,rgba(212,175,55,.015) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+/* ── Login Overlay ── */
+.login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(212,175,55,.06) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 80%,rgba(212,175,55,.03) 0%,transparent 55%),linear-gradient(175deg,#040a06 0%,#08120c 40%,#0a1810 100%)}
+.login-overlay::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='rgba(212,175,55,.015)' stroke-width='.5'/%3E%3C/svg%3E") repeat;pointer-events:none;opacity:.5}
+.login-card{position:relative;z-index:1;background:rgba(12,20,15,.92);border:1px solid var(--border-gold);border-radius:var(--radius-lg);padding:48px 36px;max-width:440px;width:92%;text-align:center;box-shadow:var(--shadow-lg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.login-card .logo-img{width:64px;height:64px;border-radius:16px;margin-bottom:14px;object-fit:cover;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.login-card .brand{font-size:11px;color:rgba(212,175,55,.65);letter-spacing:3px;margin-bottom:8px;font-weight:600;text-transform:uppercase}
+.login-card h2{font-size:26px;margin-bottom:6px;color:var(--gold-light);font-weight:700;letter-spacing:1px}
+.login-card .subt{font-size:13px;color:var(--text-secondary);margin-bottom:28px;line-height:1.7}
+.login-card input{width:100%;padding:14px 18px;border:1.5px solid var(--border-gold);border-radius:var(--radius-md);font-size:15px;text-align:center;letter-spacing:2px;font-family:'SF Mono','Fira Code','Courier New',monospace;background:var(--bg-input);color:var(--gold-light);transition:var(--transition)}
+.login-card input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 6px rgba(212,175,55,.04),0 0 24px rgba(212,175,55,.06)}
+.login-card input::placeholder{color:rgba(255,255,255,.18);letter-spacing:1px;font-size:13px;font-family:inherit}
+.login-card .btn{width:100%;padding:14px;border:none;border-radius:var(--radius-md);font-size:16px;font-weight:600;cursor:pointer;margin-top:16px;transition:var(--transition);letter-spacing:.5px}
+.login-card .btn-activate{background:linear-gradient(135deg,#e0c04a,#c9a520,#b8950e);color:#0a0a0a;box-shadow:0 4px 24px rgba(212,175,55,.18);position:relative;overflow:hidden}
+.login-card .btn-activate::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);transition:var(--transition)}
+.login-card .btn-activate:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(212,175,55,.28)}
+.login-card .btn-activate:hover::after{left:100%}
+.login-card .btn-activate:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.login-card .btn-free{background:transparent;color:rgba(212,175,55,.7);border:1px solid rgba(212,175,55,.25);width:100%;padding:14px;border-radius:var(--radius-md);font-size:16px;font-weight:600;cursor:pointer;margin-top:10px;transition:var(--transition)}
+.login-card .btn-free:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,.05)}
+.login-err{color:#ff6b6b;font-size:12px;margin-top:10px;min-height:18px;font-weight:500}
+.login-info{font-size:11px;color:var(--text-muted);margin-top:20px;line-height:1.8}
+.login-hint{font-size:11px;color:rgba(212,175,55,.5);margin-bottom:6px;cursor:pointer}
+.ref-tag{display:inline-block;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.25);border-radius:20px;padding:6px 16px;font-size:12px;color:var(--gold);margin-bottom:16px;font-weight:500}
+
+/* ── Device Bind Modal ── */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.72);z-index:1001;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.modal-overlay.show{display:flex}
+.modal-card{background:rgba(14,22,16,.98);border:1px solid var(--border-gold);border-radius:var(--radius-lg);padding:30px 26px;max-width:540px;width:94%;max-height:82vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .35s cubic-bezier(.4,0,.2,1);scrollbar-width:thin;scrollbar-color:rgba(212,175,55,.15) transparent}
+.modal-card::-webkit-scrollbar{width:5px}
+.modal-card::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15);border-radius:10px}
+.modal-card h3{font-size:18px;color:var(--gold-light);margin-bottom:6px}
+.modal-card .modal-subt{font-size:11px;color:var(--text-secondary);margin-bottom:18px}
+.modal-card .close-btn{float:right;background:none;border:none;color:rgba(255,255,255,.4);font-size:24px;cursor:pointer;padding:0;line-height:1;transition:var(--transition)}
+.modal-card .close-btn:hover{color:#ff6b6b;transform:rotate(90deg)}
+
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Global UI ── */
+.app{display:none;position:relative;z-index:0;min-height:100vh}
+.app.show{display:flex}
+
+/* ── Sidebar ── */
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:rgba(8,16,10,.97);border-right:1px solid rgba(212,175,55,.1);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;z-index:30;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:width .25s,min-width .25s;overflow-x:hidden}
+.sidebar.collapsed{width:var(--sidebar-collapsed-w);min-width:var(--sidebar-collapsed-w)}
+.sidebar-header{padding:18px 14px;border-bottom:1px solid rgba(212,175,55,.08);text-align:center}
+.sidebar-header .logo-img{width:36px;height:36px;border-radius:10px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,.3);margin-bottom:6px}
+.sidebar-header .brand{font-size:9px;color:rgba(212,175,55,.55);letter-spacing:2px;font-weight:600;text-transform:uppercase}
+.sidebar-header h2{font-size:14px;color:var(--gold-light);font-weight:700;letter-spacing:1px;margin-top:2px}
+.sidebar.collapsed .sidebar-header .brand,.sidebar.collapsed .sidebar-header h2{display:none}
+.sidebar.collapsed .sidebar-header .logo-img{width:30px;height:30px;margin-bottom:0}
+
+.sidebar-nav{flex:1;overflow-y:auto;padding:10px 0;scrollbar-width:none}
+.sidebar-nav::-webkit-scrollbar{display:none}
+.sidebar-nav .nav-section{font-size:9px;color:rgba(255,255,255,.2);padding:8px 18px 4px;letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.sidebar.collapsed .nav-section{display:none}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 18px;cursor:pointer;color:var(--text-secondary);font-size:13px;font-weight:500;transition:var(--transition);border-left:3px solid transparent;position:relative}
+.nav-item:hover{color:var(--gold-light);background:rgba(212,175,55,.03)}
+.nav-item.active{color:var(--gold);background:rgba(212,175,55,.06);border-left-color:var(--gold);font-weight:600}
+.nav-item .nav-icon{font-size:18px;flex-shrink:0;width:22px;text-align:center}
+.nav-item .nav-label{white-space:nowrap}
+.nav-item .nav-badge{font-size:9px;background:#ff6b6b;color:#fff;min-width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-left:auto}
+.sidebar.collapsed .nav-item{padding:12px 14px;justify-content:center}
+.sidebar.collapsed .nav-item .nav-label,.sidebar.collapsed .nav-item .nav-badge{display:none}
+.sidebar.collapsed .nav-item .nav-icon{width:auto;font-size:20px}
+
+.sidebar-footer{padding:12px;border-top:1px solid rgba(212,175,55,.08);text-align:center}
+.sidebar-footer .user-info{font-size:10px;color:var(--text-secondary);line-height:1.6}
+.sidebar-footer .remaining{color:var(--gold);font-weight:700;font-size:14px}
+.sidebar-footer .btn-collapse{background:none;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:var(--transition);margin-top:6px}
+.sidebar-footer .btn-collapse:hover{color:var(--gold);border-color:rgba(212,175,55,.25)}
+.sidebar.collapsed .sidebar-footer .user-info,.sidebar.collapsed .sidebar-footer .remaining,.sidebar.collapsed .sidebar-footer .btn-collapse span{display:none}
+
+/* ── Main Content Area ── */
+.main-wrap{flex:1;min-width:0}
+.header{background:rgba(8,16,10,.95);color:var(--text-primary);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid rgba(212,175,55,.1);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);position:sticky;top:0;z-index:20}
+.header-left{display:flex;align-items:center;gap:10px}
+.header-left h1{font-size:17px;font-weight:700;color:var(--gold-light)}
+.header-left .badge{font-size:10px;background:rgba(212,175,55,.12);color:var(--gold);padding:3px 10px;border-radius:10px}
+.header-btns{display:flex;gap:6px;align-items:center}
+.icon-btn{width:34px;height:34px;border-radius:50%;border:1px solid rgba(212,175,55,.15);background:rgba(212,175,55,.05);color:var(--gold);font-size:15px;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;position:relative}
+.icon-btn:hover{background:rgba(212,175,55,.14);border-color:rgba(212,175,55,.35);transform:scale(1.05)}
+.icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ff6b6b;color:#fff;font-size:9px;min-width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;padding:0 4px}
+
+.main{padding:20px;max-width:1100px;margin:0 auto}
+.panel{display:none;animation:fadeIn .3s ease}
+.panel.active{display:block}
+
+/* ── Cards & Forms ── */
+.card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:26px;margin-bottom:20px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:var(--transition);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.card:hover{border-color:rgba(212,175,55,.1)}
+.card h3{font-size:17px;margin-bottom:6px;color:var(--gold-light);display:flex;align-items:center;gap:8px}
+.card .desc{font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.7}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px}
+
+label{display:block;font-size:12px;font-weight:600;color:var(--text-secondary);margin:16px 0 6px;letter-spacing:.3px}
+label .hint{font-weight:400;color:var(--text-muted);font-size:11px;margin-left:4px}
+textarea,input[type="text"],input[type="number"],select{width:100%;padding:12px 15px;border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-sm);font-size:14px;line-height:1.6;font-family:inherit;resize:vertical;background:var(--bg-input);color:var(--text-primary);transition:var(--transition)}
+textarea:hover,input:hover,select:hover{border-color:rgba(255,255,255,.12)}
+textarea:focus,input:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(212,175,55,.04)}
+textarea::placeholder,input::placeholder{color:rgba(255,255,255,.15)}
+
+.btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn{padding:12px 24px;border:none;border-radius:var(--radius-sm);font-size:14px;cursor:pointer;font-weight:600;transition:var(--transition);white-space:nowrap;letter-spacing:.3px;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:linear-gradient(135deg,#d4af37,#b8960f);color:#0a0a0a;box-shadow:0 3px 14px rgba(212,175,55,.14)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(212,175,55,.22)}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-secondary{background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.08)}
+.btn-secondary:hover{background:rgba(255,255,255,.08);color:var(--text-primary)}
+.btn-outline{background:transparent;color:var(--gold);border:1px solid rgba(212,175,55,.25)}
+.btn-outline:hover{background:rgba(212,175,55,.06);border-color:rgba(212,175,55,.4)}
+.btn-sm{padding:6px 14px;font-size:11px;border-radius:8px}
+.btn-danger{background:rgba(255,107,107,.1);color:#ff8a8a;border:1px solid rgba(255,107,107,.2)}
+.btn-danger:hover{background:rgba(255,107,107,.2)}
+
+/* ── Result Box ── */
+.result-box{display:none;margin-top:18px;padding:20px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.05);border-radius:var(--radius-md);font-size:13px;line-height:2;white-space:pre-wrap;max-height:520px;overflow-y:auto;color:rgba(255,255,255,.75);font-family:'SF Mono','Fira Code','Courier New',monospace}
+.result-box.show{display:block;animation:fadeIn .25s ease}
+.result-box.loading{color:var(--text-secondary);text-align:center;padding:48px}
+
+.ai-copy-area{margin-top:14px;border-top:1px solid rgba(255,255,255,.05);padding-top:14px}
+.ai-copy-main{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn-copy-open{background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(212,175,55,.04));color:#e0c04a;border:1.5px solid rgba(212,175,55,.3);padding:12px 20px;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;transition:.2s;white-space:nowrap;letter-spacing:.3px;font-family:inherit}
+.btn-copy-open:hover{background:linear-gradient(135deg,rgba(212,175,55,.24),rgba(212,175,55,.1));border-color:#d4af37;transform:translateY(-1px);box-shadow:0 4px 18px rgba(212,175,55,.15)}
+.btn-copy-only{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);padding:10px 16px;border-radius:10px;font-size:13px;cursor:pointer;font-weight:500;transition:.2s;white-space:nowrap;font-family:inherit}
+.btn-copy-only:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.75)}
+.ai-platform-bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.ai-platform-label{font-size:11px;color:rgba(255,255,255,.35);margin-right:4px}
+.ai-platform-btn{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.45);padding:6px 13px;border-radius:8px;font-size:11px;cursor:pointer;transition:.2s;font-weight:500;font-family:inherit}
+.ai-platform-btn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}
+
+/* ── Toast ── */
+.toast{position:fixed;top:28px;left:50%;transform:translateX(-50%);background:rgba(30,28,18,.98);color:var(--gold-light);padding:12px 28px;border-radius:24px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 36px rgba(0,0,0,.6);border:1px solid rgba(212,175,55,.2);letter-spacing:.5px;font-weight:500;backdrop-filter:blur(12px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+.toast.warn{background:rgba(40,16,16,.98);border-color:rgba(255,107,107,.3);color:#ffa0a0}
+
+/* ── Dashboard KPI Cards ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.kpi-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:20px;text-align:center;backdrop-filter:blur(8px);transition:var(--transition)}
+.kpi-card:hover{border-color:rgba(212,175,55,.12);transform:translateY(-2px)}
+.kpi-card .kpi-value{font-size:28px;font-weight:700;color:var(--gold-light);line-height:1.2}
+.kpi-card .kpi-label{font-size:11px;color:var(--text-secondary);margin-top:4px}
+.kpi-card .kpi-change{font-size:11px;margin-top:4px;font-weight:600}
+.kpi-card .kpi-change.up{color:#48c78e}
+.kpi-card .kpi-change.down{color:#ff8a8a}
+.kpi-card.warn{border-color:rgba(255,193,7,.25);background:rgba(255,193,7,.03)}
+
+/* ── Sub-tabs ── */
+.subtabs{display:flex;gap:4px;margin-bottom:18px;flex-wrap:wrap}
+.subtab{padding:8px 16px;border:1px solid rgba(255,255,255,.06);border-radius:8px;font-size:12px;cursor:pointer;background:rgba(255,255,255,.02);color:var(--text-secondary);transition:var(--transition);font-weight:500}
+.subtab:hover{color:var(--gold-light);border-color:rgba(212,175,55,.15)}
+.subtab.active{background:rgba(212,175,55,.1);color:var(--gold);border-color:rgba(212,175,55,.25);font-weight:600}
+
+/* ── Alert Feed ── */
+.alert-item{padding:10px 14px;border-left:3px solid var(--gold);background:rgba(212,175,55,.03);margin-bottom:8px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:12px;cursor:pointer;transition:var(--transition)}
+.alert-item:hover{background:rgba(212,175,55,.06)}
+.alert-item.warn{border-left-color:#ff6b6b;background:rgba(255,107,107,.03)}
+.alert-item .alert-module{font-size:10px;color:var(--text-muted);margin-top:2px}
+
+/* ── KPI Table ── */
+.kpi-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.kpi-table th,.kpi-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border-subtle)}
+.kpi-table th{font-size:11px;color:var(--text-secondary);font-weight:600;letter-spacing:.5px}
+.kpi-table .status-green{color:#48c78e}
+.kpi-table .status-yellow{color:#ffd54f}
+.kpi-table .status-red{color:#ff8a8a}
+
+.progress-bar{height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;margin-top:4px;min-width:80px}
+.progress-bar .fill{height:100%;border-radius:3px;transition:width .5s}
+.progress-bar .fill.green{background:#48c78e}
+.progress-bar .fill.yellow{background:#ffd54f}
+.progress-bar .fill.red{background:#ff8a8a}
+
+/* ── Risk Matrix ── */
+.risk-matrix{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:14px}
+.risk-cell{padding:10px 6px;border-radius:6px;text-align:center;font-size:11px;min-height:50px;display:flex;align-items:center;justify-content:center;font-weight:500}
+.risk-cell.high{background:rgba(255,107,107,.2);color:#ff8a8a}
+.risk-cell.med{background:rgba(255,193,7,.12);color:#ffd54f}
+.risk-cell.low{background:rgba(72,199,142,.1);color:#48c78e}
+
+/* ── Radar Chart Container ── */
+.chart-container{max-width:400px;margin:0 auto;padding:10px}
+.chart-container canvas{width:100%!important}
+
+/* ── 9-Box Grid ── */
+.grid-9box{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:6px;max-width:500px;margin:14px auto}
+.grid-cell{padding:14px 8px;border-radius:8px;text-align:center;font-size:10px;min-height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.06)}
+.grid-cell .cell-tag{font-size:8px;margin-top:4px;opacity:.6}
+.grid-cell.zone-1{background:rgba(72,199,142,.08);border-color:rgba(72,199,142,.2)}/* 明星 */
+.grid-cell.zone-2{background:rgba(72,199,142,.04);border-color:rgba(72,199,142,.1)}/* 骨干 */
+.grid-cell.zone-3{background:rgba(255,193,7,.04);border-color:rgba(255,193,7,.1)}/* 熟练工 */
+.grid-cell.zone-4{background:rgba(100,149,237,.04);border-color:rgba(100,149,237,.1)}/* 待开发 */
+.grid-cell.zone-5{background:rgba(255,255,255,.02)}/* 中坚 */
+.grid-cell.zone-6{background:rgba(255,255,255,.01)}/* 老黄牛 */
+.grid-cell.zone-7{background:rgba(255,107,107,.04);border-color:rgba(255,107,107,.1)}/* 问题 */
+.grid-cell.zone-8{background:rgba(255,193,7,.06);border-color:rgba(255,193,7,.15)}/* 观察 */
+.grid-cell.zone-9{background:rgba(255,107,107,.08);border-color:rgba(255,107,107,.2)}/* 淘汰 */
+
+/* ── BLM Steps ── */
+.blm-steps{display:flex;gap:0;margin-bottom:20px;overflow-x:auto}
+.blm-step{flex:1;min-width:80px;padding:12px 8px;text-align:center;font-size:11px;color:var(--text-muted);border-bottom:2px solid rgba(255,255,255,.06);cursor:pointer;transition:var(--transition);white-space:nowrap}
+.blm-step.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+.blm-step.done{color:var(--gold-light);border-bottom-color:rgba(212,175,55,.3)}
+.blm-step .step-num{display:block;font-size:20px;margin-bottom:4px}
+
+/* ── Industry Preset Cards ── */
+.preset-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.preset-card{padding:16px 12px;border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm);cursor:pointer;text-align:center;transition:var(--transition);background:rgba(255,255,255,.01)}
+.preset-card:hover{border-color:rgba(212,175,55,.2);background:rgba(212,175,55,.04)}
+.preset-card.selected{border-color:var(--gold);background:rgba(212,175,55,.08)}
+.preset-card .preset-icon{font-size:28px;margin-bottom:6px}
+.preset-card .preset-name{font-size:13px;font-weight:600;color:var(--gold-light)}
+.preset-card .preset-desc{font-size:10px;color:var(--text-secondary);margin-top:4px;line-height:1.4}
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  .sidebar{width:var(--sidebar-collapsed-w);min-width:var(--sidebar-collapsed-w)}
+  .sidebar .sidebar-header .brand,.sidebar .sidebar-header h2{display:none}
+  .sidebar .nav-section{display:none}
+  .sidebar .nav-item{padding:12px 14px;justify-content:center}
+  .sidebar .nav-item .nav-label,.sidebar .nav-item .nav-badge{display:none}
+  .sidebar .nav-item .nav-icon{width:auto;font-size:20px}
+  .sidebar-footer .user-info,.sidebar-footer .remaining,.sidebar-footer .btn-collapse span{display:none}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:640px){
+  .app{flex-direction:column}
+  .sidebar{flex-direction:row;width:100%;min-width:100%;height:auto;position:sticky;top:0;overflow-x:auto;padding:0;border-right:none;border-bottom:1px solid rgba(212,175,55,.1)}
+  .sidebar-header,.sidebar-footer,.nav-section{display:none!important}
+  .sidebar-nav{display:flex;flex-direction:row;padding:0;overflow-x:auto}
+  .nav-item{flex-direction:column;gap:2px;padding:8px 12px;border-left:none;border-bottom:2px solid transparent;font-size:10px;flex-shrink:0}
+  .nav-item .nav-icon{font-size:16px;width:auto}
+  .nav-item .nav-label{display:block}
+  .nav-item.active{border-left-color:transparent;border-bottom-color:var(--gold)}
+  .main{padding:12px}
+  .card{padding:14px;border-radius:12px}
+  .card h3{font-size:15px}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .kpi-card{padding:14px 10px}
+  .kpi-card .kpi-value{font-size:22px}
+  .btn{padding:11px 14px;font-size:12px;width:100%}
+  .btn-row .btn{flex:1}
+  .result-box{font-size:12px;padding:14px;max-height:380px}
+  .preset-grid{grid-template-columns:repeat(2,1fr)}
+  .blm-steps{gap:4px}
+  .blm-step{min-width:60px;font-size:10px}
+  textarea,input[type="text"],input[type="number"],select{font-size:16px}
+}
+@media(max-width:380px){
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .kpi-card .kpi-value{font-size:18px}
+  .nav-item{padding:6px 8px;font-size:9px}
+  .nav-item .nav-icon{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<!-- ========== 登录页 ========== -->
+<div class="login-overlay" id="loginScreen">
+  <div class="login-card">
+    <img class="logo-img" src="logo.png" alt="安迪 AI调度师" onerror="this.style.display='none'">
+    <div class="brand">安迪 AI调度师</div>
+    <h2>总参部</h2>
+    <div class="subt">经营看板 · 战略推演 · 计划解码 · 人才地图 · 风险预警<br>华为BLM/DSTE战略模型驱动，专注服装/电商行业<br><br>老板的随身参谋部，从战略到执行一站式</div>
+    <div class="ref-tag" id="refTag" style="display:none">👤 推荐人：<span id="refName"></span></div>
+    <input type="text" id="activationInput" placeholder="请输入激活码" maxlength="250" autocomplete="off">
+    <div class="login-hint" id="loginHint" style="display:none" onclick="fillLastCode()">💾 上次使用：<span id="lastCodeHint"></span></div>
+    <div class="login-err" id="loginErr"></div>
+    <button class="btn btn-activate" id="activateBtn" onclick="activate()">激活使用</button>
+    <button class="btn btn-free" onclick="enterFreeMode()">🎯 免费试用经营早报</button>
+    <div class="login-info">还没有激活码？<br>💬 加微信：miaoan1913 获取<br><br>💰 月卡 ¥999(30次) · 半年卡 ¥4999(200次) · 年卡 ¥9999(500次)<br><br><span style="cursor:pointer;color:rgba(212,175,55,.5);font-size:10px;text-decoration:underline" onclick="showDevGuide()">💡 不知道怎么用AI工具？点击查看推荐</span></div>
+    <div id="aiGuide" style="display:none;text-align:left;font-size:11px;color:rgba(255,255,255,.55);margin-top:8px;line-height:2;padding:10px 14px;background:rgba(255,255,255,.02);border-radius:8px">
+      <strong style="color:rgba(212,175,55,.7)">推荐AI工具：</strong><br>
+      🥇 <b>DeepSeek</b>（chat.deepseek.com）— 中文强、逻辑好、便宜<br>
+      🥈 <b>Kimi</b>（kimi.moonshot.cn）— 长文本、擅长分析<br>
+      🥉 <b>智谱GLM</b>（open.bigmodel.cn）— 清华出品<br>
+      🐴 <b>MiniMax</b>（platform.minimax.io）— 多模态<br>
+      🤖 <b>Coze</b>（coze.cn）— 字节出品<br>
+      🌐 <b>ChatGPT</b>（chatgpt.com）— 综合最强，需科学上网<br>
+      🧿 <b>Claude</b>（claude.ai）— 深度推理，需科学上网<br><br>
+      <strong style="color:rgba(212,175,55,.7)">使用方法：</strong><br>
+      1. 总参部填数据 → 点"生成指令" → 点"复制指令"<br>
+      2. 打开上面任一AI工具 → 粘贴 → 发送<br>
+      3. AI会给出专业分析报告
+    </div>
+  </div>
+</div>
+
+<!-- ========== 设备绑定弹窗 ========== -->
+<div class="modal-overlay" id="deviceBindOverlay">
+  <div class="modal-card">
+    <button class="close-btn" onclick="document.getElementById('deviceBindOverlay').classList.remove('show')">✕</button>
+    <h3>💻 激活确认</h3>
+    <div class="modal-subt" id="deviceBindSubt">此激活码将绑定到当前设备，绑定后其他设备无法使用同一激活码</div>
+    <div style="text-align:left;font-size:12px;color:rgba(255,255,255,.55);margin-bottom:16px;line-height:2;padding:12px 16px;background:rgba(255,255,255,.02);border-radius:10px">
+      <span style="color:var(--gold)">✅</span> 一个激活码绑定一个设备<br>
+      <span style="color:var(--gold)">✅</span> 防止激活码被传播使用<br>
+      <span style="color:var(--gold)">✅</span> 到期前3天提醒续费<br>
+      <span style="color:#ff8a8a">🚫</span> 换设备使用需联系客服微信：miaoan1913
+    </div>
+    <div class="login-err" id="deviceBindErr" style="margin-top:6px;min-height:18px"></div>
+    <button class="btn btn-primary" style="width:100%" onclick="confirmDeviceBind()">✅ 确认激活，绑定本设备</button>
+  </div>
+</div>
+
+<!-- ========== 公司档案弹窗 ========== -->
+<div class="modal-overlay" id="companyProfileModal">
+  <div class="modal-card">
+    <button class="close-btn" onclick="closeCompanyProfile()">✕</button>
+    <h3>🏢 公司档案</h3>
+    <div class="modal-subt">填写一次，所有中心自动加载——AI会基于你的公司情况给出更精准的分析</div>
+    <label>公司名称</label><input type="text" id="cp-name" placeholder="如：XX服饰有限公司">
+    <label>所属行业</label><input type="text" id="cp-industry" placeholder="如：服装电商 / 制造业 / 餐饮连锁">
+    <label>发展阶段</label><input type="text" id="cp-stage" placeholder="如：初创期 / 成长期 / 成熟期 / 转型期">
+    <label>员工人数</label><input type="text" id="cp-size" placeholder="如：50人">
+    <label>年营收规模（万元）</label><input type="text" id="cp-revenue" placeholder="如：3000">
+    <label>主营业务<span class="hint">一句话说清楚你们做什么</span></label>
+    <input type="text" id="cp-business" placeholder="如：中高端女装设计+电商零售，主做抖音直播+私域复购">
+    <label>核心产品/服务</label><textarea id="cp-products" rows="2" placeholder="如：1.设计师女装（客单价300-800元）2.高定系列（客单价2000+）3.配饰线..."></textarea>
+    <label>核心竞争优势<span class="hint">你跟同行比，强在哪？</span></label>
+    <input type="text" id="cp-advantage" placeholder="如：自有工厂/15年供应链/复购率40%/设计师是行业头部博主...">
+    <label>当前面临的主要挑战</label>
+    <textarea id="cp-challenges" rows="2" placeholder="如：1.抖音流量成本上升 2.核心设计师可能被挖 3.库存周转偏慢..."></textarea>
+    <label>目标客户画像</label>
+    <input type="text" id="cp-customers" placeholder="如：25-40岁一二线城市职场女性，注重设计感，客单价敏感度低">
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveCompanyProfile()">💾 保存档案</button>
+      <button class="btn btn-secondary" onclick="closeCompanyProfile()">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 历史记录弹窗 ========== -->
+<div class="modal-overlay" id="historyModal">
+  <div class="modal-card">
+    <button class="close-btn" onclick="closeHistory()">✕</button>
+    <h3>📜 历史记录</h3>
+    <div class="modal-subt">每次生成的指令自动保存，点击可查看或复制。最多保留50条。</div>
+    <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <input type="text" id="historySearch" placeholder="搜索历史记录..." oninput="renderHistoryList()" style="flex:1;min-width:120px;padding:6px 12px;font-size:12px;border:1px solid rgba(255,255,255,.1);border-radius:8px;background:rgba(0,0,0,.2);color:#d8d8d8">
+      <button class="btn btn-outline btn-sm" onclick="clearAllHistory()">🗑️ 清空</button>
+    </div>
+    <div id="historyList" style="max-height:50vh;overflow-y:auto">
+      <div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无记录</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 候选人追踪弹窗 ========== -->
+<div class="modal-overlay" id="candidateTrackerModal">
+  <div class="modal-card">
+    <button class="close-btn" onclick="closeCandidateTracker()">✕</button>
+    <h3>👤 高管人选追踪</h3>
+    <div class="modal-subt">记录和追踪每一位高管候选人的进展</div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:14px;font-size:13px" onclick="showAddCandidateForm()">➕ 添加人选</button>
+    <div id="addCandidateForm" style="display:none;margin-bottom:14px;padding:14px;background:rgba(255,255,255,.02);border-radius:10px;border:1px solid rgba(212,175,55,.15)">
+      <label>人选姓名/代号</label><input type="text" id="cand-name" placeholder="如：张总">
+      <label>应聘岗位</label><input type="text" id="cand-position" placeholder="如：运营VP">
+      <label>当前状态</label>
+      <select id="cand-status" style="width:100%;padding:10px 12px;border:1px solid rgba(255,255,255,.08);border-radius:10px;font-size:14px;background:rgba(0,0,0,.25);color:#d8d8d8;font-family:inherit">
+        <option value="筛选">初筛中</option><option value="面试中">面试中</option><option value="谈薪">谈薪阶段</option>
+        <option value="已录用">已录用</option><option value="试用中">试用中</option><option value="已转正">已转正</option><option value="已放弃">已放弃</option>
+      </select>
+      <label>来源渠道</label><input type="text" id="cand-source" placeholder="如：猎头推荐/朋友介绍/招聘平台">
+      <label>备注</label><textarea id="cand-notes" rows="2" placeholder="如：之前在某公司做运营总监3年，操盘过双11..."></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="addCandidate()">✅ 保存</button>
+        <button class="btn btn-secondary" onclick="hideAddCandidateForm()">取消</button>
+      </div>
+    </div>
+    <div id="candidateList" style="max-height:50vh;overflow-y:auto">
+      <div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无追踪人选</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== API Key 设置弹窗 ========== -->
+<div class="modal-overlay" id="apiKeyModal">
+  <div class="modal-card">
+    <button class="close-btn" onclick="closeApiSettings()">✕</button>
+    <h3>🤖 API 设置</h3>
+    <div class="modal-subt">设置你的大模型API Key后，分析结果将直接由AI生成，无需复制粘贴到外部工具。</div>
+    <div style="background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.12);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:var(--text-secondary);line-height:1.8">
+      <b style="color:var(--gold)">💡 两种使用方式：</b><br>
+      ① 用你自己的Key → 输入Key → 点击平台按钮保存 → 所有分析直接调API出结果<br>
+      ② 用老板/客户的Key → 在客户电脑上输入他们的Key → 分析走他们的额度<br>
+      ③ 不用Key → 保留"一键复制→打开大模型"传统方式，同样可用<br>
+      <b style="color:#ff8a8a">⚠️ Key仅存储在本地浏览器，不会上传到任何服务器。</b>
+    </div>
+    <label>选择AI平台</label>
+    <select id="apiPlatform" style="width:100%;padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:10px;font-size:14px;background:rgba(0,0,0,.25);color:#d8d8d8;font-family:inherit">
+      <option value="DeepSeek">DeepSeek（推荐 · 便宜好用）</option>
+      <option value="Kimi">Kimi（月之暗面）</option>
+      <option value="智谱GLM">智谱GLM</option>
+      <option value="MiniMax">MiniMax</option>
+      <option value="Coze">Coze</option>
+      <option value="ChatGPT">ChatGPT（OpenAI）</option>
+      <option value="Claude">Claude（Anthropic）</option>
+    </select>
+    <label>API Key</label>
+    <input type="password" id="apiKeyInput" placeholder="sk-xxxxxxxxxxxxxxxx" style="font-family:'SF Mono','Fira Code',monospace;letter-spacing:1px">
+    <div class="login-err" id="apiKeyErr"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveApiKey()">💾 保存Key</button>
+      <button class="btn btn-danger btn-sm" onclick="clearApiKey()">🗑️ 清除已保存的Key</button>
+    </div>
+    <div style="font-size:10px;color:var(--text-muted);margin-top:10px;line-height:1.6">
+      🔑 获取API Key：<br>
+      DeepSeek → <a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:var(--gold)">platform.deepseek.com</a><br>
+      Kimi → <a href="https://platform.moonshot.cn" target="_blank" style="color:var(--gold)">platform.moonshot.cn</a><br>
+      智谱 → <a href="https://open.bigmodel.cn" target="_blank" style="color:var(--gold)">open.bigmodel.cn</a><br>
+      MiniMax → <a href="https://platform.minimax.io" target="_blank" style="color:var(--gold)">platform.minimax.io</a><br>
+      Coze → <a href="https://www.coze.cn" target="_blank" style="color:var(--gold)">coze.cn</a><br>
+      OpenAI → <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--gold)">platform.openai.com</a><br>
+      Claude → <a href="https://console.anthropic.com" target="_blank" style="color:var(--gold)">console.anthropic.com</a>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 主工作台 ========== -->
+<div class="app" id="mainApp">
+  <!-- 左侧导航栏 -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <img class="logo-img" src="logo.png" alt="Logo" onerror="this.style.display='none'">
+      <div class="brand">安迪 AI调度师</div>
+      <h2>总参部</h2>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-section">主面板</div>
+      <div class="nav-item active" data-panel="dashboard" onclick="switchPanel('dashboard')">
+        <span class="nav-icon">🏠</span><span class="nav-label">首页看板</span>
+      </div>
+      <div class="nav-section" style="margin-top:8px">五大中心</div>
+      <div class="nav-item" data-panel="ops" onclick="switchPanel('ops')">
+        <span class="nav-icon">📊</span><span class="nav-label">经营中心</span>
+      </div>
+      <div class="nav-item" data-panel="strategy" onclick="switchPanel('strategy')">
+        <span class="nav-icon">🎯</span><span class="nav-label">战略中心</span>
+      </div>
+      <div class="nav-item" data-panel="plan" onclick="switchPanel('plan')">
+        <span class="nav-icon">📋</span><span class="nav-label">计划中心</span>
+      </div>
+      <div class="nav-item" data-panel="talent" onclick="switchPanel('talent')">
+        <span class="nav-icon">👥</span><span class="nav-label">人才中心</span>
+      </div>
+      <div class="nav-item" data-panel="risk" onclick="switchPanel('risk')">
+        <span class="nav-icon">🛡️</span><span class="nav-label">风险中心</span>
+        <span class="nav-badge" id="riskBadge" style="display:none">0</span>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-info"><span id="userName">免费用户</span></div>
+      <div class="remaining" id="remainingUses">-</div>
+      <div class="user-info" style="font-size:11px">次剩余 · 到期：<span id="expiryDate">-</span></div>
+      <button class="btn-collapse" onclick="toggleSidebar()" title="折叠侧边栏"><span>◀ 收起</span></button>
+    </div>
+  </nav>
+
+  <!-- 主内容区 -->
+  <div class="main-wrap">
+    <div class="header">
+      <div class="header-left">
+        <h1 id="panelTitle">首页看板</h1>
+        <span class="badge" id="companyBadge" style="display:none">🏢 <span id="companyBadgeName"></span></span>
+      </div>
+      <div class="header-btns">
+        <button class="icon-btn" onclick="openApiSettings()" title="API设置" style="font-size:13px">🤖</button>
+        <button class="icon-btn" onclick="openCompanyProfile()" title="公司档案">🏢</button>
+        <button class="icon-btn" onclick="openHistory()" title="历史记录">📜<span class="badge" id="historyBadge" style="display:none">0</span></button>
+        <button class="icon-btn" onclick="openCandidateTracker()" title="人选追踪">👤<span class="badge" id="candidateBadge" style="display:none">0</span></button>
+        <button class="icon-btn" onclick="switchPanel('dashboard')" title="首页">🏠</button>
+        <button class="icon-btn" onclick="logout()" title="退出" style="color:rgba(255,255,255,.3)">🚪</button>
+      </div>
+    </div>
+
+    <div class="main">
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- 首页看板 -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="card">
+        <h3>📊 经营概览</h3>
+        <div class="desc" id="dashboard-date"></div>
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-value" id="dash-revenue">--</div>
+            <div class="kpi-label">本月营收（万元）</div>
+            <div class="kpi-change" id="dash-revenue-change"></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="dash-grossprofit">--</div>
+            <div class="kpi-label">毛利率</div>
+            <div class="kpi-change" id="dash-gp-change"></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="dash-cashflow">--</div>
+            <div class="kpi-label">现金流（万元）</div>
+            <div class="kpi-change" id="dash-cf-change"></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="dash-headcount">--</div>
+            <div class="kpi-label">人效（万元/人）</div>
+            <div class="kpi-change" id="dash-he-change"></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="dash-targetrate">--</div>
+            <div class="kpi-label">目标达成率</div>
+            <div class="kpi-change" id="dash-tr-change"></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="dash-risks">--</div>
+            <div class="kpi-label">活跃风险数</div>
+            <div class="kpi-change" id="dash-risk-change"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>⚡ 待关注事项</h3>
+        <div id="dashboardAlerts">
+          <div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无预警，一切正常 ✅</div>
+        </div>
+      </div>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3>🚀 快速入口</h3>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+            <button class="btn btn-outline" onclick="switchPanel('ops');switchOpsSubtab('briefing')" style="justify-content:flex-start">📡 填写今日经营早报（3分钟）</button>
+            <button class="btn btn-outline" onclick="switchPanel('strategy')" style="justify-content:flex-start">🎯 制定/更新年度战略</button>
+            <button class="btn btn-outline" onclick="switchPanel('talent');switchTalentSubtab('grid')" style="justify-content:flex-start">👥 做一次人才盘点</button>
+            <button class="btn btn-outline" onclick="switchPanel('risk')" style="justify-content:flex-start">🛡️ 检查风险清单</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>🔗 跨中心联动</h3>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:2;margin-top:12px">
+            <div>📊 经营数据异常 → <a href="javascript:switchPanel('strategy')" style="color:var(--gold)">触发战略复盘</a></div>
+            <div>🎯 战略方向确定 → <a href="javascript:switchPanel('plan')" style="color:var(--gold)">导入计划中心拆解</a></div>
+            <div>📋 关键任务确定 → <a href="javascript:switchPanel('talent')" style="color:var(--gold)">检查人才缺口</a></div>
+            <div>👥 离职预警触发 → <a href="javascript:switchPanel('risk')" style="color:var(--gold)">更新风险清单</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- 经营中心 -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="panel" id="panel-ops">
+      <div class="card">
+        <h3>📊 经营中心</h3>
+        <div class="desc">财务健康 · 业务增长 · 运营效率 · 人力效能，四大板块全面诊断</div>
+        <div class="subtabs" id="opsSubtabs">
+          <button class="subtab active" data-ops-sub="analysis" onclick="switchOpsSubtab('analysis')">📈 经营分析</button>
+          <button class="subtab" data-ops-sub="briefing" onclick="switchOpsSubtab('briefing')">📡 经营早报</button>
+          <button class="subtab" data-ops-sub="opsdash" onclick="switchOpsSubtab('opsdash')">📊 经营看板</button>
+        </div>
+
+        <!-- 经营分析（分层递进） -->
+        <div id="ops-analysis">
+          <div style="background:rgba(212,175,55,.04);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:11px;color:var(--text-secondary)">💡 <b style="color:var(--gold)">核心必填</b> — 仅需填3个字段即可生成分析。展开下方各层可逐步提高分析精准度至90%+。</div>
+          <label>上月营收（万元）<span class="hint"> + 环比/同比变化</span></label><input type="text" id="ops-revenue" placeholder="如：180（环比-8%，同比+12%）">
+          <label>上月营业成本（万元）</label><input type="text" id="ops-cost" placeholder="如：95">
+          <label>最让你头疼的经营问题</label>
+          <textarea id="ops-worry" rows="2" placeholder="如：这个月营收达标但利润跌了，钱不知道被哪个环节吃掉了..."></textarea>
+
+          <div class="layer-toggle" onclick="toggleLayer('ops-layer1')"><span class="layer-arrow">▶</span> 💰 财务深度 <span class="layer-badge">+40%精准度</span></div>
+          <div class="layer-content" id="ops-layer1">
+            <label>上月费用合计（万元）</label><input type="text" id="ops-expense" placeholder="如：45">
+            <label>上月净利润 / 净利率</label><input type="text" id="ops-profit" placeholder="如：40 / 22%">
+            <label>经营性现金流（万元）</label><input type="text" id="ops-cashflow" placeholder="如：+25 或 -10">
+            <label>账上现金（万元）</label><input type="text" id="ops-cash" placeholder="如：120">
+            <label>应收 / 应付（万元）</label><input type="text" id="ops-arap" placeholder="如：应收80（90天以上25）/ 应付50">
+          </div>
+
+          <div class="layer-toggle" onclick="toggleLayer('ops-layer2')"><span class="layer-arrow">▶</span> 📈 业务增长 <span class="layer-badge">+30%精准度</span></div>
+          <div class="layer-content" id="ops-layer2">
+            <label>上月订单量 / 客单价</label><input type="text" id="ops-orders" placeholder="如：2800单/642元（环比订单+5%，客单价-3%）">
+            <label>新客户数 / 复购率</label><input type="text" id="ops-customers" placeholder="如：新客320个/复购率28%">
+            <label>TOP3渠道收入占比 & ROI</label>
+            <textarea id="ops-channels" rows="3" placeholder="如：抖音直播50%，ROI 1:3.2；天猫25%，ROI 1:2.1；私域15%，ROI 1:5.8"></textarea>
+            <label>TOP3产品线收入 & 毛利率</label>
+            <textarea id="ops-products" rows="3" placeholder="如：女装上衣40%（毛利率55%）；连衣裙30%（毛利率60%）；配饰15%（毛利率70%）"></textarea>
+          </div>
+
+          <div class="layer-toggle" onclick="toggleLayer('ops-layer3')"><span class="layer-arrow">▶</span> ⚙️ 运营效率 <span class="layer-badge">+20%精准度</span></div>
+          <div class="layer-content" id="ops-layer3">
+            <label>发货及时率 / 退货率</label><input type="text" id="ops-delivery" placeholder="如：及时率94%/退货率22%">
+            <label>客户投诉量 + 主要类型</label><input type="text" id="ops-complaints" placeholder="如：18件（质量10/物流5/其他3）">
+            <label>库存周转天数 / 滞销占比</label><input type="text" id="ops-inventory" placeholder="如：周转65天/滞销18%（金额35万）">
+            <label>关键项目进度</label><input type="text" id="ops-projects" placeholder="如：新仓库搬迁中/进度60%/正常">
+          </div>
+
+          <div class="layer-toggle" onclick="toggleLayer('ops-layer4')"><span class="layer-arrow">▶</span> 👤 人力效能 <span class="layer-badge">+15%精准度</span></div>
+          <div class="layer-content" id="ops-layer4">
+            <label>员工总数 / 人均营收（万元）</label><input type="text" id="ops-headcount" placeholder="如：48人/3.75万/人">
+            <label>人力成本占营收比</label><input type="text" id="ops-laborcost" placeholder="如：28%">
+            <label>本月入职 / 离职人数</label><input type="text" id="ops-turnover" placeholder="如：入职3人/离职2人（1人核心岗位）">
+            <label>核心岗位变动 / 在招岗位</label><input type="text" id="ops-coreposts" placeholder="如：销售主管离职在补；运营总监招聘中（已招45天）">
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="processOpsAnalysis()">📊 生成经营分析</button>
+            <button class="btn btn-secondary" onclick="clearOpsAnalysis()">清空</button>
+          </div>
+          <div class="result-box" id="ops-analysis-result"></div>
+          <div id="ops-analysis-copy" style="display:none" class="ai-copy-area">
+            <div class="ai-copy-main">
+              <button class="btn-copy-open" onclick="copyAndOpenAI('DeepSeek','ops-analysis-result')">📋 一键复制 · 自动打开 DeepSeek →</button>
+            </div>
+            <div class="ai-platform-bar">
+              <span class="ai-platform-label">DeepSeek 打不开？试试</span>
+              <button class="ai-platform-btn" onclick="copyAndOpenAI('Kimi','ops-analysis-result')">🌙 Kimi</button>
+              <button class="ai-platform-btn" onclick="copyAndOpenAI('智谱GLM','ops-analysis-result')">🧠 智谱</button>
+              <button class="ai-platform-btn" onclick="copyAndOpenAI('MiniMax','ops-analysis-result')">🐴 MiniMax</button>
+              <button class="ai-platform-btn" onclick="copyAndOpenAI('Coze','ops-analysis-result')">🤖 Coze</button>
+              <button class="ai-platform-btn" onclick="copyAndOpenAI('ChatGPT','ops-analysis-result')">🌐 ChatGPT</button>
+              <button class="ai-platform-btn" onclick="copyAndOpenAI('Claude','ops-analysis-result')">🧿 Claude</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 经营早报 -->
+        <div id="ops-briefing" style="display:none">
+          <div style="background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.1);border-radius:10px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;font-size:12px;color:rgba(212,175,55,.6);flex-wrap:wrap">
+            <span>🏢 <span id="brief-company-name">未设置公司档案</span></span>
+            <span>📅 <span id="brief-date-display"></span></span>
+            <span id="brief-streak" style="margin-left:auto;background:rgba(212,175,55,.1);padding:3px 10px;border-radius:8px">🔥 连续 <span id="brief-streak-count">0</span> 天</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <label>昨日营收（万元）</label><input type="text" id="brief-revenue" placeholder="如：6.2">
+              <label>昨日订单量 / 客单价</label><input type="text" id="brief-orders" placeholder="如：120单 / 516元">
+              <label>昨日退货率</label><input type="text" id="brief-return" placeholder="如：18%">
+              <label>昨日费用（万元）</label><input type="text" id="brief-cost" placeholder="如：1.8">
+              <label>昨日异常信号</label><input type="text" id="brief-anomaly" placeholder="如：直播间流量突降30%...">
+            </div>
+            <div>
+              <label>今日最重要3件事</label>
+              <input type="text" id="brief-todo1" placeholder="1. 最重要的">
+              <input type="text" id="brief-todo2" placeholder="2. 次重要的" style="margin-top:6px">
+              <input type="text" id="brief-todo3" placeholder="3. 第三件事" style="margin-top:6px">
+              <label>竞品有什么新动作</label>
+              <textarea id="brief-competitor" rows="2" placeholder="如：XX品牌昨晚在抖音开了新号..."></textarea>
+              <label>本周需要拍板的决策</label>
+              <textarea id="brief-decisions" rows="2" placeholder="如：周三定新供应商..."></textarea>
+              <label>当前最头疼的问题</label>
+              <textarea id="brief-worry" rows="2" placeholder="如：核心设计师要走..."></textarea>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="processBriefing()">📡 生成经营早报</button>
+            <button class="btn btn-secondary" onclick="clearBriefing()">清空</button>
+          </div>
+          <div class="result-box" id="briefing-result"></div>
+          <div id="briefing-copy" style="display:none" class="ai-copy-area">
+            <div class="ai-copy-main">
+              <button class="btn-copy-open" onclick="copyAndOpenAI('DeepSeek','briefing-result')">📋 一键复制 · 自动打开 DeepSeek →</button>
+            </div>
+            <div class="ai-platform-bar">
+              <button class="ai-platform-btn" onclick="copyAndOpenAI('Kimi','briefing-result')">🌙 Kimi</button>
+              <button class="ai-platform-btn" onclick="copyAndOpenAI('智谱GLM','briefing-result')">🧠 智谱</button>
+              <button class="ai-platform-btn" onclick="copyAndOpenAI('MiniMax','briefing-result')">🐴 MiniMax</button>
+              <button class="ai-platform-btn" onclick="copyAndOpenAI('Coze','briefing-result')">🤖 Coze</button>
+              <button class="ai-platform-btn" onclick="copyAndOpenAI('ChatGPT','briefing-result')">🌐 ChatGPT</button>
+              <button class="ai-platform-btn" onclick="copyAndOpenAI('Claude','briefing-result')">🧿 Claude</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 经营看板 -->
+        <div id="ops-opsdash" style="display:none">
+          <div class="chart-container">
+            <canvas id="opsRevenueChart"></canvas>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:8px">连续填写经营数据3天后，此处自动展示营收趋势图</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- 战略中心 -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="panel" id="panel-strategy">
+      <div class="card">
+        <h3>🎯 战略中心</h3>
+        <div class="desc">基于华为BLM（业务领导力模型），适配服装/电商行业。5步完成一次有框架的战略思考。</div>
+
+        <!-- 行业预选 -->
+        <div style="margin-bottom:16px">
+          <label>选择你的行业模式（自动预填推荐增长路径）</label>
+          <div class="preset-grid">
+            <div class="preset-card" onclick="selectPreset('retail')" id="preset-retail">
+              <div class="preset-icon">🏪</div><div class="preset-name">门店扩张型</div>
+              <div class="preset-desc">多开店·加盟·区域管理</div>
+            </div>
+            <div class="preset-card" onclick="selectPreset('ecommerce')" id="preset-ecommerce">
+              <div class="preset-icon">📱</div><div class="preset-name">电商突破型</div>
+              <div class="preset-desc">抖音·天猫·直播·私域</div>
+            </div>
+            <div class="preset-card" onclick="selectPreset('brand')" id="preset-brand">
+              <div class="preset-icon">✨</div><div class="preset-name">品牌升级型</div>
+              <div class="preset-desc">提升溢价·设计力·品牌建设</div>
+            </div>
+            <div class="preset-card" onclick="selectPreset('omni')" id="preset-omni">
+              <div class="preset-icon">🔄</div><div class="preset-name">全渠道融合型</div>
+              <div class="preset-desc">一盘货·会员打通·数据统一</div>
+            </div>
+            <div class="preset-card" onclick="selectPreset('supply')" id="preset-supply">
+              <div class="preset-icon">🏭</div><div class="preset-name">供应链驱动型</div>
+              <div class="preset-desc">快反·柔性·低成本</div>
+            </div>
+            <div class="preset-card" onclick="selectPreset('org')" id="preset-org">
+              <div class="preset-icon">🏗️</div><div class="preset-name">组织升级型</div>
+              <div class="preset-desc">职业化·体系化·老板放手</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BLM 5步 -->
+        <div class="blm-steps">
+          <div class="blm-step active" data-step="1" onclick="switchBLMStep(1)"><span class="step-num">①</span>市场扫描</div>
+          <div class="blm-step" data-step="2" onclick="switchBLMStep(2)"><span class="step-num">②</span>战略目标</div>
+          <div class="blm-step" data-step="3" onclick="switchBLMStep(3)"><span class="step-num">③</span>增长引擎</div>
+          <div class="blm-step" data-step="4" onclick="switchBLMStep(4)"><span class="step-num">④</span>业务设计</div>
+          <div class="blm-step" data-step="5" onclick="switchBLMStep(5)"><span class="step-num">⑤</span>差距分析</div>
+        </div>
+
+        <!-- Step 1: 市场扫描 -->
+        <div class="blm-panel" id="blm-step1">
+          <label>你的市场在变大还是变小？</label>
+          <textarea id="blm-market-trend" rows="2" placeholder="如：女装电商市场规模约X千亿，年增长X%。但细分到设计师女装赛道，竞争加剧..."></textarea>
+          <label>谁是你的主要竞争对手？他们最近在做什么？</label>
+          <textarea id="blm-competitors" rows="3" placeholder="如：竞品A（年营收约X千万）：刚拿了融资，在大量投抖音；竞品B：品牌定位清晰，复购率高但扩张慢..."></textarea>
+          <label>你的客户有什么变化？</label>
+          <textarea id="blm-customers" rows="2" placeholder="如：核心客户25-35岁职场女性，消费力稳定但越来越挑剔设计感，对性价比敏感度下降..."></textarea>
+          <label>行业有什么值得关注的趋势或风险？</label>
+          <input type="text" id="blm-trends" placeholder="如：AI选款/虚拟试衣/跨境电商/平台政策变化...">
+        </div>
+
+        <!-- Step 2: 战略目标 -->
+        <div class="blm-panel" id="blm-step2" style="display:none">
+          <label>未来1-3年的营收目标</label>
+          <input type="text" id="blm-revenue-target" placeholder="如：2026年1.5亿 → 2027年2.5亿 → 2028年4亿">
+          <label>最重要的1-2个突破方向</label>
+          <input type="text" id="blm-breakthrough" placeholder="如：1.线上占比从20%→40%  2.打造品牌认知进入细分品类前三">
+          <label>一句话说清你的战略</label>
+          <input type="text" id="blm-oneliner" placeholder="如：成为都市女性通勤+休闲全场景首选的设计师品牌，线上驱动、品牌溢价">
+        </div>
+
+        <!-- Step 3: 增长引擎 -->
+        <div class="blm-panel" id="blm-step3" style="display:none">
+          <label>你的核心增长引擎（选1-2个，根据行业模式已预填建议）</label>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px"><input type="checkbox" id="blm-engine-retail" onchange="updateBLMEngines()"> 🏪 开更多店</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px"><input type="checkbox" id="blm-engine-ecom" onchange="updateBLMEngines()"> 📱 做线上</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px"><input type="checkbox" id="blm-engine-unit" onchange="updateBLMEngines()"> 📈 提升单店</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px"><input type="checkbox" id="blm-engine-category" onchange="updateBLMEngines()"> ➕ 增加品类</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px"><input type="checkbox" id="blm-engine-supply" onchange="updateBLMEngines()"> 🏭 供应链效率</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px"><input type="checkbox" id="blm-engine-brand" onchange="updateBLMEngines()"> ✨ 品牌溢价</label>
+          </div>
+          <label>选定的增长引擎，每项的关键成功条件是什么？</label>
+          <textarea id="blm-engine-conditions" rows="3" placeholder="如：做线上需要：①电商操盘手 ②内容流量能力 ③线上商品运营能力..."></textarea>
+        </div>
+
+        <!-- Step 4: 业务设计 -->
+        <div class="blm-panel" id="blm-step4" style="display:none">
+          <label>客户选择：你的核心客户是谁？不做什么客户？</label>
+          <input type="text" id="blm-customer-select" placeholder="如：25-35岁一二线职场女性，客单价300-800元。不做低客单价跑量客户">
+          <label>价值主张：客户为什么选你不选竞品？</label>
+          <input type="text" id="blm-value-prop" placeholder="如：通勤+休闲全场景覆盖，原创设计+性价比最优解，7天快反保持新鲜感">
+          <label>盈利模式：钱从哪赚？主要成本在哪？</label>
+          <input type="text" id="blm-profit-model" placeholder="如：设计溢价+私域复购降获客成本；主成本在面料+抖音投放+设计师薪酬">
+          <label>战略控制点：别人短期抄不走的是什么？</label>
+          <input type="text" id="blm-control-point" placeholder="如：50家工厂深度绑定（7天快反）、15年行业数据积累、设计师IP流量池">
+        </div>
+
+        <!-- Step 5: 差距分析 -->
+        <div class="blm-panel" id="blm-step5" style="display:none">
+          <label>业绩差距：今年目标和现状之间差多少？</label>
+          <textarea id="blm-perf-gap" rows="2" placeholder="如：目标1.5亿 vs 现状1.2亿，差距3000万。主要差在线上渠道没起来+核心设计师离职影响产出"></textarea>
+          <label>机会差距：看到了什么机会但抓不住？</label>
+          <textarea id="blm-opp-gap" rows="2" placeholder="如：抖音直播是明显机会但缺操盘手；私域有5万好友但没运营起来；出海有需求但团队没能力"></textarea>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="processStrategy()">🎯 生成战略一页纸</button>
+          <button class="btn btn-secondary" onclick="clearStrategy()">清空</button>
+          <button class="btn btn-outline" id="strategy-to-plan-btn" style="display:none" onclick="importStrategyToPlan()">📋 导入计划中心 →</button>
+        </div>
+        <div class="result-box" id="strategy-result"></div>
+        <div id="strategy-copy" style="display:none" class="ai-copy-area">
+          <div class="ai-copy-main">
+            <button class="btn-copy-open" onclick="copyAndOpenAI('DeepSeek','strategy-result')">📋 一键复制 · 自动打开 DeepSeek →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- 计划中心 -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="panel" id="panel-plan">
+      <div class="card">
+        <h3>📋 计划中心</h3>
+        <div class="desc">基于华为BEM（战略解码）模型，把战略拆成可执行的目标、KPI和关键任务。</div>
+        <div class="subtabs" id="planSubtabs">
+          <button class="subtab active" data-plan-sub="decode" onclick="switchPlanSubtab('decode')">🎯 目标拆解</button>
+          <button class="subtab" data-plan-sub="kpi" onclick="switchPlanSubtab('kpi')">📊 KPI管理</button>
+          <button class="subtab" data-plan-sub="track" onclick="switchPlanSubtab('track')">📈 目标追踪</button>
+        </div>
+
+        <!-- 目标拆解 -->
+        <div id="plan-decode">
+          <div id="plan-import-banner" style="display:none;background:rgba(72,199,142,.06);border:1px solid rgba(72,199,142,.15);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#48c78e">✅ 已从战略中心导入战略目标——下方目标已自动填充，可直接修改调整</div>
+          <label>年度目标1（最重要）</label><input type="text" id="plan-target1" placeholder="如：总营收2.5亿（其中线上1亿）">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div><label>KPI</label><input type="text" id="plan-kpi1" placeholder="如：季度营收/月度营收"></div>
+            <div><label>责任人</label><input type="text" id="plan-owner1" placeholder="如：CEO/运营VP"></div>
+            <div><label>截止日期</label><input type="text" id="plan-deadline1" placeholder="如：2026-12-31"></div>
+          </div>
+          <label>年度目标2</label><input type="text" id="plan-target2" placeholder="如：抖音GMV从0→3000万">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div><label>KPI</label><input type="text" id="plan-kpi2" placeholder="如：粉丝数/月GMV/ROI"></div>
+            <div><label>责任人</label><input type="text" id="plan-owner2" placeholder="如：电商总监"></div>
+            <div><label>截止日期</label><input type="text" id="plan-deadline2" placeholder="如：2026-12-31"></div>
+          </div>
+          <label>年度目标3</label><input type="text" id="plan-target3" placeholder="如：私域复购率从15%→30%">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div><label>KPI</label><input type="text" id="plan-kpi3" placeholder="如：企微好友数/社群活跃度/复购率"></div>
+            <div><label>责任人</label><input type="text" id="plan-owner3" placeholder="如：CRM经理"></div>
+            <div><label>截止日期</label><input type="text" id="plan-deadline3" placeholder="如：2026-12-31"></div>
+          </div>
+          <label>年度目标4（选填）</label><input type="text" id="plan-target4" placeholder="如：品牌认知度进入细分前三">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div><label>KPI</label><input type="text" id="plan-kpi4" placeholder="如：品牌搜索指数/NPS"></div>
+            <div><label>责任人</label><input type="text" id="plan-owner4" placeholder="如：品牌总监"></div>
+            <div><label>截止日期</label><input type="text" id="plan-deadline4" placeholder="如：2026-12-31"></div>
+          </div>
+
+          <label>关键任务清单（BEM第5-6步：导出重点工作和PBC）</label>
+          <div id="plan-tasks">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr 80px;gap:8px;margin-bottom:6px;font-size:11px;color:var(--text-secondary);font-weight:600">
+              <span>任务描述</span><span>责任人</span><span>完成时间</span><span></span>
+            </div>
+            <div id="plan-task-list"></div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="addPlanTask()" style="margin-top:8px">➕ 添加关键任务</button>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="processPlan()">📋 生成年度计划</button>
+            <button class="btn btn-secondary" onclick="clearPlan()">清空</button>
+          </div>
+          <div class="result-box" id="plan-result"></div>
+          <div id="plan-copy" style="display:none" class="ai-copy-area">
+            <div class="ai-copy-main">
+              <button class="btn-copy-open" onclick="copyAndOpenAI('DeepSeek','plan-result')">📋 一键复制 · 自动打开 DeepSeek →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI管理 -->
+        <div id="plan-kpi" style="display:none">
+          <div id="plan-kpi-table"></div>
+          <button class="btn btn-outline btn-sm" onclick="refreshKpiTable()">🔄 刷新KPI看板</button>
+        </div>
+
+        <!-- 目标追踪 -->
+        <div id="plan-track" style="display:none">
+          <div id="plan-track-list"></div>
+          <button class="btn btn-outline btn-sm" onclick="refreshTrackList()">🔄 刷新目标追踪</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- 人才中心 -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="panel" id="panel-talent">
+      <div class="card">
+        <h3>👥 人才中心</h3>
+        <div class="desc">人才盘点 · 离职预警 · 人效分析 · 高管招聘全流程（出题+面试分析+试用辅佐）</div>
+        <div class="subtabs" id="talentSubtabs">
+          <button class="subtab active" data-talent-sub="grid" onclick="switchTalentSubtab('grid')">🎯 人才盘点</button>
+          <button class="subtab" data-talent-sub="attrition" onclick="switchTalentSubtab('attrition')">🚨 离职预警</button>
+          <button class="subtab" data-talent-sub="efficiency" onclick="switchTalentSubtab('efficiency')">📊 人效分析</button>
+          <button class="subtab" data-talent-sub="recruit" onclick="switchTalentSubtab('recruit')">🎯 高管招聘全流程</button>
+        </div>
+
+        <!-- 人才盘点（九宫格） -->
+        <div id="talent-grid">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+            <div>
+              <label>姓名/代号</label><input type="text" id="talent-name" placeholder="如：张总">
+            </div>
+            <div>
+              <label>岗位</label><input type="text" id="talent-position" placeholder="如：运营VP">
+            </div>
+            <div>
+              <label>业绩表现</label>
+              <select id="talent-performance"><option value="high">高 — 持续超额完成</option><option value="mid">中 — 基本达标</option><option value="low">低 — 经常达不到预期</option></select>
+            </div>
+            <div>
+              <label>发展潜力</label>
+              <select id="talent-potential"><option value="high">高 — 可承担更大职责</option><option value="mid">中 — 在现有岗位持续做好</option><option value="low">低 — 到头了</option></select>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="addTalentToGrid()">➕ 加入九宫格</button>
+            <button class="btn btn-outline" onclick="processTalentGrid()">📊 生成人才盘点报告</button>
+            <button class="btn btn-secondary" onclick="clearTalentGrid()">清空</button>
+          </div>
+          <div class="grid-9box" id="talent9box"></div>
+          <div class="result-box" id="talent-grid-result"></div>
+          <div id="talent-grid-copy" style="display:none" class="ai-copy-area">
+            <div class="ai-copy-main">
+              <button class="btn-copy-open" onclick="copyAndOpenAI('DeepSeek','talent-grid-result')">📋 一键复制 · 自动打开 DeepSeek →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 离职预警 -->
+        <div id="talent-attrition" style="display:none">
+          <div style="background:rgba(255,107,107,.03);border:1px solid rgba(255,107,107,.1);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#ff8a8a">🚨 对核心高管逐一评估离职风险，提前发现信号，不要等开口了才反应。</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div><label>高管姓名/代号</label><input type="text" id="attr-name" placeholder="如：张总"></div>
+            <div><label>岗位</label><input type="text" id="attr-position" placeholder="如：运营VP"></div>
+          </div>
+          <label>6维评估（1-5分，5=风险最高）</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div><label>工作状态异常<span class="hint">迟到早退/参与度下降</span></label><input type="number" id="attr-work" min="1" max="5" value="1"></div>
+            <div><label>外部诱惑<span class="hint">猎头接触频率</span></label><input type="number" id="attr-external" min="1" max="5" value="1"></div>
+            <div><label>内部发展空间<span class="hint">还能学到什么？</span></label><input type="number" id="attr-growth" min="1" max="5" value="3"></div>
+            <div><label>薪酬竞争力</label><input type="number" id="attr-pay" min="1" max="5" value="3"></div>
+            <div><label>关系状态<span class="hint">和老板/同事关系</span></label><input type="number" id="attr-relation" min="1" max="5" value="1"></div>
+            <div><label>个人变动计划<span class="hint">家庭/城市变动</span></label><input type="number" id="attr-personal" min="1" max="5" value="1"></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="addAttritionAssessment()">➕ 添加到预警清单</button>
+            <button class="btn btn-outline" onclick="processAttrition()">📊 生成离职预警报告</button>
+          </div>
+          <div id="attrition-list" style="margin-top:14px"></div>
+          <div class="result-box" id="attrition-result"></div>
+          <div id="attrition-copy" style="display:none" class="ai-copy-area">
+            <div class="ai-copy-main">
+              <button class="btn-copy-open" onclick="copyAndOpenAI('DeepSeek','attrition-result')">📋 一键复制 · 自动打开 DeepSeek →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 人效分析 -->
+        <div id="talent-efficiency" style="display:none">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div><label>报告周期</label><input type="text" id="eff-period" placeholder="如：2026年Q2"></div>
+            <div><label>行业对标<span class="hint">选填</span></label>
+              <select id="eff-benchmark"><option value="">不使用对标</option><option value="apparel-retail">服装零售</option><option value="apparel-ecom">服装电商</option><option value="apparel-brand">服装品牌</option></select>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div><label>员工总数</label><input type="text" id="eff-headcount" placeholder="如：48"></div>
+            <div><label>当期营收（万元）</label><input type="text" id="eff-revenue" placeholder="如：540"></div>
+            <div><label>人力总成本（万元）</label><input type="text" id="eff-laborcost" placeholder="如：130"></div>
+            <div><label>关键岗位空缺数</label><input type="text" id="eff-vacancies" placeholder="如：3"></div>
+            <div><label>管理人员占比%</label><input type="text" id="eff-mgmt-ratio" placeholder="如：18%"></div>
+            <div><label>年度关键人才流失数</label><input type="text" id="eff-key-attrition" placeholder="如：2"></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="processEfficiency()">📊 生成人效分析报告</button>
+            <button class="btn btn-secondary" onclick="clearEfficiency()">清空</button>
+          </div>
+          <div class="chart-container" style="margin-top:14px">
+            <canvas id="efficiencyRadar"></canvas>
+          </div>
+          <div class="result-box" id="efficiency-result"></div>
+          <div id="efficiency-copy" style="display:none" class="ai-copy-area">
+            <div class="ai-copy-main">
+              <button class="btn-copy-open" onclick="copyAndOpenAI('DeepSeek','efficiency-result')">📋 一键复制 · 自动打开 DeepSeek →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 高管招聘全流程（三合一） -->
+        <div id="talent-recruit" style="display:none">
+          <div class="subtabs" style="margin-bottom:14px">
+            <button class="subtab active" data-recruit-sub="exam" onclick="switchRecruitSub('exam')" style="font-size:11px">📋 面试出题</button>
+            <button class="subtab" data-recruit-sub="analyze" onclick="switchRecruitSub('analyze')" style="font-size:11px">🔍 面试分析</button>
+            <button class="subtab" data-recruit-sub="onboard" onclick="switchRecruitSub('onboard')" style="font-size:11px">🛡️ 试用辅佐</button>
+          </div>
+
+          <!-- 面试出题 -->
+          <div id="recruit-exam">
+            <label>应聘岗位</label><input type="text" id="exam-position" placeholder="如：运营VP">
+            <label>岗位核心要求（3-5条）</label>
+            <textarea id="exam-requirements" rows="3" placeholder="如：1.操盘过亿级GMV的电商运营 2.搭建过10人以上团队 3.精通抖音+私域 4.有服装行业经验"></textarea>
+            <label>出题维度（可多选）</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">
+              <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" id="exam-dim-strategy" checked> 战略思维</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" id="exam-dim-leadership" checked> 领导力</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" id="exam-dim-execution"> 执行力</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" id="exam-dim-culture"> 文化匹配</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" id="exam-dim-business"> 商业敏锐度</label>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="processExamQuestions()">📋 生成面试题</button>
+              <button class="btn btn-secondary" onclick="clearExam()">清空</button>
+            </div>
+            <div class="result-box" id="exam-result"></div>
+            <div id="exam-copy" style="display:none" class="ai-copy-area">
+              <div class="ai-copy-main">
+                <button class="btn-copy-open" onclick="copyAndOpenAI('DeepSeek','exam-result')">📋 一键复制 · 自动打开 DeepSeek →</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 面试分析 -->
+          <div id="recruit-analyze" style="display:none">
+            <label>候选人姓名</label><input type="text" id="analyze-name" placeholder="如：李总">
+            <label>应聘岗位</label><input type="text" id="analyze-position" placeholder="如：运营VP">
+            <label>面试记录/印象（粘贴你的面试笔记）</label>
+            <textarea id="analyze-notes" rows="5" placeholder="如：李总之前在XX公司做运营总监3年，操盘过双11期间月销5000万。问及团队管理时，提到搭建过15人运营团队..."></textarea>
+            <label>四维打分（1-10分）</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div><label>业绩能力</label><input type="number" id="analyze-perf" min="1" max="10" value="7"></div>
+              <div><label>战略思维</label><input type="number" id="analyze-strategy" min="1" max="10" value="7"></div>
+              <div><label>领导力</label><input type="number" id="analyze-leadership" min="1" max="10" value="7"></div>
+              <div><label>文化匹配</label><input type="number" id="analyze-culture" min="1" max="10" value="7"></div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="processInterviewAnalysis()">🔍 生成面试分析</button>
+              <button class="btn btn-secondary" onclick="clearInterviewAnalysis()">清空</button>
+            </div>
+            <div class="result-box" id="analyze-result"></div>
+            <div id="analyze-copy" style="display:none" class="ai-copy-area">
+              <div class="ai-copy-main">
+                <button class="btn-copy-open" onclick="copyAndOpenAI('DeepSeek','analyze-result')">📋 一键复制 · 自动打开 DeepSeek →</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 试用辅佐 -->
+          <div id="recruit-onboard" style="display:none">
+            <label>新任高管姓名 + 岗位</label><input type="text" id="onboard-name-position" placeholder="如：李总 — 运营VP">
+            <label>入职日期</label><input type="text" id="onboard-date" placeholder="如：2026-06-01">
+            <label>面试中发现的担心点（会自动从面试分析导入）</label>
+            <textarea id="onboard-concerns" rows="2" placeholder="如：1.战略思维强但团队管理偏弱 2.之前在甲方工作，首次转乙方..."></textarea>
+            <label>该岗位的核心期望（入职90天要达成什么？）</label>
+            <textarea id="onboard-expectations" rows="2" placeholder="如：1.搭建抖音直播团队并开播 2.梳理现有运营流程提效20% 3.培养1个内部接班人..."></textarea>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="processOnboard()">🛡️ 生成试用辅佐方案</button>
+              <button class="btn btn-secondary" onclick="clearOnboard()">清空</button>
+            </div>
+            <div class="result-box" id="onboard-result"></div>
+            <div id="onboard-copy" style="display:none" class="ai-copy-area">
+              <div class="ai-copy-main">
+                <button class="btn-copy-open" onclick="copyAndOpenAI('DeepSeek','onboard-result')">📋 一键复制 · 自动打开 DeepSeek →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- 风险中心 -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="panel" id="panel-risk">
+      <div class="card">
+        <h3>🛡️ 风险中心</h3>
+        <div class="desc">不只看机会，也看风险。识别、评估、应对——把"出了问题怎么办"变成"提前知道可能出什么问题"。</div>
+        <div class="subtabs" id="riskSubtabs">
+          <button class="subtab active" data-risk-sub="identify" onclick="switchRiskSubtab('identify')">🔍 风险识别</button>
+          <button class="subtab" data-risk-sub="assess" onclick="switchRiskSubtab('assess')">📊 风险评估</button>
+          <button class="subtab" data-risk-sub="response" onclick="switchRiskSubtab('response')">🛡️ 应急预案</button>
+        </div>
+
+        <!-- 风险识别 -->
+        <div id="risk-identify">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div><label>风险名称</label><input type="text" id="risk-name" placeholder="如：最大代工厂突然断供"></div>
+            <div><label>风险类别</label>
+              <select id="risk-category">
+                <option value="market">市场风险</option><option value="supply">供应链风险</option>
+                <option value="talent">人才风险</option><option value="finance">财务风险</option>
+                <option value="strategy">战略风险</option><option value="compliance">合规风险</option>
+              </select>
+            </div>
+          </div>
+          <label>风险描述</label>
+          <textarea id="risk-desc" rows="2" placeholder="如：我们70%的产能集中在A工厂，如果A工厂因政策/火灾/资金链等问题停产，整个交货链条会断裂..."></textarea>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div><label>发生概率（1-5分）</label><input type="number" id="risk-probability" min="1" max="5" value="3"></div>
+            <div><label>影响程度（1-5分）</label><input type="number" id="risk-impact" min="1" max="5" value="3"></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="addRisk()">➕ 添加到风险清单</button>
+            <button class="btn btn-outline" onclick="processRiskReport()">📊 生成风险管理报告</button>
+          </div>
+          <div id="risk-list" style="margin-top:14px"></div>
+        </div>
+
+        <!-- 风险评估矩阵 -->
+        <div id="risk-assess" style="display:none">
+          <div class="risk-matrix" id="riskMatrix"></div>
+          <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:8px">
+            横轴：发生概率（低→高）｜纵轴：影响程度（低→高）<br>
+            <span style="color:#ff8a8a">🔴 红色</span>=高关注 · <span style="color:#ffd54f">🟡 黄色</span>=中等 · <span style="color:#48c78e">🟢 绿色</span>=低关注
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="refreshRiskMatrix()" style="margin-top:10px">🔄 刷新风险矩阵</button>
+        </div>
+
+        <!-- 应急预案 -->
+        <div id="risk-response" style="display:none">
+          <div id="risk-response-list"></div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="processScenario()">🎯 生成情景推演报告</button>
+          </div>
+          <div class="result-box" id="risk-result"></div>
+          <div id="risk-copy" style="display:none" class="ai-copy-area">
+            <div class="ai-copy-main">
+              <button class="btn-copy-open" onclick="copyAndOpenAI('DeepSeek','risk-result')">📋 一键复制 · 自动打开 DeepSeek →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div><!-- .main -->
+  </div><!-- .main-wrap -->
+</div><!-- .app -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+// ═══════════════════════════════════════
+// 总参部 · 核心JavaScript
+// ═══════════════════════════════════════
+
+// ── Constants ──
+const LS_ACTIVATED = 'zcb_activated';
+const LS_FREE_MODE = 'zcb_free_mode';
+const LS_PROFILE = 'zcb_company_profile';
+const LS_OPS_DATA = 'zcb_ops_data';
+const LS_BRIEFING_LOG = 'zcb_briefing_log';
+const LS_STRATEGY = 'zcb_strategy';
+const LS_PLAN_TARGETS = 'zcb_plan_targets';
+const LS_TALENT_GRID = 'zcb_talent_grid';
+const LS_TALENT_RISK = 'zcb_talent_risk';
+const LS_TALENT_EFFICIENCY = 'zcb_talent_efficiency';
+const LS_CANDIDATES = 'zcb_candidates';
+const LS_RISK_REGISTER = 'zcb_risk_register';
+const LS_HISTORY = 'zcb_history';
+const LS_STREAK = 'zcb_briefing_streak';
+
+const PANEL_TITLES = {
+  dashboard: '首页看板',
+  ops: '经营中心',
+  strategy: '战略中心',
+  plan: '计划中心',
+  talent: '人才中心',
+  risk: '风险中心'
+};
+
+// ── Toast ──
+let _toastTimer;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || '') + ' show';
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+
+// ── Login / Activation ──
+function activate() {
+  const input = document.getElementById('activationInput').value.trim();
+  const errEl = document.getElementById('loginErr');
+  errEl.textContent = '';
+
+  if (input.length < 8) { errEl.textContent = '请输入有效的激活码'; return; }
+
+  // Check if already activated
+  let activated = null;
+  try { activated = JSON.parse(localStorage.getItem(LS_ACTIVATED)); } catch(e) {}
+
+  if (activated && activated.deviceId) {
+    // Already has device binding — verify
+    if (activated.deviceId === getDeviceId()) {
+      showMainApp(activated);
+      return;
+    }
+  }
+
+  // New activation — validate code format
+  localStorage.setItem('zb_pending_code', input);
+  var safeCode = input.replace(/[<>&"']/g, '');
+  document.getElementById('deviceBindSubt').innerHTML =
+    '此激活码将绑定到当前设备。<br><br><b style="color:var(--gold)">激活码：' + safeCode.substring(0, 12) + '…</b>';
+  document.getElementById('deviceBindOverlay').classList.add('show');
+}
+
+function confirmDeviceBind() {
+  const code = localStorage.getItem('zb_pending_code') || '';
+  const deviceId = getDeviceId();
+  const now = new Date();
+
+  // Calculate expiry: detect period from code or default 30 days
+  const activated = {
+    code: code,
+    deviceId: deviceId,
+    wechat: '',
+    activatedAt: now.toISOString(),
+    expiry: new Date(now.getTime() + 30*86400000).toISOString(),
+    remaining: 30,
+    total: 30
+  };
+
+  // Check if code suggests longer periods (simple detection)
+  if (code.includes('-NY') || code.includes('-NC') || code.includes('YEAR')) {
+    activated.expiry = new Date(now.getTime() + 365*86400000).toISOString();
+    activated.remaining = 500;
+    activated.total = 500;
+  } else if (code.includes('-HY') || code.includes('-HC') || code.includes('HALF')) {
+    activated.expiry = new Date(now.getTime() + 180*86400000).toISOString();
+    activated.remaining = 200;
+    activated.total = 200;
+  }
+
+  localStorage.setItem(LS_ACTIVATED, JSON.stringify(activated));
+  localStorage.removeItem('zb_pending_code');
+  localStorage.setItem('zb_last_code', code);
+  document.getElementById('deviceBindOverlay').classList.remove('show');
+  showToast('✅ 激活成功！欢迎使用总参部');
+  showMainApp(activated);
+}
+
+function enterFreeMode() {
+  var now = new Date();
+  var activated = {
+    freeMode: true,
+    remaining: 5,
+    total: 5,
+    expiry: new Date(now.getTime() + 7*86400000).toISOString(),
+    deviceId: getDeviceId(),
+    code: 'FREE',
+    activatedAt: now.toISOString()
+  };
+  localStorage.setItem(LS_ACTIVATED, JSON.stringify(activated));
+  localStorage.setItem(LS_FREE_MODE, '1');
+  showToast('🎯 免费试用模式 · 可体验经营早报（5次，7天有效）');
+  showMainApp(activated);
+}
+
+function fillLastCode() {
+  const code = localStorage.getItem('zb_last_code');
+  if (code) { document.getElementById('activationInput').value = code; }
+}
+
+function showDevGuide() {
+  const el = document.getElementById('aiGuide');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function getDeviceId() {
+  let id = localStorage.getItem('zb_device_id');
+  if (!id) {
+    id = 'dev-' + Date.now().toString(36) + '-' + Math.random().toString(36).substring(2, 8);
+    localStorage.setItem('zb_device_id', id);
+  }
+  return id;
+}
+
+// ── Show Main App ──
+function showMainApp(activated) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainApp').classList.add('show');
+
+  updateUserInfo(activated);
+  restoreCompanyProfile();
+  refreshDashboard();
+}
+
+function updateUserInfo(activated) {
+  const uname = document.getElementById('userName');
+  const rem = document.getElementById('remainingUses');
+  const expiryEl = document.getElementById('expiryDate');
+
+  if (activated.freeMode) {
+    uname.textContent = '免费试用';
+    rem.textContent = activated.remaining + ' 次';
+    expiryEl.textContent = '不限';
+    return;
+  }
+
+  uname.textContent = activated.code ? '会员用户' : '免费用户';
+  if (activated.remaining !== undefined) {
+    rem.textContent = activated.remaining + ' 次';
+  } else {
+    rem.textContent = '-';
+  }
+  if (activated.expiry) {
+    const d = new Date(activated.expiry);
+    expiryEl.textContent = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+  }
+}
+
+// ── Credit System ──
+function isFreeMode() {
+  return localStorage.getItem(LS_FREE_MODE) === '1';
+}
+
+function hasCredits() {
+  if (isFreeMode()) {
+    let activated;
+    try { activated = JSON.parse(localStorage.getItem(LS_ACTIVATED)); } catch(e) {}
+    // Special: free mode gets 5 uses, only for briefing
+    return activated && activated.remaining > 0;
+  }
+  let a;
+  try { a = JSON.parse(localStorage.getItem(LS_ACTIVATED)); } catch(e) { return false; }
+  if (!a || !a.deviceId) return false;
+  if (a.deviceId !== getDeviceId()) return false;
+  if (new Date(a.expiry) < new Date()) return false;
+  return a.remaining > 0;
+}
+
+function useOneCredit(moduleName) {
+  if (isFreeMode()) {
+    // Free mode: only 经营早报 is available
+    if (moduleName !== '经营早报') {
+      showToast('免费试用仅开放经营早报。解锁全部7大模块请联系微信 miaoan1913 获取激活码', 'warn');
+      return false;
+    }
+    let a;
+    try { a = JSON.parse(localStorage.getItem(LS_ACTIVATED)); } catch(e) {}
+    if (a && a.remaining > 0) {
+      a.remaining--;
+      localStorage.setItem(LS_ACTIVATED, JSON.stringify(a));
+      updateUserInfo(a);
+      return true;
+    }
+    showToast('免费试用次数已用完（5/5），请联系微信 miaoan1913 获取激活码', 'warn');
+    return false;
+  }
+  let a;
+  try { a = JSON.parse(localStorage.getItem(LS_ACTIVATED)); } catch(e) { return false; }
+  if (!a || !a.deviceId) return false;
+  if (a.deviceId !== getDeviceId()) return false;
+  if (a.expiry && new Date(a.expiry) < new Date()) {
+    showToast('激活码已过期，请联系微信 miaoan1913 续费', 'warn');
+    return false;
+  }
+  if (a.remaining <= 0) {
+    showToast('次数已用完，请联系微信 miaoan1913 续费', 'warn');
+    return false;
+  }
+  a.remaining--;
+  localStorage.setItem(LS_ACTIVATED, JSON.stringify(a));
+  updateUserInfo(a);
+  return true;
+}
+
+// ── Sidebar Navigation ──
+function switchPanel(panel) {
+  document.querySelectorAll('.nav-item').forEach(function(el) {
+    el.classList.remove('active');
+    if (el.getAttribute('data-panel') === panel) el.classList.add('active');
+  });
+  document.querySelectorAll('.panel').forEach(function(el) { el.classList.remove('active'); });
+  var panelEl = document.getElementById('panel-' + panel);
+  if (panelEl) panelEl.classList.add('active');
+  document.getElementById('panelTitle').textContent = PANEL_TITLES[panel] || panel;
+}
+
+function toggleSidebar() {
+  var s = document.getElementById('sidebar');
+  var btn = s.querySelector('.btn-collapse span');
+  s.classList.toggle('collapsed');
+  btn.textContent = s.classList.contains('collapsed') ? '▶' : '◀ 收起';
+}
+
+// ── Ops Sub-tabs ──
+function switchOpsSubtab(sub) {
+  document.querySelectorAll('#opsSubtabs .subtab').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelector('[data-ops-sub="' + sub + '"]').classList.add('active');
+  document.getElementById('ops-analysis').style.display = sub === 'analysis' ? '' : 'none';
+  document.getElementById('ops-briefing').style.display = sub === 'briefing' ? '' : 'none';
+  document.getElementById('ops-opsdash').style.display = sub === 'opsdash' ? '' : 'none';
+  if (sub === 'opsdash') renderOpsDashboard();
+}
+
+// ── Layer Toggle ──
+function toggleLayer(id) {
+  var el = document.getElementById(id);
+  var arrow = el.previousElementSibling.querySelector('.layer-arrow');
+  if (el.style.display === 'block') {
+    el.style.display = 'none';
+    arrow.textContent = '▶';
+  } else {
+    el.style.display = 'block';
+    arrow.textContent = '▼';
+  }
+}
+
+// ── Strategy: BLM Steps ──
+function switchBLMStep(step) {
+  document.querySelectorAll('.blm-step').forEach(function(el) {
+    el.classList.remove('active');
+    if (parseInt(el.getAttribute('data-step')) === step) el.classList.add('active');
+    if (parseInt(el.getAttribute('data-step')) < step) { el.classList.add('done'); el.classList.remove('active'); }
+  });
+  for (var i = 1; i <= 5; i++) {
+    document.getElementById('blm-step' + i).style.display = i === step ? '' : 'none';
+  }
+}
+
+// ── Industry Presets ──
+function selectPreset(type) {
+  document.querySelectorAll('.preset-card').forEach(function(el) { el.classList.remove('selected'); });
+  var card = document.getElementById('preset-' + type);
+  if (card) card.classList.add('selected');
+
+  // Pre-fill growth engines based on preset
+  var engines = {
+    retail: ['retail', 'unit'],
+    ecommerce: ['ecom', 'unit'],
+    brand: ['brand', 'unit'],
+    omni: ['ecom', 'retail', 'supply'],
+    supply: ['supply'],
+    org: ['unit']
+  };
+  // Reset all
+  ['retail','ecom','unit','category','supply','brand'].forEach(function(e) {
+    var cb = document.getElementById('blm-engine-' + e);
+    if (cb) cb.checked = false;
+  });
+  // Set recommended
+  (engines[type] || []).forEach(function(e) {
+    var cb = document.getElementById('blm-engine-' + e);
+    if (cb) cb.checked = true;
+  });
+  updateBLMEngines();
+
+  // Pre-fill BLM step textareas
+  var presets = {
+    retail: { label: '门店扩张型', trend: '线下服装零售市场增速放缓至X%，但体验型消费需求上升。', competitors: '区域头部品牌、加盟品牌', customers: '注重线下体验和试穿的中产消费者' },
+    ecommerce: { label: '电商突破型', trend: '直播电商渗透率持续提升，抖音服装类目GMV增长X%。', competitors: '平台头部主播品牌、DTC品牌', customers: '习惯线上购买、价格敏感度分层明显的年轻消费者' },
+    brand: { label: '品牌升级型', trend: '消费者品牌意识增强，愿意为设计和品质支付溢价。', competitors: '设计师品牌、国际二线品牌', customers: '追求个性化和品质感的25-40岁中高收入女性' },
+    omni: { label: '全渠道融合型', trend: '纯线上或纯线下模式增长见顶，线上线下融合是趋势。', competitors: '全渠道运营成熟的竞品品牌', customers: '多渠道接触品牌、期望一致体验的消费者' },
+    supply: { label: '供应链驱动型', trend: '快反和柔性供应链成为服装行业核心竞争力。', competitors: 'SHEIN等快反模式头部玩家', customers: '对上新速度和性价比敏感的消费者' },
+    org: { label: '组织升级型', trend: '企业发展遇到管理瓶颈，需要职业化转型。', competitors: '管理规范化的竞品企业', customers: '不适用' }
+  };
+  var p = presets[type];
+  if (p && document.getElementById('blm-market-trend').value === '') {
+    document.getElementById('blm-market-trend').value = p.trend;
+    document.getElementById('blm-competitors').value = p.competitors;
+    document.getElementById('blm-customers').value = p.customers;
+  }
+}
+
+function updateBLMEngines() {
+  var selected = [];
+  ['retail','ecom','unit','category','supply','brand'].forEach(function(e) {
+    var cb = document.getElementById('blm-engine-' + e);
+    if (cb && cb.checked) selected.push(cb.parentElement.textContent.trim().substring(2));
+  });
+  document.getElementById('blm-engine-conditions').placeholder =
+    selected.length ? '选定的引擎：' + selected.join('、') + '。每项关键成功条件：' : '请先选择增长引擎';
+}
+
+// ── Plan Sub-tabs ──
+function switchPlanSubtab(sub) {
+  document.querySelectorAll('#planSubtabs .subtab').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelector('[data-plan-sub="' + sub + '"]').classList.add('active');
+  document.getElementById('plan-decode').style.display = sub === 'decode' ? '' : 'none';
+  document.getElementById('plan-kpi').style.display = sub === 'kpi' ? '' : 'none';
+  document.getElementById('plan-track').style.display = sub === 'track' ? '' : 'none';
+  if (sub === 'kpi') refreshKpiTable();
+  if (sub === 'track') refreshTrackList();
+}
+
+function addPlanTask() {
+  var list = document.getElementById('plan-task-list');
+  var idx = list.children.length + 1;
+  var row = document.createElement('div');
+  row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr 1fr 80px;gap:8px;margin-bottom:6px';
+  row.innerHTML = '<input type="text" placeholder="任务' + idx + '描述" style="padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.06);border-radius:8px;background:rgba(0,0,0,.2);color:#d8d8d8;font-family:inherit">' +
+    '<input type="text" placeholder="责任人" style="padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.06);border-radius:8px;background:rgba(0,0,0,.2);color:#d8d8d8;font-family:inherit">' +
+    '<input type="text" placeholder="完成时间" style="padding:8px 10px;font-size:12px;border:1px solid rgba(255,255,255,.06);border-radius:8px;background:rgba(0,0,0,.2);color:#d8d8d8;font-family:inherit">' +
+    '<button class="btn btn-danger btn-sm" onclick="this.parentElement.remove()" style="padding:4px 8px">✕</button>';
+  list.appendChild(row);
+}
+
+function getAllPlanData() {
+  var targets = [];
+  for (var i = 1; i <= 4; i++) {
+    var t = document.getElementById('plan-target' + i).value.trim();
+    if (!t) continue;
+    targets.push({
+      target: t,
+      kpi: document.getElementById('plan-kpi' + i).value.trim(),
+      owner: document.getElementById('plan-owner' + i).value.trim(),
+      deadline: document.getElementById('plan-deadline' + i).value.trim()
+    });
+  }
+  var tasks = [];
+  var rows = document.querySelectorAll('#plan-task-list > div');
+  rows.forEach(function(row) {
+    var inputs = row.querySelectorAll('input');
+    if (inputs.length >= 3 && inputs[0].value.trim()) {
+      tasks.push({ task: inputs[0].value.trim(), owner: inputs[1].value.trim(), deadline: inputs[2].value.trim() });
+    }
+  });
+  return { targets: targets, tasks: tasks };
+}
+
+function refreshKpiTable() {
+  var data = getAllPlanData();
+  var html = '<table class="kpi-table"><thead><tr><th>目标</th><th>KPI</th><th>责任人</th><th>截止日期</th><th>进度</th></tr></thead><tbody>';
+  data.targets.forEach(function(t) {
+    var pct = t.deadline ? Math.min(100, Math.floor(Math.random() * 80 + 10)) : 0;
+    var cls = pct >= 70 ? 'green' : pct >= 40 ? 'yellow' : 'red';
+    html += '<tr><td>' + escapeHtml(t.target) + '</td><td>' + escapeHtml(t.kpi) + '</td><td>' + escapeHtml(t.owner) + '</td><td>' + escapeHtml(t.deadline) + '</td><td><div class="progress-bar"><div class="fill ' + cls + '" style="width:' + pct + '%"></div></div><span style="font-size:10px">' + pct + '%</span></td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('plan-kpi-table').innerHTML = html;
+}
+
+function refreshTrackList() {
+  var data = getAllPlanData();
+  var html = '';
+  data.targets.forEach(function(t) {
+    html += '<div style="background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:10px;padding:14px;margin-bottom:10px">' +
+      '<div style="font-weight:600;color:var(--gold-light);margin-bottom:6px">🎯 ' + escapeHtml(t.target) + '</div>' +
+      '<div style="font-size:12px;color:var(--text-secondary);line-height:1.8">' +
+      'KPI：' + escapeHtml(t.kpi||'未设置') + '｜责任人：' + escapeHtml(t.owner||'未指定') + '｜截止：' + escapeHtml(t.deadline||'未设定') +
+      '</div></div>';
+  });
+  if (!html) html = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无目标数据，请先在「目标拆解」中填写</div>';
+  document.getElementById('plan-track-list').innerHTML = html;
+}
+
+// ── Talent Sub-tabs ──
+function switchTalentSubtab(sub) {
+  document.querySelectorAll('#talentSubtabs .subtab').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelector('[data-talent-sub="' + sub + '"]').classList.add('active');
+  document.getElementById('talent-grid').style.display = sub === 'grid' ? '' : 'none';
+  document.getElementById('talent-attrition').style.display = sub === 'attrition' ? '' : 'none';
+  document.getElementById('talent-efficiency').style.display = sub === 'efficiency' ? '' : 'none';
+  document.getElementById('talent-recruit').style.display = sub === 'recruit' ? '' : 'none';
+  if (sub === 'grid') render9Box();
+  if (sub === 'attrition') renderAttritionList();
+}
+
+function switchRecruitSub(sub) {
+  document.querySelectorAll('#talent-recruit .subtab').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelector('[data-recruit-sub="' + sub + '"]').classList.add('active');
+  document.getElementById('recruit-exam').style.display = sub === 'exam' ? '' : 'none';
+  document.getElementById('recruit-analyze').style.display = sub === 'analyze' ? '' : 'none';
+  document.getElementById('recruit-onboard').style.display = sub === 'onboard' ? '' : 'none';
+}
+
+// ── Risk Sub-tabs ──
+function switchRiskSubtab(sub) {
+  document.querySelectorAll('#riskSubtabs .subtab').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelector('[data-risk-sub="' + sub + '"]').classList.add('active');
+  document.getElementById('risk-identify').style.display = sub === 'identify' ? '' : 'none';
+  document.getElementById('risk-assess').style.display = sub === 'assess' ? '' : 'none';
+  document.getElementById('risk-response').style.display = sub === 'response' ? '' : 'none';
+  if (sub === 'assess') refreshRiskMatrix();
+  if (sub === 'response') renderRiskResponse();
+}
+
+// ═══════════════════════════════════════
+// 公司档案
+// ═══════════════════════════════════════
+function openCompanyProfile() {
+  var profile = null;
+  try { profile = JSON.parse(localStorage.getItem(LS_PROFILE)); } catch(e) {}
+  if (profile) {
+    ['name','industry','stage','size','revenue','business','products','advantage','challenges','customers'].forEach(function(f) {
+      document.getElementById('cp-' + f).value = profile[f] || '';
+    });
+  }
+  document.getElementById('companyProfileModal').classList.add('show');
+}
+
+function closeCompanyProfile() {
+  document.getElementById('companyProfileModal').classList.remove('show');
+}
+
+function saveCompanyProfile() {
+  var profile = {};
+  ['name','industry','stage','size','revenue','business','products','advantage','challenges','customers'].forEach(function(f) {
+    profile[f] = document.getElementById('cp-' + f).value.trim();
+  });
+  localStorage.setItem(LS_PROFILE, JSON.stringify(profile));
+  restoreCompanyProfile();
+  closeCompanyProfile();
+  showToast('✅ 公司档案已保存，所有中心自动加载');
+}
+
+function restoreCompanyProfile() {
+  var profile = null;
+  try { profile = JSON.parse(localStorage.getItem(LS_PROFILE)); } catch(e) {}
+  if (profile && profile.name) {
+    document.getElementById('companyBadge').style.display = '';
+    document.getElementById('companyBadgeName').textContent = profile.name;
+    document.getElementById('brief-company-name').textContent = profile.name;
+  }
+}
+
+function getCompanyProfileText() {
+  var p = null;
+  try { p = JSON.parse(localStorage.getItem(LS_PROFILE)); } catch(e) {}
+  if (!p || !p.name) return '';
+  var text = '公司名称：' + p.name + '\n';
+  if (p.industry) text += '所属行业：' + p.industry + '\n';
+  if (p.stage) text += '发展阶段：' + p.stage + '\n';
+  if (p.size) text += '员工人数：' + p.size + '\n';
+  if (p.revenue) text += '年营收规模（万元）：' + p.revenue + '\n';
+  if (p.business) text += '主营业务：' + p.business + '\n';
+  if (p.products) text += '核心产品/服务：' + p.products + '\n';
+  if (p.advantage) text += '核心竞争优势：' + p.advantage + '\n';
+  if (p.challenges) text += '当前面临的主要挑战：' + p.challenges + '\n';
+  if (p.customers) text += '目标客户画像：' + p.customers + '\n';
+  return text;
+}
+
+// ═══════════════════════════════════════
+// 历史记录
+// ═══════════════════════════════════════
+function openHistory() {
+  document.getElementById('historyModal').classList.add('show');
+  document.getElementById('historySearch').value = '';
+  renderHistoryList();
+}
+
+function closeHistory() { document.getElementById('historyModal').classList.remove('show'); }
+
+function getHistory() {
+  var h = null;
+  try { h = JSON.parse(localStorage.getItem(LS_HISTORY)); } catch(e) {}
+  return h || [];
+}
+
+function saveToHistory(module, result, prompt) {
+  var h = getHistory();
+  h.unshift({ date: new Date().toISOString(), module: module, result: result, prompt: prompt });
+  if (h.length > 50) h = h.slice(0, 50);
+  localStorage.setItem(LS_HISTORY, JSON.stringify(h));
+}
+
+function renderHistoryList() {
+  var h = getHistory();
+  var search = (document.getElementById('historySearch').value || '').toLowerCase();
+  var container = document.getElementById('historyList');
+  if (search) h = h.filter(function(item) { return (item.module||'').toLowerCase().indexOf(search) !== -1 || (item.result||'').toLowerCase().indexOf(search) !== -1; });
+
+  if (!h.length) { container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无记录</div>'; return; }
+  var html = '';
+  h.forEach(function(item, i) {
+    var d = new Date(item.date);
+    html += '<div style="padding:10px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer" onclick="viewHistoryItem(' + i + ')">' +
+      '<div style="font-size:12px;color:var(--gold)">' + escapeHtml(item.module||'未知') + '</div>' +
+      '<div style="font-size:10px;color:var(--text-muted)">' + d.toLocaleString() + ' — ' + escapeHtml((item.result||'').substring(0, 60)) + '…</div></div>';
+  });
+  container.innerHTML = html;
+}
+
+function viewHistoryItem(i) {
+  var h = getHistory();
+  var item = h[i];
+  if (!item) return;
+  navigator.clipboard.writeText(item.result || '').then(function() {
+    showToast('✅ 已复制到剪贴板，可粘贴到AI工具使用');
+  });
+}
+
+function clearAllHistory() {
+  if (confirm('确认清空所有历史记录？')) {
+    localStorage.removeItem(LS_HISTORY);
+    renderHistoryList();
+    showToast('历史记录已清空');
+  }
+}
+
+// ═══════════════════════════════════════
+// 候选人追踪
+// ═══════════════════════════════════════
+function openCandidateTracker() {
+  document.getElementById('candidateTrackerModal').classList.add('show');
+  renderCandidateList();
+}
+
+function closeCandidateTracker() { document.getElementById('candidateTrackerModal').classList.remove('show'); }
+
+function showAddCandidateForm() { document.getElementById('addCandidateForm').style.display = ''; }
+function hideAddCandidateForm() { document.getElementById('addCandidateForm').style.display = 'none'; }
+
+function getCandidates() {
+  var c = null;
+  try { c = JSON.parse(localStorage.getItem(LS_CANDIDATES)); } catch(e) {}
+  return c || [];
+}
+
+function addCandidate() {
+  var c = getCandidates();
+  c.push({
+    name: document.getElementById('cand-name').value.trim(),
+    position: document.getElementById('cand-position').value.trim(),
+    status: document.getElementById('cand-status').value,
+    source: document.getElementById('cand-source').value.trim(),
+    notes: document.getElementById('cand-notes').value.trim(),
+    addedAt: new Date().toISOString()
+  });
+  localStorage.setItem(LS_CANDIDATES, JSON.stringify(c));
+  hideAddCandidateForm();
+  renderCandidateList();
+  showToast('✅ 人选已添加');
+}
+
+function renderCandidateList() {
+  var c = getCandidates();
+  var container = document.getElementById('candidateList');
+  if (!c.length) { container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无追踪人选</div>'; return; }
+  var html = '';
+  c.forEach(function(item, i) {
+    html += '<div style="padding:10px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center">' +
+      '<div><div style="font-size:13px;color:var(--text-primary)">' + escapeHtml(item.name) + ' — ' + escapeHtml(item.position) + '</div>' +
+      '<div style="font-size:10px;color:var(--text-muted)">' + (item.status||'') + '｜' + (item.source||'') + '</div></div>' +
+      '<button class="btn btn-danger btn-sm" onclick="deleteCandidate(' + i + ')" style="padding:4px 8px;font-size:10px">🗑️</button></div>';
+  });
+  container.innerHTML = html;
+}
+
+function deleteCandidate(i) {
+  var c = getCandidates();
+  c.splice(i, 1);
+  localStorage.setItem(LS_CANDIDATES, JSON.stringify(c));
+  renderCandidateList();
+  showToast('已删除');
+}
+
+// ═══════════════════════════════════════
+// 各中心处理逻辑
+// ═══════════════════════════════════════
+
+function collectFieldValue(id, label) {
+  var v = document.getElementById(id).value.trim();
+  return v ? label + v : '';
+}
+
+// ── 经营分析 ──
+function processOpsAnalysis() {
+  var profile = getCompanyProfileText();
+  var lines = [];
+  if (profile) lines.push('【公司背景】\n' + profile + '\n');
+
+  lines.push('【经营数据】');
+  var revenue = document.getElementById('ops-revenue').value.trim();
+  var cost = document.getElementById('ops-cost').value.trim();
+  var worry = document.getElementById('ops-worry').value.trim();
+
+  if (!revenue || !cost) { showToast('请至少填写营收和营业成本', 'warn'); return; }
+
+  lines.push('上月营收（万元）：' + revenue);
+  lines.push('上月营业成本（万元）：' + cost);
+  if (worry) lines.push('最头疼的经营问题：' + worry);
+
+  // Extended layers
+  var layers = {
+    'ops-expense': '上月费用合计',
+    'ops-profit': '净利润/净利率',
+    'ops-cashflow': '经营性现金流',
+    'ops-cash': '账上现金',
+    'ops-arap': '应收/应付',
+    'ops-orders': '订单量/客单价',
+    'ops-customers': '新客户数/复购率',
+    'ops-channels': 'TOP3渠道',
+    'ops-products': 'TOP3产品线',
+    'ops-delivery': '发货及时率/退货率',
+    'ops-complaints': '客户投诉',
+    'ops-inventory': '库存周转/滞销',
+    'ops-projects': '关键项目进度',
+    'ops-headcount': '员工总数/人均营收',
+    'ops-laborcost': '人力成本占营收比',
+    'ops-turnover': '入职/离职',
+    'ops-coreposts': '核心岗位变动'
+  };
+
+  Object.keys(layers).forEach(function(id) {
+    var v = document.getElementById(id).value.trim();
+    if (v) lines.push(layers[id] + '：' + v);
+  });
+
+  lines.push('');
+  lines.push('请基于以上数据，输出以下结构的经营分析报告：');
+  lines.push('一、核心指标概览（3-5条关键数字）');
+  lines.push('二、财务健康诊断（盈利能力/现金流/成本结构）');
+  lines.push('三、业务增长诊断（渠道效率/产品表现/客户质量）');
+  lines.push('四、运营效率诊断（交付/库存/质量）');
+  lines.push('五、人力效能诊断（人效/流失/关键岗位）');
+  lines.push('六、TOP3问题与根因分析');
+  lines.push('七、本月重点行动建议（3-5条具体可执行的建议）');
+
+  var result = lines.join('\n');
+  processWithAI('ops-analysis-result', 'ops-analysis-copy', result, '经营分析');
+}
+
+function clearOpsAnalysis() {
+  document.querySelectorAll('#ops-analysis input, #ops-analysis textarea').forEach(function(el) { el.value = ''; });
+  document.getElementById('ops-analysis-result').classList.remove('show');
+  document.getElementById('ops-analysis-result').innerHTML = '';
+  document.getElementById('ops-analysis-copy').style.display = 'none';
+  showToast('已清空');
+}
+
+// ── 经营早报 ──
+function processBriefing() {
+  var profile = getCompanyProfileText();
+  var lines = [];
+  if (profile) lines.push('【公司背景】\n' + profile + '\n');
+  lines.push('【今日经营早报】');
+
+  var fields = {
+    'brief-revenue': '昨日营收（万元）',
+    'brief-orders': '昨日订单量/客单价',
+    'brief-return': '昨日退货率',
+    'brief-cost': '昨日费用（万元）',
+    'brief-anomaly': '昨日异常信号'
+  };
+  Object.keys(fields).forEach(function(id) {
+    var v = document.getElementById(id).value.trim();
+    if (v) lines.push(fields[id] + '：' + v);
+  });
+
+  var todos = ['brief-todo1', 'brief-todo2', 'brief-todo3'].map(function(id) { return document.getElementById(id).value.trim(); }).filter(Boolean);
+  if (todos.length) lines.push('今日最重要事项：\n' + todos.map(function(t,i) { return (i+1) + '. ' + t; }).join('\n'));
+
+  var extra = {
+    'brief-competitor': '竞品新动作',
+    'brief-decisions': '本周需拍板决策',
+    'brief-worry': '最头疼问题'
+  };
+  Object.keys(extra).forEach(function(id) {
+    var v = document.getElementById(id).value.trim();
+    if (v) lines.push(extra[id] + '：' + v);
+  });
+
+  lines.push('');
+  lines.push('请基于以上信息，输出：');
+  lines.push('一、今日经营简报（3-5条一句话总结）');
+  lines.push('二、今日关注清单（按优先级排序：🔴紧急 → 🟡重要 → 🟢常规）');
+  lines.push('三、今日决策建议（1-2条具体建议）');
+  lines.push('四、风险提示（如有异常信号，给出预警和应对方向）');
+
+  var result = lines.join('\n');
+  processWithAI('briefing-result', 'briefing-copy', result, '经营早报');
+
+  // Track streak
+  var streak = parseInt(localStorage.getItem(LS_STREAK) || '0') + 1;
+  localStorage.setItem(LS_STREAK, streak);
+  document.getElementById('brief-streak-count').textContent = streak;
+  document.getElementById('brief-streak').style.display = '';
+
+  // Save ops data
+  saveBriefingData();
+  refreshDashboard();
+}
+
+function clearBriefing() {
+  document.querySelectorAll('#ops-briefing input, #ops-briefing textarea').forEach(function(el) { el.value = ''; });
+  document.getElementById('briefing-result').classList.remove('show');
+  document.getElementById('briefing-result').innerHTML = '';
+  document.getElementById('briefing-copy').style.display = 'none';
+  showToast('已清空');
+}
+
+function saveBriefingData() {
+  var data = {
+    date: new Date().toISOString(),
+    revenue: document.getElementById('brief-revenue').value.trim(),
+    orders: document.getElementById('brief-orders').value.trim(),
+    returnRate: document.getElementById('brief-return').value.trim(),
+    cost: document.getElementById('brief-cost').value.trim(),
+    anomaly: document.getElementById('brief-anomaly').value.trim()
+  };
+  var all = null;
+  try { all = JSON.parse(localStorage.getItem(LS_OPS_DATA)); } catch(e) {}
+  if (!all) all = [];
+  all.unshift(data);
+  if (all.length > 90) all = all.slice(0, 90);
+  localStorage.setItem(LS_OPS_DATA, JSON.stringify(all));
+}
+
+// ── 经营看板图表 ──
+let opsRevenueChart = null;
+function renderOpsDashboard() {
+  var data = null;
+  try { data = JSON.parse(localStorage.getItem(LS_OPS_DATA)); } catch(e) {}
+  if (!data || data.length < 3) return;
+  var ctx = document.getElementById('opsRevenueChart');
+  if (!ctx) return;
+
+  // Reverse to chronological
+  data = data.slice().reverse();
+  var labels = data.map(function(d) { return new Date(d.date).toLocaleDateString('zh-CN', {month:'short',day:'numeric'}); });
+  var revenues = data.map(function(d) { return parseFloat(d.revenue) || 0; });
+
+  if (opsRevenueChart) opsRevenueChart.destroy();
+  opsRevenueChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '每日营收（万元）',
+        data: revenues,
+        borderColor: '#d4af37',
+        backgroundColor: 'rgba(212,175,55,0.05)',
+        fill: true,
+        tension: 0.3,
+        pointBackgroundColor: '#d4af37'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: 'rgba(255,255,255,0.5)', font: { size: 11 } } }
+      },
+      scales: {
+        x: { ticks: { color: 'rgba(255,255,255,0.3)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.03)' } },
+        y: { ticks: { color: 'rgba(255,255,255,0.3)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.03)' } }
+      }
+    }
+  });
+}
+
+// ── 战略中心 ──
+function processStrategy() {
+  var profile = getCompanyProfileText();
+  var lines = [];
+  if (profile) lines.push('【公司背景】\n' + profile + '\n');
+
+  // Get selected preset
+  var selectedPreset = '';
+  document.querySelectorAll('.preset-card.selected').forEach(function(el) { selectedPreset = el.querySelector('.preset-name').textContent; });
+
+  lines.push('【战略制定】');
+  if (selectedPreset) lines.push('行业模式：' + selectedPreset);
+
+  var blmFields = {
+    'blm-market-trend': '市场趋势',
+    'blm-competitors': '竞争格局',
+    'blm-customers': '客户变化',
+    'blm-trends': '行业趋势/风险',
+    'blm-revenue-target': '1-3年营收目标',
+    'blm-breakthrough': '突破方向',
+    'blm-oneliner': '一句话战略',
+    'blm-customer-select': '客户选择',
+    'blm-value-prop': '价值主张',
+    'blm-profit-model': '盈利模式',
+    'blm-control-point': '战略控制点',
+    'blm-perf-gap': '业绩差距',
+    'blm-opp-gap': '机会差距'
+  };
+
+  // Growth engines
+  var engines = [];
+  ['retail','ecom','unit','category','supply','brand'].forEach(function(e) {
+    var cb = document.getElementById('blm-engine-' + e);
+    if (cb && cb.checked) engines.push(cb.parentElement.textContent.trim().substring(2));
+  });
+  if (engines.length) lines.push('增长引擎：' + engines.join('、'));
+
+  var conditions = document.getElementById('blm-engine-conditions').value.trim();
+  if (conditions) lines.push('增长引擎关键成功条件：' + conditions);
+
+  Object.keys(blmFields).forEach(function(id) {
+    var v = document.getElementById(id).value.trim();
+    if (v) lines.push(blmFields[id] + '：' + v);
+  });
+
+  lines.push('');
+  lines.push('请基于以上信息，输出华为BLM格式的「战略一页纸」：');
+  lines.push('一、战略意图（我们想去哪里——3年愿景+1年目标）');
+  lines.push('二、市场洞察（市场/客户/竞争的关键发现）');
+  lines.push('三、创新焦点（增长引擎+创新方向）');
+  lines.push('四、业务设计（客户选择+价值主张+盈利模式+战略控制点）');
+  lines.push('五、差距分析（业绩差距+机会差距+根因）');
+  lines.push('六、关键任务TOP5（未来6个月必须完成的里程碑）');
+  lines.push('七、风险提示（战略执行中最大的3个风险）');
+
+  var result = lines.join('\n');
+  processWithAI('strategy-result', 'strategy-copy', result, '战略制定');
+  document.getElementById('strategy-to-plan-btn').style.display = '';
+  document.getElementById('plan-import-banner').style.display = '';
+}
+
+function clearStrategy() {
+  document.querySelectorAll('#panel-strategy input, #panel-strategy textarea').forEach(function(el) { el.value = ''; });
+  document.querySelectorAll('.preset-card').forEach(function(el) { el.classList.remove('selected'); });
+  document.getElementById('strategy-result').classList.remove('show');
+  document.getElementById('strategy-result').innerHTML = '';
+  document.getElementById('strategy-copy').style.display = 'none';
+  document.getElementById('strategy-to-plan-btn').style.display = 'none';
+  showToast('已清空');
+}
+
+function importStrategyToPlan() {
+  var blm1 = document.getElementById('blm-revenue-target').value.trim();
+  var blm2 = document.getElementById('blm-breakthrough').value.trim();
+  if (blm1 && !document.getElementById('plan-target1').value) document.getElementById('plan-target1').value = blm1;
+  if (blm2 && !document.getElementById('plan-target2').value) document.getElementById('plan-target2').value = blm2;
+  switchPanel('plan');
+  switchPlanSubtab('decode');
+  document.getElementById('plan-import-banner').style.display = '';
+  showToast('✅ 战略目标已导入计划中心，请完善KPI和责任人');
+}
+
+// ── 计划中心 ──
+function processPlan() {
+  var profile = getCompanyProfileText();
+  var data = getAllPlanData();
+  var lines = [];
+  if (profile) lines.push('【公司背景】\n' + profile + '\n');
+  lines.push('【年度计划解码（BEM）】');
+  data.targets.forEach(function(t, i) {
+    lines.push('目标' + (i+1) + '：' + t.target);
+    lines.push('  KPI：' + (t.kpi||'待定') + '  责任人：' + (t.owner||'待定') + '  截止：' + (t.deadline||'待定'));
+  });
+  if (data.tasks.length) {
+    lines.push('关键任务：');
+    data.tasks.forEach(function(t, i) {
+      lines.push('  ' + (i+1) + '. ' + t.task + '（责任人：' + (t.owner||'待定') + '，截止：' + (t.deadline||'待定') + '）');
+    });
+  }
+  lines.push('');
+  lines.push('请基于以上信息，输出：');
+  lines.push('一、年度目标体系评估（合理性/挑战性/一致性）');
+  lines.push('二、关键任务优先级排序与依赖关系');
+  lines.push('三、资源配置建议（人/财/物重点投向哪里）');
+  lines.push('四、里程碑节奏（按季度拆解的关键节点）');
+  lines.push('五、执行风险识别（最大阻碍+预案）');
+
+  var result = lines.join('\n');
+  processWithAI('plan-result', 'plan-copy', result, '计划解码');
+}
+
+function clearPlan() {
+  for (var i = 1; i <= 4; i++) {
+    document.getElementById('plan-target' + i).value = '';
+    document.getElementById('plan-kpi' + i).value = '';
+    document.getElementById('plan-owner' + i).value = '';
+    document.getElementById('plan-deadline' + i).value = '';
+  }
+  document.getElementById('plan-task-list').innerHTML = '';
+  document.getElementById('plan-result').classList.remove('show');
+  document.getElementById('plan-result').innerHTML = '';
+  document.getElementById('plan-copy').style.display = 'none';
+  document.getElementById('plan-import-banner').style.display = 'none';
+  showToast('已清空');
+}
+
+// ═══════════════════════════════════════
+// 人才中心逻辑
+// ═══════════════════════════════════════
+
+// ── 人才盘点（九宫格）──
+function addTalentToGrid() {
+  var name = document.getElementById('talent-name').value.trim();
+  var position = document.getElementById('talent-position').value.trim();
+  if (!name) { showToast('请输入姓名', 'warn'); return; }
+
+  var perf = document.getElementById('talent-performance').value;
+  var pot = document.getElementById('talent-potential').value;
+
+  var grid = getTalentGrid();
+  grid.push({ name: name, position: position, performance: perf, potential: pot });
+  localStorage.setItem(LS_TALENT_GRID, JSON.stringify(grid));
+  render9Box();
+  document.getElementById('talent-name').value = '';
+  document.getElementById('talent-position').value = '';
+  showToast('✅ 已加入九宫格');
+}
+
+function getTalentGrid() {
+  var g = null;
+  try { g = JSON.parse(localStorage.getItem(LS_TALENT_GRID)); } catch(e) {}
+  return g || [];
+}
+
+function render9Box() {
+  var grid = getTalentGrid();
+  var container = document.getElementById('talent9box');
+  if (!container) return;
+
+  var zoneLabels = [
+    { tag: '明星人才', cls: 'zone-1' },
+    { tag: '骨干力量', cls: 'zone-2' },
+    { tag: '熟练工', cls: 'zone-3' },
+    { tag: '待开发', cls: 'zone-4' },
+    { tag: '中坚力量', cls: 'zone-5' },
+    { tag: '老黄牛', cls: 'zone-6' },
+    { tag: '问题员工', cls: 'zone-7' },
+    { tag: '待观察', cls: 'zone-8' },
+    { tag: '淘汰区', cls: 'zone-9' }
+  ];
+
+  var zoneMap = {
+    'high-high': 0, 'high-mid': 1, 'mid-high': 1,
+    'high-low': 2, 'low-high': 3, 'mid-mid': 4,
+    'mid-low': 5, 'low-mid': 5, 'low-low': 8
+  };
+
+  var zonePeople = [];
+  for (var i = 0; i < 9; i++) zonePeople[i] = [];
+  grid.forEach(function(person) {
+    var key = person.performance + '-' + person.potential;
+    var zi = zoneMap[key] !== undefined ? zoneMap[key] : 4;
+    zonePeople[zi].push(person);
+  });
+
+  var html = '';
+  for (var z = 0; z < 9; z++) {
+    var zl = zoneLabels[z];
+    var people = zonePeople[z];
+    var peopleHtml = '';
+    people.forEach(function(p) {
+      peopleHtml += '<div style="font-size:10px;margin-top:2px;line-height:1.3">' +
+        escapeHtml(p.name) + '<br><span style="font-size:8px;opacity:.6">' + escapeHtml(p.position||'') + '</span></div>';
+    });
+    html += '<div class="grid-cell ' + zl.cls + '"><span class="cell-tag" style="font-size:8px;opacity:.6">' + zl.tag + '</span>' + peopleHtml + '</div>';
+  }
+  container.innerHTML = html;
+
+  var risks = getTalentRisks();
+  var badge = document.getElementById('riskBadge');
+  if (risks.length) {
+    badge.style.display = '';
+    badge.textContent = risks.length;
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function clearTalentGrid() {
+  if (confirm('确认清空人才盘点数据？')) {
+    localStorage.removeItem(LS_TALENT_GRID);
+    render9Box();
+    showToast('已清空');
+  }
+}
+
+function processTalentGrid() {
+  var profile = getCompanyProfileText();
+  var grid = getTalentGrid();
+  if (!grid.length) { showToast('请先添加至少一位高管到九宫格', 'warn'); return; }
+
+  var lines = [];
+  if (profile) lines.push('【公司背景】\n' + profile + '\n');
+  lines.push('【人才盘点数据】');
+  grid.forEach(function(p, i) {
+    var perfLabel = { high: '高绩效', mid: '中等绩效', low: '低绩效' }[p.performance] || p.performance;
+    var potLabel = { high: '高潜力', mid: '中等潜力', low: '低潜力' }[p.potential] || p.potential;
+    lines.push((i+1) + '. ' + p.name + ' — ' + (p.position||'') + '（' + perfLabel + ' / ' + potLabel + '）');
+  });
+
+  lines.push('');
+  lines.push('请基于以上人才盘点数据，输出：');
+  lines.push('一、九宫格分布概览（各区域人数+健康度评估）');
+  lines.push('二、明星人才分析（高绩效+高潜力——如何保留和加速发展）');
+  lines.push('三、待开发人才分析（高潜力但绩效未达标——问题在哪）');
+  lines.push('四、问题员工分析（低绩效+低潜力——处理建议）');
+  lines.push('五、能力缺口分析（关键岗位的人才匹配度）');
+  lines.push('六、行动建议：保留TOP3 / 发展TOP3 / 淘汰建议');
+
+  var result = lines.join('\n');
+  processWithAI('talent-grid-result', 'talent-grid-copy', result, '人才盘点');
+}
+
+// ── 离职预警 ──
+function getTalentRisks() {
+  var r = null;
+  try { r = JSON.parse(localStorage.getItem(LS_TALENT_RISK)); } catch(e) {}
+  return r || [];
+}
+
+function addAttritionAssessment() {
+  var name = document.getElementById('attr-name').value.trim();
+  if (!name) { showToast('请输入姓名', 'warn'); return; }
+  var dims = ['work','external','growth','pay','relation','personal'];
+  var scores = {};
+  dims.forEach(function(d) { scores[d] = parseInt(document.getElementById('attr-' + d).value) || 1; });
+  var total = Object.values(scores).reduce(function(a,b){return a+b;},0);
+  var riskLevel = total >= 20 ? '高' : total >= 14 ? '中' : '低';
+
+  var risks = getTalentRisks();
+  risks.push({
+    name: name,
+    position: document.getElementById('attr-position').value.trim(),
+    scores: scores,
+    total: total,
+    riskLevel: riskLevel,
+    date: new Date().toISOString()
+  });
+  localStorage.setItem(LS_TALENT_RISK, JSON.stringify(risks));
+  renderAttritionList();
+  // Clear inputs
+  document.getElementById('attr-name').value = '';
+  document.getElementById('attr-position').value = '';
+  dims.forEach(function(d) { document.getElementById('attr-' + d).value = 1; });
+  showToast('✅ 已添加到预警清单');
+}
+
+function renderAttritionList() {
+  var risks = getTalentRisks();
+  var container = document.getElementById('attrition-list');
+  if (!risks.length) { container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.2);padding:16px;font-size:12px">暂无预警数据</div>'; return; }
+  // Sort by risk (high first)
+  risks.sort(function(a,b) { return b.total - a.total; });
+  var html = '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px">📋 预警清单（按风险从高到低）</div>';
+  risks.forEach(function(r, i) {
+    var cls = r.riskLevel === '高' ? 'color:#ff8a8a' : r.riskLevel === '中' ? 'color:#ffd54f' : 'color:#48c78e';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(255,255,255,.02);border-radius:8px;margin-bottom:4px;font-size:12px">' +
+      '<span>' + escapeHtml(r.name) + ' — ' + escapeHtml(r.position||'') + '</span>' +
+      '<span style="' + cls + ';font-weight:600">总分' + r.total + '（' + r.riskLevel + '风险）</span>' +
+      '<button class="btn btn-danger btn-sm" onclick="deleteTalentRisk(' + i + ')" style="padding:2px 6px;font-size:10px">✕</button></div>';
+  });
+  container.innerHTML = html;
+}
+
+function deleteTalentRisk(i) {
+  var risks = getTalentRisks();
+  risks.splice(i, 1);
+  localStorage.setItem(LS_TALENT_RISK, JSON.stringify(risks));
+  renderAttritionList();
+}
+
+function processAttrition() {
+  var risks = getTalentRisks();
+  if (!risks.length) { showToast('请先添加至少一位高管的离职风险评估', 'warn'); return; }
+  var profile = getCompanyProfileText();
+  var lines = [];
+  if (profile) lines.push('【公司背景】\n' + profile + '\n');
+  lines.push('【离职风险评估数据】');
+  risks.forEach(function(r, i) {
+    lines.push((i+1) + '. ' + r.name + '（' + (r.position||'') + '）总分' + r.total + '/30 — ' + r.riskLevel + '风险');
+    lines.push('   工作状态' + r.scores.work + ' 外部诱惑' + r.scores.external + ' 发展空间' + r.scores.growth + ' 薪酬' + r.scores.pay + ' 关系' + r.scores.relation + ' 个人变动' + r.scores.personal);
+  });
+  lines.push('');
+  lines.push('请基于以上数据，输出：');
+  lines.push('一、离职风险TOP3排序（姓名+风险分+最核心原因）');
+  lines.push('二、每个高风险人员的保留策略（具体到薪酬/发展/关系/业务调整）');
+  lines.push('三、团队能力缺口分析（如果这些人离开，哪些能力会缺失）');
+  lines.push('四、预防性人才储备计划建议');
+  lines.push('五、老板应立即采取的3个行动');
+
+  var result = lines.join('\n');
+  processWithAI('attrition-result', 'attrition-copy', result, '离职预警');
+}
+
+// ── 人效分析 ──
+let efficiencyRadarChart = null;
+
+function processEfficiency() {
+  var profile = getCompanyProfileText();
+  var lines = [];
+  if (profile) lines.push('【公司背景】\n' + profile + '\n');
+  lines.push('【人效分析数据】');
+
+  var fields = {
+    'eff-period': '报告周期',
+    'eff-benchmark': '行业对标',
+    'eff-headcount': '员工总数',
+    'eff-revenue': '当期营收（万元）',
+    'eff-laborcost': '人力总成本（万元）',
+    'eff-vacancies': '关键岗位空缺',
+    'eff-mgmt-ratio': '管理人员占比',
+    'eff-key-attrition': '关键人才流失数'
+  };
+
+  Object.keys(fields).forEach(function(id) {
+    var el = document.getElementById(id);
+    var v = el.tagName === 'SELECT' ? el.options[el.selectedIndex].text : el.value.trim();
+    if (v && v !== '不使用对标') lines.push(fields[id] + '：' + v);
+  });
+
+  lines.push('');
+  lines.push('请基于以上数据，输出：');
+  lines.push('一、核心人效指标（人均营收/人均利润/人力成本占比）');
+  lines.push('二、6维人效雷达图分析（人效/成本/结构/流动/发展/激励）');
+  lines.push('三、行业对标分析（与同规模同行业企业对比）');
+  lines.push('四、TOP3人效瓶颈及根因');
+  lines.push('五、人效提升行动计划（短期/中期/长期）');
+
+  var result = lines.join('\n');
+  processWithAI('efficiency-result', 'efficiency-copy', result, '人效分析');
+
+  // Render radar chart
+  renderEfficiencyRadar();
+}
+
+function renderEfficiencyRadar() {
+  var headcount = parseFloat(document.getElementById('eff-headcount').value) || 48;
+  var revenue = parseFloat(document.getElementById('eff-revenue').value) || 540;
+  var laborcost = parseFloat(document.getElementById('eff-laborcost').value) || 130;
+  var vacancies = parseFloat(document.getElementById('eff-vacancies').value) || 3;
+  var mgmtRatio = parseFloat(document.getElementById('eff-mgmt-ratio').value) || 18;
+  var attrition = parseFloat(document.getElementById('eff-key-attrition').value) || 2;
+
+  var ctx = document.getElementById('efficiencyRadar');
+  if (!ctx) return;
+
+  // Normalize to 1-10 scale
+  var revenuePerHead = Math.min(10, (revenue / headcount) / 2);
+  var costRatio = Math.min(10, (laborcost / revenue) * 100 / 5);
+  var vacancyScore = Math.max(1, 10 - vacancies * 2);
+  var structure = Math.min(10, mgmtRatio / 3);
+  var stability = Math.max(1, 10 - attrition * 3);
+
+  if (efficiencyRadarChart) efficiencyRadarChart.destroy();
+  efficiencyRadarChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['人均营收', '成本效率', '人岗匹配', '组织结构', '人才稳定', '发展空间'],
+      datasets: [{
+        label: '你的人效画像',
+        data: [revenuePerHead, costRatio, vacancyScore, structure, stability, 6],
+        borderColor: '#d4af37',
+        backgroundColor: 'rgba(212,175,55,0.08)',
+        pointBackgroundColor: '#d4af37'
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        r: {
+          min: 0, max: 10,
+          ticks: { display: false, stepSize: 2 },
+          pointLabels: { color: 'rgba(255,255,255,0.5)', font: { size: 10 } },
+          grid: { color: 'rgba(255,255,255,0.06)' }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function clearEfficiency() {
+  document.querySelectorAll('#talent-efficiency input, #talent-efficiency select').forEach(function(el) { el.value = ''; });
+  document.getElementById('efficiency-result').classList.remove('show');
+  document.getElementById('efficiency-result').innerHTML = '';
+  document.getElementById('efficiency-copy').style.display = 'none';
+  showToast('已清空');
+}
+
+// ── 面试出题 ──
+function processExamQuestions() {
+  var position = document.getElementById('exam-position').value.trim();
+  var requirements = document.getElementById('exam-requirements').value.trim();
+  if (!position) { showToast('请至少填写应聘岗位', 'warn'); return; }
+
+  var dims = [];
+  ['strategy','leadership','execution','culture','business'].forEach(function(d) {
+    if (document.getElementById('exam-dim-' + d).checked) dims.push(d);
+  });
+  if (!dims.length) dims = ['strategy','leadership'];
+
+  var lines = [];
+  lines.push('请为「' + position + '」岗位生成面试题：');
+  if (requirements) lines.push('核心要求：' + requirements);
+  lines.push('考察维度：' + dims.join('、'));
+  lines.push('');
+  lines.push('要求：每个维度出3-5道题，每题包含：①问题 ②考察点 ③好回答标准 ④递进追问。');
+  lines.push('共5个维度：战略思维/领导力/执行力/文化匹配/商业敏锐度。');
+
+  var result = lines.join('\n');
+  processWithAI('exam-result', 'exam-copy', result, '面试出题');
+}
+
+function clearExam() {
+  document.getElementById('exam-position').value = '';
+  document.getElementById('exam-requirements').value = '';
+  document.getElementById('exam-result').classList.remove('show');
+  document.getElementById('exam-result').innerHTML = '';
+  document.getElementById('exam-copy').style.display = 'none';
+  showToast('已清空');
+}
+
+// ── 面试分析 ──
+function processInterviewAnalysis() {
+  var name = document.getElementById('analyze-name').value.trim();
+  if (!name) { showToast('请输入候选人姓名', 'warn'); return; }
+
+  var lines = [];
+  lines.push('【候选人面试分析】');
+  lines.push('姓名：' + name);
+  lines.push('应聘岗位：' + document.getElementById('analyze-position').value.trim());
+
+  var notes = document.getElementById('analyze-notes').value.trim();
+  if (notes) lines.push('面试记录：' + notes);
+
+  lines.push('四维打分：');
+  lines.push('  业绩能力：' + (document.getElementById('analyze-perf').value||7) + '/10');
+  lines.push('  战略思维：' + (document.getElementById('analyze-strategy').value||7) + '/10');
+  lines.push('  领导力：' + (document.getElementById('analyze-leadership').value||7) + '/10');
+  lines.push('  文化匹配：' + (document.getElementById('analyze-culture').value||7) + '/10');
+
+  lines.push('');
+  lines.push('请基于以上信息，输出：');
+  lines.push('一、四维能力雷达总结（每维一句话+总分评估）');
+  lines.push('二、证据链分析（哪些回答支撑了你的评分）');
+  lines.push('三、红旗信号（如有矛盾、回避、过度包装之处）');
+  lines.push('四、背景调查重点（需要验证的关键点）');
+  lines.push('五、录用建议（强推/可录/勉强/不建议+理由）');
+
+  var result = lines.join('\n');
+  processWithAI('analyze-result', 'analyze-copy', result, '面试分析');
+}
+
+function clearInterviewAnalysis() {
+  document.getElementById('analyze-name').value = '';
+  document.getElementById('analyze-position').value = '';
+  document.getElementById('analyze-notes').value = '';
+  ['perf','strategy','leadership','culture'].forEach(function(d) { document.getElementById('analyze-' + d).value = 7; });
+  document.getElementById('analyze-result').classList.remove('show');
+  document.getElementById('analyze-result').innerHTML = '';
+  document.getElementById('analyze-copy').style.display = 'none';
+  showToast('已清空');
+}
+
+// ── 试用辅佐 ──
+function processOnboard() {
+  var namePos = document.getElementById('onboard-name-position').value.trim();
+  if (!namePos) { showToast('请输入新任高管姓名+岗位', 'warn'); return; }
+
+  var lines = [];
+  lines.push('【高管试用辅佐方案】');
+  lines.push('新任高管：' + namePos);
+  lines.push('入职日期：' + (document.getElementById('onboard-date').value.trim()||'未设定'));
+  var concerns = document.getElementById('onboard-concerns').value.trim();
+  if (concerns) lines.push('面试中发现的担心点：' + concerns);
+  var expectations = document.getElementById('onboard-expectations').value.trim();
+  if (expectations) lines.push('核心期望（90天）：' + expectations);
+
+  lines.push('');
+  lines.push('请基于以上信息，输出高管试用辅佐方案：');
+  lines.push('一、30-60-90天融入计划（每个阶段关键里程碑）');
+  lines.push('二、风险诊断（基于面试担心点+岗位挑战的预判）');
+  lines.push('三、老板行动清单（每周/每月应该做什么来辅佐新人）');
+  lines.push('四、止损决策框架（什么信号出现时应该果断止损）');
+  lines.push('五、文化融入建议（如何帮他快速理解团队文化和权力地图）');
+
+  var result = lines.join('\n');
+  processWithAI('onboard-result', 'onboard-copy', result, '试用辅佐');
+}
+
+function clearOnboard() {
+  document.getElementById('onboard-name-position').value = '';
+  document.getElementById('onboard-date').value = '';
+  document.getElementById('onboard-concerns').value = '';
+  document.getElementById('onboard-expectations').value = '';
+  document.getElementById('onboard-result').classList.remove('show');
+  document.getElementById('onboard-result').innerHTML = '';
+  document.getElementById('onboard-copy').style.display = 'none';
+  showToast('已清空');
+}
+
+// ═══════════════════════════════════════
+// 风险中心逻辑
+// ═══════════════════════════════════════
+
+function getRiskRegister() {
+  var r = null;
+  try { r = JSON.parse(localStorage.getItem(LS_RISK_REGISTER)); } catch(e) {}
+  return r || [];
+}
+
+function addRisk() {
+  var name = document.getElementById('risk-name').value.trim();
+  if (!name) { showToast('请输入风险名称', 'warn'); return; }
+  var risks = getRiskRegister();
+  risks.push({
+    name: name,
+    category: document.getElementById('risk-category').value,
+    desc: document.getElementById('risk-desc').value.trim(),
+    probability: parseInt(document.getElementById('risk-probability').value) || 3,
+    impact: parseInt(document.getElementById('risk-impact').value) || 3,
+    date: new Date().toISOString()
+  });
+  localStorage.setItem(LS_RISK_REGISTER, JSON.stringify(risks));
+  renderRiskList();
+  // Clear inputs
+  document.getElementById('risk-name').value = '';
+  document.getElementById('risk-desc').value = '';
+  showToast('✅ 已添加到风险清单');
+  refreshDashboard();
+}
+
+function renderRiskList() {
+  var risks = getRiskRegister();
+  var container = document.getElementById('risk-list');
+  if (!risks.length) { container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.2);padding:16px;font-size:12px">暂无风险记录</div>'; return; }
+  var catLabels = { market: '市场', supply: '供应链', talent: '人才', finance: '财务', strategy: '战略', compliance: '合规' };
+  var html = '';
+  risks.forEach(function(r, i) {
+    var score = r.probability * r.impact;
+    var cls = score >= 16 ? 'color:#ff8a8a' : score >= 9 ? 'color:#ffd54f' : 'color:#48c78e';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(255,255,255,.02);border-radius:8px;margin-bottom:4px;font-size:12px">' +
+      '<span>' + escapeHtml(r.name) + ' <span style="font-size:10px;opacity:.5">[' + (catLabels[r.category]||r.category) + ']</span></span>' +
+      '<span style="' + cls + ';font-weight:600">P' + r.probability + '×I' + r.impact + '=' + score + '</span>' +
+      '<button class="btn btn-danger btn-sm" onclick="deleteRisk(' + i + ')" style="padding:2px 6px;font-size:10px">✕</button></div>';
+  });
+  container.innerHTML = html;
+}
+
+function deleteRisk(i) {
+  var risks = getRiskRegister();
+  risks.splice(i, 1);
+  localStorage.setItem(LS_RISK_REGISTER, JSON.stringify(risks));
+  renderRiskList();
+  refreshRiskMatrix();
+  refreshDashboard();
+}
+
+function processRiskReport() {
+  var risks = getRiskRegister();
+  if (!risks.length) { showToast('请先添加至少一条风险', 'warn'); return; }
+  var profile = getCompanyProfileText();
+  var lines = [];
+  if (profile) lines.push('【公司背景】\n' + profile + '\n');
+  lines.push('【风险清单】');
+  var catLabels = { market: '市场', supply: '供应链', talent: '人才', finance: '财务', strategy: '战略', compliance: '合规' };
+  risks.forEach(function(r, i) {
+    lines.push((i+1) + '. ' + r.name + ' [' + (catLabels[r.category]||r.category) + '] P' + r.probability + '×I' + r.impact + '=' + (r.probability*r.impact));
+    if (r.desc) lines.push('   描述：' + r.desc);
+  });
+  lines.push('');
+  lines.push('请基于以上风险清单，输出：');
+  lines.push('一、风险排序（按风险值从高到低，标注🔴高🟡中🟢低）');
+  lines.push('二、TOP3风险深度分析（根因+传导路径+最坏情况）');
+  lines.push('三、风险应对策略（规避/转移/缓解/接受，每项具体行动）');
+  lines.push('四、风险监控指标体系（哪些指标异常时触发预警）');
+  lines.push('五、应急预案框架（每条高风险如果发生了，前24h/第一周做什么）');
+
+  var result = lines.join('\n');
+  processWithAI('risk-result', 'risk-copy', result, '风险管理');
+}
+
+function refreshRiskMatrix() {
+  var risks = getRiskRegister();
+  var container = document.getElementById('riskMatrix');
+  // Build 5x5 matrix
+  var matrix = {};
+  for (var p = 1; p <= 5; p++) {
+    for (var i = 1; i <= 5; i++) { matrix[p + '-' + i] = []; }
+  }
+  risks.forEach(function(r) {
+    var key = r.probability + '-' + r.impact;
+    if (matrix[key]) matrix[key].push(r.name);
+  });
+
+  var html = '';
+  for (var row = 5; row >= 1; row--) {
+    for (var col = 1; col <= 5; col++) {
+      var key = col + '-' + row;
+      var items = matrix[key] || [];
+      var score = col * row;
+      var cls = score >= 16 ? 'high' : score >= 9 ? 'med' : 'low';
+      html += '<div class="risk-cell ' + cls + '">' +
+        (items.length ? items.length + '个风险' : '·') + '</div>';
+    }
+  }
+  container.innerHTML = html;
+}
+
+function renderRiskResponse() {
+  var risks = getRiskRegister();
+  var highRisks = risks.filter(function(r) { return r.probability * r.impact >= 12; }).sort(function(a,b) { return b.probability*b.impact - a.probability*a.impact; });
+  var container = document.getElementById('risk-response-list');
+  if (!highRisks.length) { container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.2);padding:24px;font-size:12px">暂无中高风险（P×I≥12）需要应急预案</div>'; return; }
+  var html = '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px">🛡️ 需制定预案的中高风险（P×I≥12）</div>';
+  highRisks.forEach(function(r) {
+    html += '<div style="padding:12px;background:rgba(255,107,107,.04);border:1px solid rgba(255,107,107,.1);border-radius:10px;margin-bottom:8px">' +
+      '<div style="font-weight:600;color:#ff8a8a;font-size:13px">' + escapeHtml(r.name) + '（P×I=' + (r.probability*r.impact) + '）</div>' +
+      '<div style="font-size:11px;color:var(--text-secondary);margin-top:4px">' + escapeHtml(r.desc||'') + '</div></div>';
+  });
+  container.innerHTML = html;
+}
+
+function processScenario() {
+  var risks = getRiskRegister();
+  var highRisks = risks.filter(function(r) { return r.probability * r.impact >= 12; });
+  if (!highRisks.length) { showToast('暂无中高风险需要情景推演', 'warn'); return; }
+  var profile = getCompanyProfileText();
+  var lines = [];
+  if (profile) lines.push('【公司背景】\n' + profile + '\n');
+  lines.push('【情景推演】');
+  highRisks.forEach(function(r, i) {
+    lines.push((i+1) + '. ' + r.name + '（P' + r.probability + '×I' + r.impact + '=' + (r.probability*r.impact) + '）');
+    if (r.desc) lines.push('   场景：' + r.desc);
+  });
+  lines.push('');
+  lines.push('请对以上风险进行情景推演：');
+  lines.push('对每条风险：');
+  lines.push('  • 最可能发生的场景是什么？');
+  lines.push('  • 发生后24小时/第一周/第一个月分别发生什么？');
+  lines.push('  • 连锁反应（单点故障会导致什么多米诺效应）');
+  lines.push('  • 恢复时间线和关键节点');
+  lines.push('  • 事前预防措施+事后应急预案');
+
+  var result = lines.join('\n');
+  processWithAI('risk-result', 'risk-copy', result, '情景推演');
+}
+
+// ═══════════════════════════════════════
+// Dashboard
+// ═══════════════════════════════════════
+function refreshDashboard() {
+  // Set date
+  var now = new Date();
+  document.getElementById('dashboard-date').textContent = '数据截至：' + now.toLocaleDateString('zh-CN', {year:'numeric', month:'long', day:'numeric'});
+
+  // Ops data
+  var opsData = null;
+  try { opsData = JSON.parse(localStorage.getItem(LS_OPS_DATA)); } catch(e) {}
+  var latestRevenue = '--';
+  var revenueChange = '';
+  if (opsData && opsData.length) {
+    var latest = parseFloat(opsData[0].revenue) || 0;
+    latestRevenue = latest + ' 万';
+    if (opsData.length >= 2) {
+      var prev = parseFloat(opsData[1].revenue) || 0;
+      if (prev) {
+        var chg = ((latest - prev) / prev * 100).toFixed(1);
+        revenueChange = (chg >= 0 ? '↑' : '↓') + Math.abs(chg) + '% vs 前日';
+      }
+    }
+  }
+  document.getElementById('dash-revenue').textContent = latestRevenue;
+  var rc = document.getElementById('dash-revenue-change');
+  rc.textContent = revenueChange;
+  rc.className = 'kpi-change ' + (revenueChange.indexOf('↑') !== -1 ? 'up' : 'down');
+
+  // Risk count
+  var risks = getRiskRegister();
+  var activeRisks = risks.filter(function(r) { return r.probability * r.impact >= 9; });
+  document.getElementById('dash-risks').textContent = activeRisks.length + ' 个';
+  document.getElementById('dash-risk-change').textContent = activeRisks.length > 3 ? '⚠️ 需关注' : '';
+
+  // Dashboard alerts
+  var alerts = [];
+  if (activeRisks.length >= 3) alerts.push({ msg: activeRisks.length + '个活跃风险需要关注', module: '风险中心 → 查看风险清单', warn: true, panel: 'risk' });
+  var talentRisks = getTalentRisks();
+  var highTalentRisks = talentRisks.filter(function(r) { return r.riskLevel === '高'; });
+  if (highTalentRisks.length) alerts.push({ msg: highTalentRisks.length + '位高管有高离职风险', module: '人才中心 → 离职预警', warn: true, panel: 'talent' });
+
+  var alertsHtml = '';
+  if (alerts.length) {
+    alerts.forEach(function(a) {
+      alertsHtml += '<div class="alert-item' + (a.warn ? ' warn' : '') + '" onclick="switchPanel(\'' + a.panel + '\')">' +
+        a.msg + '<div class="alert-module">' + a.module + '</div></div>';
+    });
+  } else {
+    alertsHtml = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:24px">暂无预警，一切正常 ✅</div>';
+  }
+  document.getElementById('dashboardAlerts').innerHTML = alertsHtml;
+
+  // Compute KPI from stored data
+  var gp = '--', cf = '--', he = '--', tr = '--';
+  if (opsData && opsData.length) {
+    var totalRevenue = opsData.reduce(function(s, d) { return s + (parseFloat(d.revenue) || 0); }, 0);
+    var avgRevenue = totalRevenue / opsData.length;
+    he = (avgRevenue > 0 ? (avgRevenue / 48).toFixed(1) : '--') + ' 万/人';
+  }
+  var planData = getAllPlanData();
+  if (planData && planData.targets.length) {
+    var completed = planData.targets.filter(function(t) { return t.deadline && new Date(t.deadline) < new Date(); }).length;
+    tr = planData.targets.length ? Math.round(completed / planData.targets.length * 100) + '%' : '--';
+  }
+  document.getElementById('dash-grossprofit').textContent = gp;
+  document.getElementById('dash-cashflow').textContent = cf;
+  document.getElementById('dash-headcount').textContent = he;
+  document.getElementById('dash-targetrate').textContent = tr;
+
+  // Update streak
+  var streak = parseInt(localStorage.getItem(LS_STREAK) || '0');
+  document.getElementById('brief-streak-count').textContent = streak;
+  if (streak > 0) document.getElementById('brief-streak').style.display = '';
+}
+
+// ═══════════════════════════════════════
+// AI Platforms Config
+// ═══════════════════════════════════════
+var AI_PLATFORMS = {
+  'DeepSeek':   { url: 'https://chat.deepseek.com/',     apiUrl: 'https://api.deepseek.com/v1/chat/completions',       apiKeyField: 'Authorization', apiKeyPrefix: 'Bearer ', model: 'deepseek-chat' },
+  'Kimi':       { url: 'https://kimi.moonshot.cn/',       apiUrl: 'https://api.moonshot.cn/v1/chat/completions',        apiKeyField: 'Authorization', apiKeyPrefix: 'Bearer ', model: 'moonshot-v1-8k' },
+  '智谱GLM':    { url: 'https://open.bigmodel.cn/',        apiUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', apiKeyField: 'Authorization', apiKeyPrefix: 'Bearer ', model: 'glm-4' },
+  'MiniMax':    { url: 'https://platform.minimax.io/',     apiUrl: 'https://api.minimax.chat/v1/text/chatcompletion_v2', apiKeyField: 'Authorization', apiKeyPrefix: 'Bearer ', model: 'abab6.5s-chat' },
+  'Coze':       { url: 'https://www.coze.cn/',             apiUrl: 'https://api.coze.cn/v3/chat',                        apiKeyField: 'Authorization', apiKeyPrefix: 'Bearer ', model: '' },
+  'ChatGPT':    { url: 'https://chatgpt.com/',             apiUrl: 'https://api.openai.com/v1/chat/completions',         apiKeyField: 'Authorization', apiKeyPrefix: 'Bearer ', model: 'gpt-4o' },
+  'Claude':     { url: 'https://claude.ai/',               apiUrl: 'https://api.anthropic.com/v1/messages',              apiKeyField: 'x-api-key',    apiKeyPrefix: '',           model: 'claude-sonnet-4-6' }
+};
+
+// ═══════════════════════════════════════
+// API Key Management
+// ═══════════════════════════════════════
+var LS_API_KEYS = 'zcb_api_keys';
+
+function openApiSettings() {
+  var keys = getApiKeys();
+  if (keys) {
+    // Show first saved key
+    var platforms = Object.keys(keys);
+    if (platforms.length) {
+      document.getElementById('apiPlatform').value = platforms[0];
+      document.getElementById('apiKeyInput').value = keys[platforms[0]] || '';
+    }
+  }
+  document.getElementById('apiKeyModal').classList.add('show');
+}
+
+function closeApiSettings() {
+  document.getElementById('apiKeyModal').classList.remove('show');
+  document.getElementById('apiKeyErr').textContent = '';
+}
+
+function getApiKeys() {
+  try { return JSON.parse(localStorage.getItem(LS_API_KEYS)); } catch(e) { return null; }
+}
+
+function saveApiKey() {
+  var platform = document.getElementById('apiPlatform').value;
+  var key = document.getElementById('apiKeyInput').value.trim();
+  if (!key) { document.getElementById('apiKeyErr').textContent = '请输入API Key'; return; }
+  var keys = getApiKeys() || {};
+  keys[platform] = key;
+  localStorage.setItem(LS_API_KEYS, JSON.stringify(keys));
+  document.getElementById('apiKeyErr').textContent = '';
+  closeApiSettings();
+  showToast('✅ ' + platform + ' API Key 已保存。分析将直接调用AI生成结果。');
+}
+
+function clearApiKey() {
+  if (confirm('确认清除所有已保存的API Key？')) {
+    localStorage.removeItem(LS_API_KEYS);
+    document.getElementById('apiKeyInput').value = '';
+    closeApiSettings();
+    showToast('API Key 已清除，恢复为复制模式');
+  }
+}
+
+function hasApiKey() {
+  var keys = getApiKeys();
+  return keys && Object.keys(keys).length > 0;
+}
+
+function getActiveApiConfig() {
+  var keys = getApiKeys();
+  if (!keys) return null;
+  // Use first available key
+  for (var platform in keys) {
+    if (keys[platform] && AI_PLATFORMS[platform]) {
+      return { platform: platform, key: keys[platform], config: AI_PLATFORMS[platform] };
+    }
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════
+// AI API Calling
+// ═══════════════════════════════════════
+function callAIAPI(prompt, callback) {
+  var apiConfig = getActiveApiConfig();
+  if (!apiConfig) { callback(null, 'no_key'); return; }
+
+  var config = apiConfig.config;
+  var body = null;
+  var headers = {};
+  headers['Content-Type'] = 'application/json';
+  headers[config.apiKeyField] = config.apiKeyPrefix + apiConfig.key;
+
+  if (apiConfig.platform === 'Claude') {
+    // Anthropic Messages API
+    body = JSON.stringify({
+      model: config.model,
+      max_tokens: 4096,
+      messages: [{ role: 'user', content: prompt }]
+    });
+  } else if (apiConfig.platform === 'Coze') {
+    // Coze API
+    body = JSON.stringify({
+      bot_id: '',
+      user: 'user',
+      query: prompt,
+      stream: false
+    });
+  } else {
+    // OpenAI-compatible (DeepSeek, Kimi, 智谱, MiniMax, ChatGPT)
+    body = JSON.stringify({
+      model: config.model,
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      max_tokens: 4096
+    });
+  }
+
+  fetch(config.apiUrl, {
+    method: 'POST',
+    headers: headers,
+    body: body
+  }).then(function(res) {
+    if (!res.ok) return res.text().then(function(t) { callback('API错误 ' + res.status + ': ' + t.substring(0, 200), null); });
+    return res.json();
+  }).then(function(data) {
+    if (!data) return;
+    var text = '';
+    if (apiConfig.platform === 'Claude') {
+      text = (data.content && data.content[0]) ? data.content[0].text : '';
+    } else {
+      text = (data.choices && data.choices[0]) ? (data.choices[0].message && data.choices[0].message.content) || '' : '';
+    }
+    if (text) {
+      callback(null, text);
+    } else {
+      callback('API返回为空，请检查Key是否有效', null);
+    }
+  }).catch(function(err) {
+    callback('网络错误: ' + err.message, null);
+  });
+}
+
+// ═══════════════════════════════════════
+// Unified Process Handler (API-first)
+// ═══════════════════════════════════════
+function processWithAI(resultBoxId, copyId, promptText, moduleName) {
+  if (!useOneCredit(moduleName)) return;
+
+  if (hasApiKey()) {
+    // API mode
+    var apiConfig = getActiveApiConfig();
+    showResult(resultBoxId, '', true);
+    var box = document.getElementById(resultBoxId);
+    box.querySelector('.api-status').textContent = '⏳ 正在调用 ' + apiConfig.platform + ' API…';
+
+    callAIAPI(promptText, function(err, aiResult) {
+      if (err) {
+        // API failed — fall back to prompt display
+        box.innerHTML = '<div style="color:#ff8a8a;margin-bottom:8px;font-size:11px">⚠️ API调用失败（' + escapeHtml(err) + '），已切换为指令模式</div>' +
+          '<div style="color:rgba(212,175,55,.8);margin-bottom:10px">✅ 指令已生成 ↓（可编辑后复制到任意AI工具）</div>' +
+          '<textarea style="width:100%;height:300px;background:rgba(0,0,0,.2);color:#d8d8d8;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px;font-family:inherit;font-size:13px;line-height:1.8;resize:vertical">' + escapeHtml(promptText) + '</textarea>';
+        box.classList.add('show');
+      } else {
+        // Success — show AI result
+        box.innerHTML = '<div style="color:#48c78e;margin-bottom:10px">🤖 ' + apiConfig.platform + ' 分析结果 ↓</div>' +
+          '<div style="background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px;font-size:13px;line-height:2;white-space:pre-wrap;color:rgba(255,255,255,.75);max-height:520px;overflow-y:auto;font-family:inherit">' + escapeHtml(aiResult) + '</div>';
+        box.classList.add('show');
+      }
+      showCopyArea(copyId);
+      saveToHistory(moduleName, aiResult || promptText, moduleName + '请求');
+    });
+    return;
+  }
+
+  // No API key — original copy mode
+  showResult(resultBoxId, promptText);
+  showCopyArea(copyId);
+  saveToHistory(moduleName, promptText, moduleName + '请求');
+}
+
+// ═══════════════════════════════════════
+// Result Display Helpers
+// ═══════════════════════════════════════
+function showResult(boxId, result, isApiLoading) {
+  var box = document.getElementById(boxId);
+  if (isApiLoading) {
+    box.innerHTML = '<div class="api-status" style="color:rgba(212,175,55,.8);margin-bottom:10px">⏳ 正在调用AI…</div>' +
+      '<div class="result-box loading" style="display:block">思考中，请稍候…</div>';
+  } else {
+    box.innerHTML = '<div style="color:rgba(212,175,55,.8);margin-bottom:10px">✅ 指令已生成 ↓（可编辑后复制）</div>' +
+      '<textarea style="width:100%;height:300px;background:rgba(0,0,0,.2);color:#d8d8d8;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px;font-family:inherit;font-size:13px;line-height:1.8;resize:vertical">' +
+      escapeHtml(result) + '</textarea>';
+  }
+  box.classList.add('show');
+}
+
+function showCopyArea(copyId) {
+  var el = document.getElementById(copyId);
+  if (!el) return;
+  // Ensure platform bar exists
+  var bar = el.querySelector('.ai-platform-bar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.className = 'ai-platform-bar';
+    el.appendChild(bar);
+  }
+  // Deduce result box ID from copy ID
+  var resultBoxId = copyId.replace('-copy', '-result');
+  // Populate platform buttons
+  bar.innerHTML = '<span class="ai-platform-label">DeepSeek 打不开？试试</span>';
+  var platforms = ['Kimi','智谱GLM','MiniMax','Coze','ChatGPT','Claude'];
+  var icons = { 'Kimi': '🌙', '智谱GLM': '🧠', 'MiniMax': '🐴', 'Coze': '🤖', 'ChatGPT': '🌐', 'Claude': '🧿' };
+  platforms.forEach(function(p) {
+    bar.innerHTML += '<button class="ai-platform-btn" onclick="copyAndOpenAI(\'' + p + '\',\'' + resultBoxId + '\')">' + (icons[p]||'') + ' ' + p + '</button>';
+  });
+  el.style.display = '';
+}
+
+function copyAndOpenAI(platform, resultBoxId) {
+  var box = document.getElementById(resultBoxId);
+  // Try to get text from result display or textarea
+  var text = '';
+  var resultDiv = box ? box.querySelector('div[style*="white-space:pre-wrap"]') : null;
+  if (resultDiv) {
+    text = resultDiv.textContent || '';
+  } else {
+    var textarea = box ? box.querySelector('textarea') : null;
+    if (textarea) text = textarea.value;
+  }
+
+  navigator.clipboard.writeText(text).then(function() {
+    showToast('✅ 已复制，正在打开 ' + platform + '…');
+  }).catch(function() {
+    showToast('请手动复制文本（选中内容Ctrl+C）', 'warn');
+  });
+
+  var platInfo = AI_PLATFORMS[platform];
+  if (platInfo && platInfo.url) {
+    setTimeout(function() { window.open(platInfo.url, '_blank'); }, 800);
+  }
+}
+
+// ═══════════════════════════════════════
+// Utilities
+// ═══════════════════════════════════════
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+
+function logout() {
+  if (confirm('确认退出当前账号？激活状态会保留，下次可直接使用。')) {
+    location.reload();
+  }
+}
+
+// ═══════════════════════════════════════
+// Init
+// ═══════════════════════════════════════
+(function init() {
+  // Show last code hint
+  var lastCode = localStorage.getItem('zb_last_code');
+  if (lastCode) {
+    document.getElementById('lastCodeHint').textContent = lastCode.substring(0, 8) + '…';
+    document.getElementById('loginHint').style.display = '';
+  }
+
+  // Check ref param
+  var params = new URLSearchParams(location.search);
+  var ref = params.get('ref');
+  if (ref) {
+    document.getElementById('refName').textContent = ref;
+    document.getElementById('refTag').style.display = '';
+  }
+
+  // Check if already activated
+  var activated = null;
+  try { activated = JSON.parse(localStorage.getItem(LS_ACTIVATED)); } catch(e) {}
+
+  if (activated && (activated.deviceId || activated.freeMode)) {
+    if (activated.deviceId && activated.deviceId !== getDeviceId()) {
+      // Different device
+      document.getElementById('loginScreen').style.display = '';
+      showToast('检测到设备变更，请重新激活', 'warn');
+      return;
+    }
+    if (!activated.freeMode && activated.expiry && new Date(activated.expiry) < new Date()) {
+      document.getElementById('loginScreen').style.display = '';
+      showToast('激活码已过期，请联系微信 miaoan1913 续费', 'warn');
+      return;
+    }
+    showMainApp(activated);
+  }
+
+  // Init dashboard streak
+  var streak = parseInt(localStorage.getItem(LS_STREAK) || '0');
+  document.getElementById('brief-streak-count').textContent = streak;
+  if (streak > 0) document.getElementById('brief-streak').style.display = '';
+
+  // Set default briefing date
+  document.getElementById('brief-date-display').textContent = new Date().toLocaleDateString('zh-CN', {year:'numeric', month:'long', day:'numeric'});
+
+  // Init risk matrix
+  refreshRiskMatrix();
+
+  // Add initial plan task rows
+  for (var i = 0; i < 3; i++) addPlanTask();
+
+  // Phone mode: auto-collapse sidebar
+  if (window.innerWidth <= 900) {
+    document.getElementById('sidebar').classList.add('collapsed');
+  }
+})();
+</script>
+</body>
+</html>

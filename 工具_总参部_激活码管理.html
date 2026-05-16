@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>总参部 · 激活码管理 · 安迪 AI调度师</title>
+<style>
+:root {
+  --bg-deep: #060e0a;
+  --bg-card: rgba(14, 24, 18, 0.85);
+  --bg-input: rgba(0,0,0,0.3);
+  --gold: #d4af37;
+  --gold-light: #e8d5a3;
+  --text-primary: #e6e0d0;
+  --text-secondary: rgba(255,255,255,0.5);
+  --text-muted: rgba(255,255,255,0.3);
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-gold: rgba(212,175,55,0.18);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-card: 0 1px 2px rgba(0,0,0,.4), 0 8px 32px rgba(0,0,0,.5);
+  --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Noto Sans SC',sans-serif;background:var(--bg-deep);color:var(--text-primary);-webkit-font-smoothing:antialiased;line-height:1.6;min-height:100vh}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(212,175,55,.025) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 100%,rgba(212,175,55,.015) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+.container{max-width:900px;margin:0 auto;padding:20px;position:relative;z-index:1}
+
+/* Header */
+.header{text-align:center;padding:30px 0 20px}
+.header .logo{font-size:48px;margin-bottom:8px}
+.header h1{font-size:24px;color:var(--gold-light);font-weight:700;letter-spacing:1px}
+.header .subt{font-size:12px;color:var(--text-secondary);margin-top:4px}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:20px;justify-content:center;flex-wrap:wrap}
+.tab{padding:9px 20px;border:1px solid rgba(255,255,255,.08);border-radius:10px;font-size:13px;cursor:pointer;background:rgba(255,255,255,.02);color:var(--text-secondary);transition:var(--transition);font-weight:500}
+.tab:hover{color:var(--gold-light);border-color:rgba(212,175,55,.15)}
+.tab.active{background:rgba(212,175,55,.1);color:var(--gold);border-color:rgba(212,175,55,.25);font-weight:600}
+
+/* Cards */
+.card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:26px;margin-bottom:20px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.card h3{font-size:17px;margin-bottom:6px;color:var(--gold-light)}
+.card .desc{font-size:12px;color:var(--text-secondary);margin-bottom:16px;line-height:1.7}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+
+/* Form */
+label{display:block;font-size:12px;font-weight:600;color:var(--text-secondary);margin:14px 0 5px}
+input,select,textarea{width:100%;padding:12px 15px;border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;background:var(--bg-input);color:var(--text-primary);transition:var(--transition)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(212,175,55,.04)}
+input::placeholder{color:rgba(255,255,255,.15)}
+textarea{resize:vertical;line-height:1.6}
+
+.btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn{padding:12px 24px;border:none;border-radius:var(--radius-sm);font-size:14px;cursor:pointer;font-weight:600;transition:var(--transition);white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,#d4af37,#b8960f);color:#0a0a0a;box-shadow:0 3px 14px rgba(212,175,55,.14)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(212,175,55,.22)}
+.btn-secondary{background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.08)}
+.btn-secondary:hover{background:rgba(255,255,255,.08);color:var(--text-primary)}
+.btn-outline{background:transparent;color:var(--gold);border:1px solid rgba(212,175,55,.25)}
+.btn-outline:hover{background:rgba(212,175,55,.06)}
+.btn-sm{padding:6px 14px;font-size:11px;border-radius:8px}
+.btn-danger{background:rgba(255,107,107,.1);color:#ff8a8a;border:1px solid rgba(255,107,107,.2)}
+
+/* Product Selector */
+.product-card{padding:16px 20px;border:2px solid rgba(255,255,255,.06);border-radius:var(--radius-md);cursor:pointer;text-align:center;transition:var(--transition)}
+.product-card:hover{border-color:rgba(212,175,55,.2)}
+.product-card.selected{border-color:var(--gold);background:rgba(212,175,55,.06)}
+.product-card .product-name{font-size:16px;font-weight:700;color:var(--gold-light)}
+.product-card .product-desc{font-size:11px;color:var(--text-secondary);margin-top:4px}
+
+/* Package Cards */
+.pkg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.pkg-card{padding:16px;border:1.5px solid rgba(255,255,255,.06);border-radius:var(--radius-sm);cursor:pointer;text-align:center;transition:var(--transition)}
+.pkg-card:hover{border-color:rgba(212,175,55,.15)}
+.pkg-card.selected{border-color:var(--gold);background:rgba(212,175,55,.06)}
+.pkg-card .pkg-name{font-size:15px;font-weight:700;color:var(--gold-light)}
+.pkg-card .pkg-price{font-size:18px;color:var(--gold);font-weight:700;margin-top:4px}
+.pkg-card .pkg-meta{font-size:10px;color:var(--text-muted);margin-top:4px}
+
+/* Generated Code */
+.code-display{background:rgba(0,0,0,.3);border:2px dashed var(--gold);border-radius:var(--radius-md);padding:24px;text-align:center;margin-top:16px;display:none}
+.code-display.show{display:block}
+.code-display .code-value{font-size:28px;font-family:'SF Mono','Fira Code','Courier New',monospace;color:var(--gold-light);letter-spacing:3px;word-break:break-all}
+.code-display .code-info{font-size:11px;color:var(--text-secondary);margin-top:8px;line-height:1.8}
+
+/* History Table */
+.history-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+.history-table th{text-align:left;padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.06);font-size:10px;color:var(--text-secondary);font-weight:600;letter-spacing:.5px}
+.history-table td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.03);font-size:12px}
+.history-table .status-active{color:#48c78e;font-weight:600}
+.history-table .status-expired{color:#ff8a8a;font-weight:600}
+.history-table .status-used{color:#ffd54f;font-weight:600}
+
+/* Copy Template */
+.template-box{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:16px;font-size:12px;line-height:2;white-space:pre-wrap;max-height:300px;overflow-y:auto;color:rgba(255,255,255,.75);margin-top:12px;display:none}
+.template-box.show{display:block}
+
+/* Toast */
+.toast{position:fixed;top:28px;left:50%;transform:translateX(-50%);background:rgba(30,28,18,.98);color:var(--gold-light);padding:12px 28px;border-radius:24px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 36px rgba(0,0,0,.6);border:1px solid rgba(212,175,55,.2);font-weight:500}
+.toast.show{opacity:1}
+
+@media(max-width:640px){
+  .container{padding:12px}
+  .card{padding:14px}
+  .code-display .code-value{font-size:20px;letter-spacing:1px}
+  .pkg-grid{grid-template-columns:1fr 1fr}
+  .btn{width:100%}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="logo">🎖️</div>
+    <h1>总参部 · 激活码管理</h1>
+    <div class="subt">生成激活码 · 管理客户 · 发送话术</div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('generate')">🔑 生成激活码</div>
+    <div class="tab" onclick="switchTab('history')">📋 发放记录</div>
+    <div class="tab" onclick="switchTab('templates')">💬 发送话术</div>
+  </div>
+
+  <!-- Generate Tab -->
+  <div id="tab-generate">
+    <div class="card">
+      <h3>① 选择产品</h3>
+      <div class="card-grid" style="margin-top:12px">
+        <div class="product-card selected" id="prod-zongcanmou" onclick="selectProduct('zongcanmou')">
+          <div class="product-name">🎖️ 总参部</div>
+          <div class="product-desc">经营看板 · 战略推演 · 人才地图 · 风险预警<br>华为BLM/DSTE驱动，五大中心联动</div>
+        </div>
+        <div class="product-card" id="prod-chief" onclick="selectProduct('chief')">
+          <div class="product-name">🤖 AI总参谋</div>
+          <div class="product-desc">经营诊断 · 人才盘点 · 决策推演<br>七大功能模块，输入即出指令</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>② 客户信息</h3>
+      <label>客户名称</label>
+      <input type="text" id="customerName" placeholder="如：张总 / XX服饰有限公司">
+      <label>备注（选填）</label>
+      <input type="text" id="customerNote" placeholder="如：朋友介绍 / 抖音粉丝 / 展会客户">
+      <label>绑定微信（选填）</label>
+      <input type="text" id="customerWechat" placeholder="客户微信号">
+    </div>
+
+    <div class="card">
+      <h3>③ 选择套餐</h3>
+      <div class="pkg-grid">
+        <div class="pkg-card selected" id="pkg-month" onclick="selectPackage('month')">
+          <div class="pkg-name">月卡</div>
+          <div class="pkg-price">¥999</div>
+          <div class="pkg-meta">30次 · 30天有效</div>
+        </div>
+        <div class="pkg-card" id="pkg-half" onclick="selectPackage('half')">
+          <div class="pkg-name">半年卡</div>
+          <div class="pkg-price">¥4999</div>
+          <div class="pkg-meta">200次 · 180天有效</div>
+        </div>
+        <div class="pkg-card" id="pkg-year" onclick="selectPackage('year')">
+          <div class="pkg-name">年卡</div>
+          <div class="pkg-price">¥9999</div>
+          <div class="pkg-meta">500次 · 365天有效</div>
+        </div>
+        <div class="pkg-card" id="pkg-custom" onclick="selectPackage('custom')">
+          <div class="pkg-name">自定义</div>
+          <div class="pkg-price">--</div>
+          <div class="pkg-meta" style="margin-top:8px">
+            <input type="number" id="customTimes" placeholder="次数" style="width:80%;text-align:center;font-size:13px;padding:6px" onclick="event.stopPropagation()">
+            <input type="number" id="customDays" placeholder="天数" style="width:80%;text-align:center;font-size:13px;padding:6px;margin-top:4px" onclick="event.stopPropagation()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center">
+      <h3>④ 生成激活码</h3>
+      <button class="btn btn-primary" onclick="generateCode()" style="font-size:16px;padding:14px 36px">🔑 生成激活码</button>
+      <div class="code-display" id="codeDisplay">
+        <div class="code-value" id="codeValue"></div>
+        <div class="code-info" id="codeInfo"></div>
+        <div class="btn-row" style="justify-content:center;margin-top:14px">
+          <button class="btn btn-outline" onclick="copyCode()">📋 复制激活码</button>
+          <button class="btn btn-primary" onclick="prepareTemplate()">💬 复制发送话术</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Tab -->
+  <div id="tab-history" style="display:none">
+    <div class="card">
+      <h3>📋 发放记录</h3>
+      <div class="desc">所有已生成的激活码记录。点击可复制激活码或话术。</div>
+      <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <select id="historyFilter" onchange="renderHistory()" style="width:auto;padding:8px 12px;border:1px solid rgba(255,255,255,.08);border-radius:8px;font-size:12px;background:rgba(0,0,0,.2);color:#d8d8d8;font-family:inherit">
+          <option value="all">全部产品</option>
+          <option value="zongcanmou">总参部</option>
+          <option value="chief">AI总参谋</option>
+        </select>
+        <button class="btn btn-secondary btn-sm" onclick="exportHistory()">📥 导出CSV</button>
+        <button class="btn btn-danger btn-sm" onclick="clearHistory()">🗑️ 清空记录</button>
+      </div>
+      <table class="history-table">
+        <thead><tr><th>时间</th><th>产品</th><th>客户</th><th>套餐</th><th>激活码</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody id="historyTableBody"><tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.2);padding:24px">暂无记录</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Templates Tab -->
+  <div id="tab-templates" style="display:none">
+    <div class="card">
+      <h3>💬 发送话术模板</h3>
+      <div class="desc">生成激活码后，选模板一键复制发给客户。</div>
+      <label>选择模板</label>
+      <select id="templateSelect" onchange="showTemplate()" style="width:100%">
+        <option value="">-- 请先生成激活码再选模板 --</option>
+        <option value="formal">模板一 · 正式版（微信/企微首发）</option>
+        <option value="short">模板二 · 简短版（朋友圈/群内私信）</option>
+        <option value="receipt">模板三 · 激活码发放回执</option>
+        <option value="renewal">模板四 · 快到期提醒</option>
+      </select>
+      <div class="template-box" id="templateBox"></div>
+      <div class="btn-row" id="templateBtns" style="display:none">
+        <button class="btn btn-primary" onclick="copyTemplate()">📋 复制话术</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════
+// State
+// ═══════════════════════════════
+var selectedProduct = 'zongcanmou';
+var selectedPackage = 'month';
+var lastGeneratedCode = null;
+var lastGeneratedInfo = null;
+
+// ═══════════════════════════════
+// Toast
+// ═══════════════════════════════
+var _toastTimer;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show';
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+
+// ═══════════════════════════════
+// Product Selection
+// ═══════════════════════════════
+function selectProduct(p) {
+  selectedProduct = p;
+  document.querySelectorAll('.product-card').forEach(function(el){ el.classList.remove('selected'); });
+  document.getElementById('prod-' + p).classList.add('selected');
+}
+
+// ═══════════════════════════════
+// Package Selection
+// ═══════════════════════════════
+function selectPackage(p) {
+  selectedPackage = p;
+  document.querySelectorAll('.pkg-card').forEach(function(el){ el.classList.remove('selected'); });
+  document.getElementById('pkg-' + p).classList.add('selected');
+}
+
+// ═══════════════════════════════
+// Generate Code
+// ═══════════════════════════════
+function generateCode() {
+  var name = document.getElementById('customerName').value.trim();
+  if (!name) { showToast('请输入客户名称'); return; }
+
+  var now = new Date();
+  var ts = now.getTime().toString(36).toUpperCase();
+
+  // Generate code: PRODUCT-YYYYMM-TYPE-RANDOM-HASH
+  var prod = selectedProduct === 'zongcanmou' ? 'ZCB' : 'ZCM';
+  var datePart = now.getFullYear().toString() + pad(now.getMonth()+1) + pad(now.getDate());
+
+  var pkgInfo, pkgTimes, pkgDays, pkgLabel;
+  switch (selectedPackage) {
+    case 'month': pkgTimes = 30; pkgDays = 30; pkgLabel = '月卡'; break;
+    case 'half':  pkgTimes = 200; pkgDays = 180; pkgLabel = '半年卡'; break;
+    case 'year':  pkgTimes = 500; pkgDays = 365; pkgLabel = '年卡'; break;
+    case 'custom':
+      pkgTimes = parseInt(document.getElementById('customTimes').value) || 100;
+      pkgDays = parseInt(document.getElementById('customDays').value) || 90;
+      pkgLabel = '定制';
+      break;
+  }
+
+  var pkgCode = pkgTimes + 'T' + pkgDays + 'D';
+  var random = Math.random().toString(36).substring(2, 6).toUpperCase();
+  var code = prod + '-' + datePart + '-' + pkgCode + '-' + random;
+
+  // Save to history
+  var history = getHistory();
+  var record = {
+    code: code,
+    product: selectedProduct === 'zongcanmou' ? '总参部' : 'AI总参谋',
+    productId: selectedProduct,
+    customer: name,
+    note: document.getElementById('customerNote').value.trim(),
+    wechat: document.getElementById('customerWechat').value.trim(),
+    package: pkgLabel,
+    times: pkgTimes,
+    days: pkgDays,
+    date: now.toISOString(),
+    status: 'active'
+  };
+  history.unshift(record);
+  localStorage.setItem('zongcanmou_code_history', JSON.stringify(history));
+
+  // Display
+  lastGeneratedCode = code;
+  lastGeneratedInfo = record;
+
+  document.getElementById('codeValue').textContent = code;
+  document.getElementById('codeInfo').innerHTML =
+    '👤 客户：' + name + '<br>' +
+    '📦 产品：' + record.product + '｜套餐：' + pkgLabel + '<br>' +
+    '🔢 次数：' + pkgTimes + '次｜有效期：' + pkgDays + '天<br>' +
+    '📅 生成时间：' + now.toLocaleString();
+  document.getElementById('codeDisplay').classList.add('show');
+
+  showToast('✅ 激活码已生成');
+}
+
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+function copyCode() {
+  if (!lastGeneratedCode) return;
+  navigator.clipboard.writeText(lastGeneratedCode).then(function(){
+    showToast('✅ 激活码已复制');
+  });
+}
+
+// ═══════════════════════════════
+// History
+// ═══════════════════════════════
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem('zongcanmou_code_history')); } catch(e) {}
+  return [];
+}
+
+function renderHistory() {
+  var history = getHistory();
+  var filter = document.getElementById('historyFilter').value;
+  if (filter !== 'all') history = history.filter(function(r){ return r.productId === filter; });
+
+  var tbody = document.getElementById('historyTableBody');
+  if (!history.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.2);padding:24px">暂无记录</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = history.map(function(r, i){
+    var d = new Date(r.date);
+    var expiry = new Date(d.getTime() + r.days * 86400000);
+    var statusHtml;
+    if (expiry < new Date()) statusHtml = '<span class="status-expired">已过期</span>';
+    else statusHtml = '<span class="status-active">有效</span>';
+
+    return '<tr>' +
+      '<td>' + d.toLocaleDateString('zh-CN') + '</td>' +
+      '<td>' + r.product + '</td>' +
+      '<td>' + r.customer + '</td>' +
+      '<td>' + r.package + '（' + r.times + '次/' + r.days + '天）</td>' +
+      '<td><code style="font-size:10px;cursor:pointer" onclick="copyHistoryCode(' + i + ')" title="点击复制">' + r.code.substring(0, 16) + '…</code></td>' +
+      '<td>' + statusHtml + '</td>' +
+      '<td><button class="btn btn-outline btn-sm" onclick="copyHistoryCode(' + i + ')" style="padding:3px 8px;font-size:10px">📋</button> <button class="btn btn-danger btn-sm" onclick="deleteCode(' + i + ')" style="padding:3px 8px;font-size:10px">✕</button></td>' +
+      '</tr>';
+  }).join('');
+}
+
+function copyHistoryCode(i) {
+  var history = getHistory();
+  var r = history[i];
+  if (!r) return;
+  lastGeneratedCode = r.code;
+  lastGeneratedInfo = r;
+  navigator.clipboard.writeText(r.code).then(function(){
+    showToast('✅ 激活码已复制：' + r.code.substring(0, 16) + '…');
+  });
+}
+
+function deleteCode(i) {
+  if (!confirm('确认删除这条记录？')) return;
+  var history = getHistory();
+  history.splice(i, 1);
+  localStorage.setItem('zongcanmou_code_history', JSON.stringify(history));
+  renderHistory();
+  showToast('已删除');
+}
+
+function clearHistory() {
+  if (!confirm('确认清空所有发放记录？此操作不可恢复。')) return;
+  localStorage.removeItem('zongcanmou_code_history');
+  renderHistory();
+  showToast('记录已清空');
+}
+
+function exportHistory() {
+  var history = getHistory();
+  var csv = '时间,产品,客户,套餐,次数,天数,激活码,状态\n';
+  history.forEach(function(r){
+    var expiry = new Date(new Date(r.date).getTime() + r.days * 86400000);
+    csv += [new Date(r.date).toLocaleDateString(), r.product, r.customer, r.package, r.times, r.days, r.code, expiry < new Date() ? '已过期' : '有效'].join(',') + '\n';
+  });
+  var blob = new Blob(['﻿' + csv], {type:'text/csv;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = '激活码发放记录.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════
+// Templates
+// ═══════════════════════════════════
+function prepareTemplate() {
+  if (!lastGeneratedCode || !lastGeneratedInfo) { showToast('请先生成激活码'); return; }
+  switchTab('templates');
+  document.getElementById('templateSelect').value = 'formal';
+  showTemplate();
+}
+
+function showTemplate() {
+  var sel = document.getElementById('templateSelect').value;
+  var box = document.getElementById('templateBox');
+  var btns = document.getElementById('templateBtns');
+  if (!sel) { box.classList.remove('show'); btns.style.display = 'none'; return; }
+
+  var info = lastGeneratedInfo;
+  if (!info && sel) {
+    // Try to load from last history entry
+    var history = getHistory();
+    if (history.length) {
+      info = history[0];
+      lastGeneratedCode = info.code;
+      lastGeneratedInfo = info;
+    }
+  }
+  if (!info) { box.innerHTML = '请先生成激活码'; box.classList.add('show'); btns.style.display = 'none'; return; }
+
+  var expiry = new Date(new Date(info.date).getTime() + info.days * 86400000);
+  var expiryStr = expiry.getFullYear() + '-' + pad(expiry.getMonth()+1) + '-' + pad(expiry.getDate());
+  var workbenchUrl = 'https://andy-miaoan.github.io/ai-zongcanmou/AI总参谋工作台.html';
+
+  var templates = {
+    formal:
+      info.customer + '您好，您的「安迪AI调度师 · ' + info.product + '」已开通 🎉\n\n' +
+      '📌 工作台：' + workbenchUrl + '\n' +
+      '🔑 激活码：' + info.code + '\n\n' +
+      '━━ ' + info.package + ' · 到期 ' + expiryStr + ' · ' + info.times + '次 ━━\n\n' +
+      '━━ 使用方法（30秒上手）━━\n' +
+      '打开链接 → 输入激活码 → 输入微信号\n' +
+      '→ 🎯 三个场景入口：「经营诊断」「人才盘点」「决策推演」，点进去直接开始\n' +
+      '→ 或直接用 🤖 万能输入框，一句话说出需求\n' +
+      '→ 填少量必填字段 → 点生成出结果\n\n' +
+      (info.productId === 'zongcanmou' ?
+        '💡 总参部亮点：\n' +
+        '📊 五大中心联动：经营→战略→计划→人才→风险\n' +
+        '🧠 华为BLM/DSTE战略模型驱动\n' +
+        '🏪 6种服装/电商行业模式预设\n' +
+        '📡 每日经营早报，3分钟掌握全局\n' :
+        '💡 新功能亮点：\n' +
+        '📊 经营分析仅需填3个核心字段\n' +
+        '⏭ 智能流程串联\n' +
+        '🧠 企业名称自动记忆\n') +
+      '\n💬 任何问题随时联系：miaoan1913\n\n—— 安迪 AI调度师',
+
+    short:
+      '您的' + info.product + '已就位 ✅\n\n' +
+      '🔗 ' + workbenchUrl + '\n' +
+      '🔑 激活码：' + info.code + '\n\n' +
+      (info.productId === 'zongcanmou' ?
+        '五大中心一条龙：经营看板 → 战略推演 → 计划解码 → 人才地图 → 风险预警\n' :
+        '七大功能一条龙：经营早报 → 经营分析 → 人才盘点 → 决策沙盘 → 面试题库 → 面试分析 → 试用辅佐\n') +
+      '打开链接 → 输激活码 → 点场景入口 → 开始使用。老板的随身参谋部。\n\n' +
+      '💬 有问题找我：miaoan1913',
+
+    receipt:
+      info.customer + '，激活码已发放，信息确认：\n\n' +
+      '🔑 激活码：' + info.code + '\n' +
+      '👤 绑定人数：1个微信\n' +
+      '📅 有效期：' + expiryStr + '\n' +
+      '🔢 可用次数：' + info.times + '次\n\n' +
+      '📌 工作台：' + workbenchUrl + '\n\n' +
+      '建议收藏链接，每次使用打开即可。激活码建议截图保存，或长按复制存到备忘录。',
+
+    renewal:
+      info.customer + '，您的' + info.product + '会员即将到期（剩余X天/X次），建议提前续费避免中断。\n\n' +
+      '🔗 ' + workbenchUrl + '\n' +
+      '💬 续费联系：miaoan1913'
+  };
+
+  box.textContent = templates[sel] || '';
+  box.classList.add('show');
+  btns.style.display = '';
+}
+
+function copyTemplate() {
+  var text = document.getElementById('templateBox').textContent;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(function(){
+    showToast('✅ 话术已复制，可直接粘贴给客户');
+  });
+}
+
+// ═══════════════════════════════════
+// Tabs
+// ═══════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(el){
+    if (el.textContent.indexOf(tab === 'generate' ? '生成激活码' : tab === 'history' ? '发放记录' : '发送话术') !== -1) el.classList.add('active');
+  });
+  document.getElementById('tab-generate').style.display = tab === 'generate' ? '' : 'none';
+  document.getElementById('tab-history').style.display = tab === 'history' ? '' : 'none';
+  document.getElementById('tab-templates').style.display = tab === 'templates' ? '' : 'none';
+  if (tab === 'history') renderHistory();
+}
+
+// ═══════════════════════════════════
+// Init
+// ═══════════════════════════════════
+(function init() {
+  renderHistory();
+})();
+</script>
+</body>
+</html>
