@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI总参谋 · 产品介绍手册 | 安迪 AI调度师</title>
+<style>
+:root {
+  --bg: #060e0a; --card: rgba(14, 24, 18, 0.85); --border: rgba(212, 175, 55, 0.15);
+  --gold: #d4af37; --gold-light: #e8d5a3; --gold-dark: #a68a2e;
+  --gold-glow: rgba(212, 175, 55, 0.08);
+  --text: #e6e0d0; --text2: rgba(255, 255, 255, 0.65); --text3: rgba(255, 255, 255, 0.48);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.8; overflow-x: hidden;
+}
+body::before {
+  content:''; position:fixed; top:0; left:0; width:100%; height:100%;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212,175,55,.025) 0%, transparent 60%),
+              radial-gradient(ellipse 50% 40% at 80% 100%, rgba(212,175,55,.015) 0%, transparent 50%);
+  pointer-events:none; z-index:0;
+}
+
+/* Nav */
+.top-nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  background:rgba(4,10,6,.88); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border); padding:0 32px;
+}
+.top-nav .inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:56px; }
+.top-nav .logo { display:flex; align-items:center; gap:10px; }
+.top-nav .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,#e0c04a,#b8950e); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; color:#0a0a0a; font-weight:800; }
+.top-nav .logo-text { font-size:13px; color:var(--gold); letter-spacing:2px; font-weight:600; }
+.top-nav .nav-links { display:flex; gap:28px; list-style:none; }
+.top-nav .nav-links a { color:var(--text2); text-decoration:none; font-size:12px; letter-spacing:.5px; transition:color .2s; }
+.top-nav .nav-links a:hover { color:var(--gold-light); }
+
+/* Hero */
+.hero {
+  text-align:center; padding:130px 24px 80px; position:relative; overflow:hidden; z-index:1;
+  background:linear-gradient(175deg,#040a06 0%,#08120c 40%,#0a1810 100%);
+}
+.hero::before {
+  content:''; position:absolute; top:0; left:0; width:100%; height:100%;
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(212,175,55,.06) 0%, transparent 60%),
+              radial-gradient(ellipse 40% 40% at 80% 80%, rgba(212,175,55,.03) 0%, transparent 55%),
+              url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='rgba(212,175,55,.015)' stroke-width='.5'/%3E%3C/svg%3E") repeat;
+  pointer-events:none;
+}
+.hero .overline { font-size:11px; letter-spacing:4px; color:var(--gold); text-transform:uppercase; margin-bottom:16px; font-weight:600; }
+.hero h1 { font-size:clamp(34px,5vw,52px); font-weight:800; letter-spacing:3px; margin-bottom:10px; }
+.hero h1 span { background:linear-gradient(180deg,#f0e0b0 0%,#d4af37 40%,#a68a2e 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.hero .subtitle { font-size:18px; color:var(--text2); letter-spacing:2px; margin-bottom:10px; }
+.hero .tagline { font-size:14px; color:var(--text3); max-width:560px; margin:0 auto 40px; line-height:1.9; }
+.hero .cta-row { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+.btn-primary {
+  display:inline-block; padding:14px 36px; background:linear-gradient(135deg,#e0c04a,#c9a520,#b8950e);
+  color:#0a0a0a; border-radius:50px; font-size:15px; font-weight:600; text-decoration:none;
+  transition:.25s; border:none; cursor:pointer; letter-spacing:1px;
+  box-shadow:0 4px 24px rgba(212,175,55,.18);
+}
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 36px rgba(212,175,55,.3); }
+.btn-outline {
+  display:inline-block; padding:14px 36px; border:1.5px solid rgba(212,175,55,.22);
+  color:var(--gold-light); border-radius:50px; font-size:15px; font-weight:600; text-decoration:none;
+  transition:.25s; cursor:pointer; letter-spacing:1px;
+}
+.btn-outline:hover { background:rgba(212,175,55,.06); border-color:rgba(212,175,55,.4); }
+
+/* Sections */
+.container { max-width:1000px; margin:0 auto; padding:0 28px; position:relative; z-index:1; }
+.section { padding:80px 0; position:relative; z-index:1; }
+.section-dark { background:rgba(14,24,18,.4); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.section-label {
+  display:inline-block; padding:5px 16px; border-radius:20px; font-size:10px; font-weight:700;
+  letter-spacing:2.5px; margin-bottom:16px; text-transform:uppercase;
+  background:rgba(212,175,55,.08); color:var(--gold); border:1px solid rgba(212,175,55,.15);
+}
+.section h2 { font-size:30px; font-weight:700; margin-bottom:8px; color:var(--gold-light); letter-spacing:1px; }
+.section .lead { font-size:15px; color:var(--text2); margin-bottom:32px; max-width:580px; }
+
+/* Cards */
+.card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:18px; }
+.info-card {
+  background:var(--card); border:1px solid var(--border); border-radius:16px; padding:30px 26px;
+  transition:.3s; position:relative; overflow:hidden;
+}
+.info-card:hover { border-color:rgba(212,175,55,.25); transform:translateY(-3px); box-shadow:0 16px 48px rgba(0,0,0,.4); }
+.info-card .icon { font-size:32px; margin-bottom:12px; display:block; }
+.info-card h4 { font-size:15px; color:var(--gold-light); margin-bottom:6px; }
+.info-card p { font-size:13px; color:var(--text2); line-height:1.7; }
+.info-card .tag {
+  display:inline-block; padding:3px 12px; background:rgba(212,175,55,.08); border:1px solid var(--border);
+  border-radius:10px; font-size:11px; color:var(--gold); margin-top:10px;
+}
+
+/* Pain highlight */
+.pain-box {
+  background:rgba(212,175,55,.04); border:1px solid rgba(212,175,55,.18); border-radius:14px;
+  padding:28px 32px; text-align:center; margin-bottom:36px;
+}
+.pain-box p { font-size:14px; color:var(--text2); line-height:2; }
+.pain-box strong { color:var(--gold-light); }
+
+/* Steps */
+.steps { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.step {
+  text-align:center; padding:30px 20px; background:var(--card); border:1px solid var(--border);
+  border-radius:14px; position:relative;
+}
+.step-num {
+  width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,#e0c04a,#b8960f);
+  display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:700;
+  margin:0 auto 12px; color:#0a0a0a; box-shadow:0 4px 16px rgba(212,175,55,.25);
+}
+.step h4 { font-size:15px; margin-bottom:4px; color:var(--gold-light); }
+.step p { font-size:12px; color:var(--text2); }
+.step-arrow { position:absolute; right:-18px; top:50%; transform:translateY(-50%); font-size:22px; color:var(--gold); }
+
+/* Module cards */
+.module-grid { display:grid; gap:12px; }
+.module-card {
+  background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px 24px;
+  display:flex; gap:16px; align-items:flex-start; transition:.3s;
+}
+.module-card:hover { border-color:rgba(212,175,55,.25); background:rgba(20,30,22,.9); }
+.module-card .m-icon { font-size:30px; flex-shrink:0; width:46px; text-align:center; }
+.module-card .m-info { flex:1; }
+.module-card .m-info h4 { font-size:15px; margin-bottom:4px; color:var(--gold-light); }
+.module-card .m-info p { font-size:12px; color:var(--text2); line-height:1.7; }
+.module-card .m-tag {
+  display:inline-block; padding:3px 12px; background:rgba(212,175,55,.1);
+  border-radius:10px; font-size:11px; color:#e0c04a; margin-top:6px; font-weight:500;
+}
+
+/* Pricing */
+.pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.price-card {
+  background:var(--card); border:1px solid var(--border); border-radius:16px; padding:34px 24px;
+  text-align:center; transition:.3s; position:relative;
+}
+.price-card:hover { transform:translateY(-4px); box-shadow:0 16px 48px rgba(0,0,0,.4); }
+.price-card.featured { border-color:var(--gold); box-shadow:0 0 40px rgba(212,175,55,.05); }
+.price-card.featured::before {
+  content:'推荐'; position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+  background:linear-gradient(135deg,#e0c04a,#b8960f); color:#0a0a0a; padding:4px 20px;
+  border-radius:12px; font-size:11px; font-weight:700; letter-spacing:1px;
+}
+.price-card .plan-name { font-size:14px; color:var(--gold-light); letter-spacing:1px; margin-bottom:12px; }
+.price-card .price { font-size:40px; font-weight:800; color:var(--gold-light); }
+.price-card .price span { font-size:13px; color:var(--text2); font-weight:400; }
+.price-card .unit { font-size:11px; color:var(--text3); margin-bottom:20px; }
+.price-card .plan-features { list-style:none; text-align:left; }
+.price-card .plan-features li { font-size:12px; color:var(--text2); padding:6px 0; border-bottom:1px solid rgba(255,255,255,.03); }
+.price-card .plan-features li::before { content:'✓ '; color:var(--gold); font-weight:700; margin-right:6px; }
+.btn-buy {
+  display:block; width:100%; padding:12px; border-radius:50px; font-size:14px; font-weight:600;
+  cursor:pointer; transition:.25s; border:none; text-align:center; text-decoration:none; margin-top:18px; letter-spacing:.5px;
+}
+.btn-buy.gold { background:linear-gradient(135deg,#e0c04a,#c9a520,#b8950e); color:#0a0a0a; }
+.btn-buy.gold:hover { transform:translateY(-1px); box-shadow:0 6px 24px rgba(212,175,55,.3); }
+.btn-buy.outline { background:transparent; border:1px solid rgba(212,175,55,.2); color:var(--gold-light); }
+.btn-buy.outline:hover { background:rgba(212,175,55,.06); }
+
+/* Comparison table */
+.compare-table { width:100%; border-collapse:collapse; font-size:13px; }
+.compare-table th { text-align:left; padding:12px 16px; background:rgba(14,24,18,.8); color:var(--text2); font-weight:600; border-bottom:2px solid var(--border); font-size:11px; text-transform:uppercase; letter-spacing:.5px; }
+.compare-table td { padding:12px 16px; border-bottom:1px solid var(--border); color:rgba(255,255,255,.7); font-size:13px; }
+.compare-table tr:hover td { background:rgba(212,175,55,.03); }
+.compare-table .hl { color:var(--gold-light); font-weight:600; }
+
+/* FAQ */
+.faq-item { border-bottom:1px solid var(--border); }
+.faq-q {
+  padding:16px 0; font-size:15px; font-weight:600; cursor:pointer;
+  display:flex; justify-content:space-between; align-items:center; color:var(--gold-light);
+}
+.faq-q::after { content:'+'; font-size:20px; color:var(--gold); }
+.faq-a { padding:0 0 16px; font-size:13px; color:var(--text2); display:none; line-height:1.9; }
+.faq-item.open .faq-a { display:block; }
+.faq-item.open .faq-q::after { content:'−'; }
+
+/* Footer */
+.cta-section {
+  text-align:center; padding:72px 24px;
+  background:linear-gradient(175deg,#08120c 0%,#0a1810 100%);
+  border-top:1px solid var(--border); position:relative; z-index:1;
+}
+.cta-section h2 { font-size:28px; margin-bottom:12px; color:var(--gold-light); letter-spacing:1px; }
+.cta-section p { font-size:14px; color:var(--text2); margin-bottom:28px; max-width:500px; margin-left:auto; margin-right:auto; }
+.cta-section .contact { font-size:13px; color:var(--text3); margin-top:24px; }
+.footer { text-align:center; padding:24px; font-size:11px; color:var(--text3); border-top:1px solid rgba(255,255,255,.04); position:relative; z-index:1; letter-spacing:.5px; }
+
+/* Reveal */
+.reveal { opacity:0; transform:translateY(30px); transition:opacity .7s ease,transform .7s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+@media(max-width:768px) {
+  .hero { padding:100px 16px 50px; }
+  .hero h1 { font-size:32px; }
+  .section { padding:48px 0; }
+  .section h2 { font-size:24px; }
+  .steps { grid-template-columns:1fr; }
+  .step-arrow { display:none; }
+  .module-card { flex-direction:column; }
+  .pricing-grid { grid-template-columns:1fr; max-width:380px; margin:0 auto; }
+  .nav-links { display:none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav class="top-nav">
+  <div class="inner">
+    <div class="logo"><div class="logo-icon">谋</div><span class="logo-text">AI总参谋</span></div>
+    <ul class="nav-links">
+      <li><a href="#overview">产品概述</a></li>
+      <li><a href="#modules">功能模块</a></li>
+      <li><a href="#how">使用流程</a></li>
+      <li><a href="#pricing">套餐</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <div class="overline">安迪 AI调度师 出品</div>
+  <h1><span>AI 总参谋</span></h1>
+  <p class="subtitle">老板的随身参谋部</p>
+  <p class="tagline">
+    面向中小企业老板的AI决策辅助工具。<br>
+    覆盖企业经营分析、高管人才盘点、企业决策推演、高管面试、面试分析、试用辅佐六大场景。
+  </p>
+  <div class="cta-row">
+    <a href="https://andy-miaoan.github.io/ai-zongcanmou/AI总参谋工作台.html" class="btn-primary" target="_blank">进入工作台</a>
+    <a href="#modules" class="btn-outline">了解功能模块</a>
+  </div>
+</section>
+
+<!-- ═══════════ OVERVIEW ═══════════ -->
+<section class="section" id="overview">
+  <div class="container">
+    <div class="section-label reveal">产品概述</div>
+    <h2 class="reveal">什么是AI总参谋？</h2>
+    <p class="lead reveal">一个面向中小企业老板的AI决策辅助工具。你填写经营数据，系统生成专业的AI分析指令，复制粘贴到 DeepSeek / Kimi / 豆包等AI工具，即可获得深度经营分析报告。</p>
+
+    <div class="pain-box reveal">
+      <p>
+        <strong>中小企业老板是中国最孤独的决策者。</strong><br>
+        大公司有战略部、有CHRO、有咨询公司。你呢？所有重大决策，最终只能一个人拍板。<br>
+        利润下滑了，谁帮你找根因？想开新业务，谁帮你推演AB方案？核心高管要走，谁帮你判断该留还是该放？<br>
+        <strong style="color:#e0c04a;">AI总参谋，就是你的随身参谋部——不替你决策，但让你每次决策前，都有人帮你把功课做足。</strong>
+      </p>
+    </div>
+
+    <div class="card-grid">
+      <div class="info-card reveal">
+        <span class="icon">💰</span>
+        <h4>1/50的价格</h4>
+        <p>管理咨询公司一次诊断50万起步，AI总参谋年卡仅¥9,999。同样的分析框架，用AI完成。</p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">⚡</span>
+        <h4>即时可用</h4>
+        <p>不用预约、不用排队、不用等顾问档期。随时填写数据，即时生成AI分析指令。</p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">🔒</span>
+        <h4>数据自有</h4>
+        <p>所有经营数据仅存储在本地浏览器中，不上传任何第三方服务器。你的数据完全由你掌控。</p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">🎯</span>
+        <h4>6大决策场景</h4>
+        <p>从经营诊断到高管招聘，覆盖老板最头疼的六大关键决策场景，一套系统管全程。</p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">🧠</span>
+        <h4>15年行业深耕 × AI</h4>
+        <p>不是教你怎么用AI，而是把15年服装行业HR+猎头经验做成AI方法论。每一个模块都是经过上百家企业验证的专业决策框架。</p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">🔄</span>
+        <h4>持续参谋</h4>
+        <p>经营是长期过程。月度快诊+季度深盘+重大决策专项推演，系统持续支持。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ MODULES ═══════════ -->
+<section class="section section-dark" id="modules">
+  <div class="container">
+    <div class="section-label reveal">核心模块</div>
+    <h2 class="reveal">六大核心模块 · 经营决策全覆盖</h2>
+    <p class="lead reveal">每个模块都是一套完整的决策分析框架，AI根据你的数据生成专业指令。</p>
+
+    <div class="module-grid">
+      <div class="module-card reveal">
+        <div class="m-icon">📊</div>
+        <div class="m-info">
+          <h4>企业经营分析</h4>
+          <p>财务、业务、运营、人力四大板块全面诊断。月度快诊+季度深盘，AI帮你从经营数据中找到异常、找到原因、找到行动方向。</p>
+          <span class="m-tag">经营诊断</span>
+        </div>
+      </div>
+      <div class="module-card reveal">
+        <div class="m-icon">👥</div>
+        <div class="m-info">
+          <h4>高管人才盘点</h4>
+          <p>用九宫格模型评估核心团队：谁是超级明星？谁该果断优化？谁走了是灾难？把"凭感觉用人"变成"有判断用人"。</p>
+          <span class="m-tag">人才评估</span>
+        </div>
+      </div>
+      <div class="module-card reveal">
+        <div class="m-icon">🎯</div>
+        <div class="m-info">
+          <h4>企业决策沙盘</h4>
+          <p>要不要开分公司？要不要换掉销售VP？要不要降价？AI推演每个选项的最佳/最差/最可能三种情景+风险矩阵。</p>
+          <span class="m-tag">决策推演</span>
+        </div>
+      </div>
+      <div class="module-card reveal">
+        <div class="m-icon">📋</div>
+        <div class="m-info">
+          <h4>高管面试题库</h4>
+          <p>面高管不是聊天。5大模块24道结构化面试题——业绩验证、战略思维、领导力、文化匹配、压力测试，每题有考察标准+红旗信号。</p>
+          <span class="m-tag">招聘工具</span>
+        </div>
+      </div>
+      <div class="module-card reveal">
+        <div class="m-icon">🔍</div>
+        <div class="m-info">
+          <h4>高管面试分析</h4>
+          <p>面试完别靠感觉判断。AI把面试记录变成四维打分+证据链+认知偏差提醒——对抗光环效应和确认偏误。</p>
+          <span class="m-tag">面试评估</span>
+        </div>
+      </div>
+      <div class="module-card reveal">
+        <div class="m-icon">🛡️</div>
+        <div class="m-info">
+          <h4>高管试用辅佐</h4>
+          <p>新高管最危险的就是前90天。AI帮你设计90天融入计划，诊断"该继续观察还是果断止损"，降低试错成本。</p>
+          <span class="m-tag">关键护航</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ HOW ═══════════ -->
+<section class="section" id="how">
+  <div class="container">
+    <div class="section-label reveal">使用流程</div>
+    <h2 class="reveal">三步上手，简单直接</h2>
+    <p class="lead reveal">不需要下载APP，不需要安装软件。一个网页，三步完成。</p>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <h4>填写信息</h4>
+        <p>选择功能模块，填写你的公司档案、经营数据、决策背景等信息</p>
+        <span class="step-arrow">→</span>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <h4>生成AI指令</h4>
+        <p>点击生成按钮，系统自动整合你的数据，输出结构化的专业AI分析指令</p>
+        <span class="step-arrow">→</span>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <h4>复制到AI工具</h4>
+        <p>复制指令 → 粘贴到DeepSeek/Kimi/豆包等AI → 获得深度经营分析报告</p>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:32px;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;" class="reveal">
+      <p style="font-size:13px;color:var(--text2);">
+        <strong style="color:var(--gold);">📌 支持任意AI大模型：</strong>
+        DeepSeek · Kimi · 豆包 · 通义千问 · 文心一言 · ChatGPT · Claude · Gemini
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ PRICING ═══════════ -->
+<section class="section section-dark" id="pricing">
+  <div class="container">
+    <div class="section-label reveal">套餐定价</div>
+    <h2 class="reveal">选择适合你的参谋方案</h2>
+    <p class="lead reveal">三个档位，按需选择。所有套餐均包含全部6个模块的无限制访问权限。</p>
+
+    <div class="pricing-grid">
+      <div class="price-card reveal">
+        <div class="plan-name">月卡 · 月度体验</div>
+        <div class="price">¥999<span>/月</span></div>
+        <div class="unit">30次AI指令 · 有效期30天</div>
+        <ul class="plan-features">
+          <li>全部6个模块开放</li>
+          <li>30次AI指令生成</li>
+          <li>公司档案系统</li>
+          <li>本地数据存储</li>
+          <li>客服微信支持</li>
+        </ul>
+        <a class="btn-buy outline" href="#">加微信 miaoan1913 购买</a>
+      </div>
+      <div class="price-card featured reveal">
+        <div class="plan-name">半年卡 · 半年深度</div>
+        <div class="price">¥4,999<span>/半年</span></div>
+        <div class="unit">200次AI指令 · 有效期180天</div>
+        <ul class="plan-features">
+          <li>全部6个模块开放</li>
+          <li>200次AI指令生成</li>
+          <li>公司档案系统</li>
+          <li>本地数据存储</li>
+          <li>客服微信优先响应</li>
+          <li>每月1次人工答疑</li>
+        </ul>
+        <a class="btn-buy gold" href="#">加微信 miaoan1913 购买</a>
+      </div>
+      <div class="price-card reveal">
+        <div class="plan-name">年卡 · 年度随身参谋</div>
+        <div class="price">¥9,999<span>/年</span></div>
+        <div class="unit">500次AI指令 · 有效期365天</div>
+        <ul class="plan-features">
+          <li>全部6个模块开放</li>
+          <li>500次AI指令生成</li>
+          <li>公司档案系统</li>
+          <li>本地数据存储</li>
+          <li>客服微信优先响应</li>
+          <li>每月2次人工答疑</li>
+          <li>1次视频面谈(45min)</li>
+          <li>年度经营回顾报告</li>
+        </ul>
+        <a class="btn-buy outline" href="#">加微信 miaoan1913 购买</a>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:18px;font-size:12px;color:var(--text3);">
+      💡 推荐半年卡：180天覆盖一次完整的经营诊断→人才盘点→决策推演的周期<br>
+      所有套餐购买后激活码即时生成，激活后开始计费
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════ COMPARISON ═══════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-label reveal">为什么选择我们</div>
+    <h2 class="reveal">AI总参谋 vs 传统管理咨询</h2>
+    <p class="lead reveal">同样的分析框架，完全不同的体验和价格。</p>
+
+    <div style="overflow-x:auto;" class="reveal">
+    <table class="compare-table">
+      <thead><tr><th>对比维度</th><th>传统管理咨询公司</th><th style="color:var(--gold-light);">AI总参谋</th></tr></thead>
+      <tbody>
+        <tr><td>起步价格</td><td>¥500,000 起</td><td class="hl">¥999（月卡）</td></tr>
+        <tr><td>单次分析成本</td><td>¥50,000 – 100,000</td><td class="hl">约¥20 – 33/次</td></tr>
+        <tr><td>服务模式</td><td>预约→等排期→驻场调研→出报告</td><td class="hl">随时填写，即时生成</td></tr>
+        <tr><td>响应速度</td><td>3-6周出报告</td><td class="hl">即时出分析指令</td></tr>
+        <tr><td>覆盖面</td><td>取决于顾问团队专长</td><td class="hl">6大模块覆盖经营全周期</td></tr>
+        <tr><td>数据安全</td><td>咨询公司服务器/项目文件</td><td class="hl">仅存本地浏览器</td></tr>
+        <tr><td>分析客观性</td><td>可能受顾问方法论偏好影响</td><td class="hl">AI多维度客观分析</td></tr>
+        <tr><td>持续跟踪</td><td>项目制，结项即结束</td><td class="hl">不限次生成，随时分析</td></tr>
+        <tr><td>地域限制</td><td>一线城市才有优质咨询公司</td><td class="hl">有网络就能用</td></tr>
+        <tr><td>知识更新</td><td>依赖顾问个人经验积累</td><td class="hl">AI持续吸收最新方法论</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ TARGET ═══════════ -->
+<section class="section section-dark">
+  <div class="container">
+    <div class="section-label reveal">适用人群</div>
+    <h2 class="reveal">谁适合用AI总参谋？</h2>
+    <p class="lead reveal">无论你处于经营管理的哪个阶段，都能找到对应的模块。</p>
+
+    <div class="card-grid">
+      <div class="info-card reveal">
+        <span class="icon">🏢</span>
+        <h4>中小企业老板/CEO</h4>
+        <p>没有战略部、没有CHRO，所有重大决策自己扛。AI总参谋帮你把拍脑袋变成有框架、有推演、有风险预案的科学决策。</p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">📉</span>
+        <h4>利润下滑却找不到原因的老板</h4>
+        <p>月底看报表已经晚了。经营分析模块从财务、业务、运营、人力四大板块交叉诊断，找到异常根因。</p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">🎯</span>
+        <h4>面临重大决策的创始人</h4>
+        <p>要不要开新业务线？要不要换掉核心高管？决策沙盘推演每个选项的三种情景+风险矩阵，想清楚再拍板。</p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">👔</span>
+        <h4>正在招高管的老板</h4>
+        <p>面聊聊觉得不错就定了，3个月后发现踩坑。面试题库+面试分析帮你精准选人，降低试错成本。</p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">🔄</span>
+        <h4>刚引入新高管的老板</h4>
+        <p>新高管入职前90天是最大风险窗口。试用辅佐模块提供系统化融入方案和止损决策框架。</p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">💼</span>
+        <h4>COO/VP/高管操盘手</h4>
+        <p>帮老板做决策分析，需要方法论和工具支撑。AI总参谋提供专业分析框架，让你的建议更有说服力。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SECURITY ═══════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-label reveal">安全与隐私</div>
+    <h2 class="reveal">你的数据，你完全掌控</h2>
+    <p class="lead reveal">AI总参谋采用离线优先架构，经营数据默认不离开你的设备。</p>
+
+    <div class="card-grid">
+      <div class="info-card reveal">
+        <span class="icon">🏠</span>
+        <h4>本地存储 · 默认离线</h4>
+        <p>所有经营数据仅存储在浏览器本地。没有后端服务器，没有数据库，你的数据不会上传到任何第三方平台。</p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">🔑</span>
+        <h4>一码一设备</h4>
+        <p>每个激活码绑定到首次激活的设备。绑定后其他设备无法使用同一激活码，杜绝激活码被传播分享。</p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">☁️</span>
+        <h4>云端同步（可选）</h4>
+        <p>如需在多设备间同步使用状态，可配置GitHub Gist作为同步后端。数据存储在你自己的GitHub账号下。</p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">🛡️</span>
+        <h4>发给AI的数据由你控制</h4>
+        <p>系统生成的是分析指令模板，你可以在复制前自由编辑、脱敏、删除任何敏感信息。什么数据给AI看，完全由你决定。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FOUNDER ═══════════ -->
+<section class="section section-dark">
+  <div class="container">
+    <div class="section-label reveal">关于创始人</div>
+    <h2 class="reveal">谁在做这件事？</h2>
+    <p class="lead reveal">不是技术团队做的产品，是一个在服装电商行业实战了15年的操盘手，把自己吃饭的家伙做成了工具。</p>
+
+    <div class="card-grid">
+      <div class="info-card reveal">
+        <span class="icon">👤</span>
+        <h4>安迪（Andy）</h4>
+        <p style="font-size:13px;line-height:1.9;">
+          <strong>15年服装电商行业深度参与者</strong><br><br>
+          深度参与企业从几千万到几个亿的成长全过程。不是顾问、不是讲师，是真正在一线陪老板打过仗、踩过坑、填过坑的人。<br><br>
+          <strong>前10年：</strong>服装企业一号位操盘手，从招聘、绩效、薪酬到组织搭建、业务诊断、战略落地，全链条深度参与。<br><br>
+          <strong>后5年：</strong>服装&电商行业猎头合伙人，专注服务年营收3000万-10亿的中型企业，累计完成500+中高管职位交付。
+        </p>
+      </div>
+      <div class="info-card reveal">
+        <span class="icon">💡</span>
+        <h4>为什么做这个产品？</h4>
+        <p style="font-size:13px;line-height:1.9;">
+          15年里目睹了太多本可避免的决策悲剧。这些老板都是聪明人，问题从来不是"不聪明"，而是<strong>太孤独</strong>——没有一个能帮他系统分析、交叉比对、推演风险的参谋部。<br><br>
+          2026年，我把15年积累的方法论——经营诊断框架、人才评估模型、结构化面试题库、决策推演模板——全部做成了AI系统。让每个老板用不到咨询公司1/50的成本，拥有自己的随身参谋部。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FAQ ═══════════ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-label reveal">常见问题</div>
+    <h2 class="reveal">FAQ</h2>
+
+    <div class="faq-item reveal">
+      <div class="faq-q">怎么使用？需要下载软件吗？</div>
+      <div class="faq-a">不需要。打开网页，输入激活码即可使用。选择功能模块 → 填写你的经营数据 → 点击"生成AI指令"→ 复制指令 → 粘贴到DeepSeek/Kimi/豆包等任意AI工具 → AI输出分析报告。全程浏览器操作，无需安装任何软件。</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">AI分析的靠谱吗？会不会瞎说？</div>
+      <div class="faq-a">AI总参谋不是替你做决定，是帮你把数据看透。它最擅长的三件事：找异常（哪个指标波动大）、给假设（可能的原因有哪些）、做对比（环比/同比/行业对比）。每个分析模块都基于专业管理方法论设计。但最终的判断和决策，是你自己做。</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">我不会用AI，能用吗？</div>
+      <div class="faq-a">完全不需要会AI。你只需要填你的经营数据——营收多少、成本多少、退货率多少——点一下生成，它就给你一套完整的分析指令。你复制粘贴到任何AI工具，就能得到一份专业分析报告。会复制粘贴就能用。</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">和总参部有什么区别？</div>
+      <div class="faq-a">AI总参谋是"你有问题，找个参谋问问"——填表单→生成提示词→复制到AI，轻量灵活。总参部是"你坐进指挥室，参谋班子全到位"——华为BLM/DSTE方法论驱动，五大中心联动，数据沉淀追踪，更系统更深度。两个产品互补：先用AI总参谋快速上手，再用总参部深度管理。</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">我的经营数据安全吗？</div>
+      <div class="faq-a">所有经营数据仅保存在你的浏览器本地存储中——不上传任何服务器。AI总参谋是一个离线工作台架构，你的经营数据不会离开你的电脑。生成的分析指令你可以选择性地发给AI工具，敏感数据可以提前做脱敏处理。</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">次数用完了怎么办？</div>
+      <div class="faq-a">次数指"生成AI指令"的次数。用完可以购买新卡续费，次数和天数都会叠加。建议按需选择套餐：轻度用户选月卡(30次)，中度用户选半年卡(200次)，深度依赖用户选年卡(500次)。</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">可以多设备使用吗？</div>
+      <div class="faq-a">不可以。一个激活码绑定一个设备，激活后仅限该设备使用。这是为了防止激活码被传播分享，保护付费客户的权益。如需更换设备（如换新电脑），联系客服微信 miaoan1913 解除旧设备绑定即可。</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">不满意可以退款吗？</div>
+      <div class="faq-a">激活码一旦激活即开始计费，不支持退款。建议先购买月卡¥999体验30次，确认产品适合你的需求后再续半年卡或年卡。我的客户续费率很高，所以我对产品有信心。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CTA ═══════════ -->
+<section class="cta-section">
+  <h2 class="reveal">用AI重新定义经营决策</h2>
+  <p class="reveal">1/50的价格、随时可用、数据自有、AI深度分析。<br>从现在开始，让AI做你的随身参谋部。</p>
+  <div class="reveal">
+    <a href="https://andy-miaoan.github.io/ai-zongcanmou/AI总参谋工作台.html" class="btn-primary" target="_blank">进入工作台</a>
+  </div>
+  <div class="contact reveal">
+    客服微信：miaoan1913 · 工作日9:00-21:00<br>
+    激活码购买、使用咨询、商务合作，请加微信
+  </div>
+</section>
+
+<footer class="footer">
+  安迪AI调度师 · AI总参谋 v1.0 · 老板的随身参谋部 · 客服微信：miaoan1913
+</footer>
+
+<script>
+// FAQ toggle
+document.querySelectorAll('.faq-q').forEach(function(q) {
+  q.addEventListener('click', function() { this.parentElement.classList.toggle('open'); });
+});
+// Scroll reveal
+(function() {
+  var els = document.querySelectorAll('.reveal');
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  els.forEach(function(el) { obs.observe(el); });
+})();
+</script>
+
+</body>
+</html>
